@@ -74,6 +74,7 @@
                 position_class: "toast-top-center",
                 rtl: {{app()->getLocale()=='ar' ? "true" : 'false'}}
             });
+            $('#my_multi_select1').multiSelect('refresh');
         })
 
         //fire event to get product by id

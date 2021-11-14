@@ -64,6 +64,9 @@
          window.Livewire.on('addedAllSizes',()=>{
             $('#sizesAndPrices').modal('hide');
         })
+        window.Livewire.on('changeType',()=>{
+            $('#my_multi_select1').multiSelect('refresh');
+        })
          window.Livewire.on('updateColor',()=>{
             $('#updateColorsAndPrices').modal('hide');
         })
@@ -81,7 +84,10 @@
                 stack: false,
                 position_class: "toast-top-center",
                 rtl: {{app()->getLocale()=='ar' ? "true" : 'false'}}
+
             });
+            $('#my_multi_select1').multiSelect('refresh');
+
         })
     </script>
 @endpush

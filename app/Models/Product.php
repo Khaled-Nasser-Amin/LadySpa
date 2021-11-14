@@ -10,11 +10,6 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $fillable=[
-        'name_ar', 'name_en',
-        'slug', 'description_ar',
-        'description_en','image','banner','featured','reviews','isActive','featured_slider'
-    ];
 
 
     protected $guarded=[''];
@@ -43,6 +38,17 @@ class Product extends Model
     public function taxes(){
         return $this->belongsToMany(Tax::class,'products_taxes');
     }
+
+    public function groups(){
+        return $this->belongsToMany(Product::class,'products_groups','child_product_id','parent_product_id')->withPivot('sizes')->using(ProductsGroups::class);
+    }
+
+    //this relation about existing product in table groups
+    public function child_products(){
+        return $this->belongsToMany(Product::class,'products_groups','parent_product_id','child_product_id')->withPivot('sizes')->using(ProductsGroups::class);
+    }
+
+
     public function getSlugAttribute($value){
         return Str::slug($value);
     }

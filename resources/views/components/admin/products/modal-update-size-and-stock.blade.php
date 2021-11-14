@@ -8,16 +8,26 @@
             <span aria-hidden="true">&times;</span>
         </button>
         </div>
-            <div class="modal-body">
-                <div class="col-sm-12">
+            <div class="modal-body row">
+                <div class="col-md-6 col-sm-12">
                     <label for="size">{{__('text.Size')}}</label><br>
                     <input type="size" class="form-control"  wire:model='update_size' id="size" ><br>
                     <x-general.input-error for="update_size" />
                 </div>
-                <div class="col-sm-12">
+                <div class="col-md-6 col-sm-12">
                     <label for="stock">{{__('text.Stock')}}</label><br>
                     <input type="stock" class="form-control"  wire:model='update_stock' id="stock" ><br>
                     <x-general.input-error for="update_stock" />
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <label for="price">{{__('text.Price')}}</label><br>
+                    <input type="price" class="form-control"  wire:model='update_price' id="price" ><br>
+                    <x-general.input-error for="update_price" />
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <label for="sale">{{__('text.Sale')}}</label><br>
+                    <input type="sale" class="form-control"  wire:model='update_sale' id="sale" ><br>
+                    <x-general.input-error for="update_sale" />
                 </div>
             </div>
         <div class="modal-footer row justify-content-center">

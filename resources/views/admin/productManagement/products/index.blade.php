@@ -50,7 +50,7 @@
 
             <!-- all products -->
              <div class="row">
-                <x-admin.products.card-show :products="$products" />
+                {{-- <x-admin.products.card-show :products="$products" /> --}}
              </div>
 
             <!-- pagination -->

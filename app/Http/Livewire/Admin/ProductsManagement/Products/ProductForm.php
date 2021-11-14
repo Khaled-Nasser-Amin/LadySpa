@@ -3,8 +3,6 @@
 namespace App\Http\Livewire\Admin\ProductsManagement\Products;
 
 use App\Http\Controllers\admin\productManagement\products\ProductController;
-use App\Models\Category;
-use App\Models\Color;
 use App\Models\Images;
 use App\Models\Product;
 use App\Models\Size;
@@ -29,8 +27,9 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $image,
         $product_banner,
         $groupImage,
-        $slug,
+        $slug,$type,
         $search;
+
     public $action; // action for change form action between add new product and update product
     public $product;
 
@@ -42,21 +41,33 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public $index; //modal size and stock
 
 
+    public $productsIndex; //group of products
+
+
     public function mount(){
         $this->taxes=Tax::get();
         $this->taxes_selected=[];
 
+        $this->products=Product::where('type','single')->where('user_id',auth()->user()->id)->get();
+        $this->productsIndex[]=['product_id' => '','quantity' => '' ];
+
+        $this->type="single";
+
+
     }
 
+    //refresh jquery plugin
+    public function updatedType(){
+        $this->emit('changeType');
+    }
     public function store(){
         $productStore=new ProductController();
         $data=$this->validation(['image' => 'required|mimes:jpg,png,jpeg,gif','product_banner' => 'required|mimes:jpg,png,jpeg,gif']);
         $data=$this->setSlug($data);
         $product=$productStore->store($data);
         auth()->user()->products()->save($product);
-        $this->colorsAndPrice($product);
-        $cat=$product->category;
-        $this->updateCategoryStatus($cat);
+        $this->associateProductWithSize($this->sizes,$product);
+        $this->associateImagesWithProduct($data,$product);
         $product->taxes()->syncWithoutDetaching($this->taxes_selected);
         $this->resetVariables();
         $this->dispatchBrowserEvent('success', __('text.Product Added Successfully'));
@@ -133,7 +144,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         ],$image_validation));
     }
 
-
+    //handle sizes array
     public function sizesAndPrice($product){
         foreach ($this->sizes as $key => $row){
             $size=Size::create([
@@ -147,87 +158,33 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
             $product->sizes()->save($size);
         }
     }
-    // public function updateColorsAndPrice($product){
-        //     $product->colors()->whereNotIn('id',collect($this->colorsIndex)->pluck('id')->toArray())->delete();
-        //     foreach ($this->colorsIndex as $key => $row){
-        //         if(isset($row['id'])){
-        //             $color=Color::find($row['id']);
-        //             $color->update([
-        //                 'color' => $row['color'],
-        //                 'price' => $row['price'],
-        //                 'sale' => trim($row['sale']) == '' || $row['sale'] == null ? 0 : $row['sale']
-        //             ]);
-        //             if(isset($row['groupImage'])){
-        //                 $this->livewireDeleteGroupOfImages($color->images,'products');
-        //                 $color->images()->delete();
-        //                 $imagesNames=$this->livewireGroupImages($row,'products');
-        //                 $this->associateImagesWithColor($imagesNames,$color);
-        //             }
 
-        //         }else{
-        //             $color=Color::create([
-        //                 'color' => $row['color'],
-        //                 'price' => $row['price'],
-        //                 'sale' => trim($row['sale']) == '' || $row['sale'] == null ? 0 : $row['sale']
-        //             ]);
-        //             $this->colorsIndex[$key]['id']=$color->id;
-        //             $imagesNames=$this->livewireGroupImages($row,'products');
-        //             $this->associateImagesWithColor($imagesNames,$color);
-        //         }
-        //         $this->associateColorWithSize($row['sizes'],$color,$key);
-        //         $product->colors()->save($color);
-        //     }
+    //sizes with product
+    public function associateProductWithSize($sizes,$product){
+        $product->sizes()->whereNotIn('id',collect($sizes)->pluck('id')->toArray())->delete();
 
-    // }
+        foreach ($sizes as $key=>$row)
+        {
+            if(isset($row['id'])){
+                $size=Size::find($row['id']);
+                $size->update(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
 
-    // public function resetVariables(){
-        //     $this->name_ar= null;
-        //     $this->name_en=null;
-        //     $this->description_ar=null;
-        //     $this->description_en=null;
-        //     $this->image = null;
-        //     $this->slug=null;
-        //     $this->tax=null;
-        //     $this->groupImage=null;
-        //     $this->sizesIndex=[];
-    // }
+            }else{
+                $size=Size::create(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
+                $size->product()->associate($product->id);
+                $size->save();
+                $this->sizes[$key]['id']=$size->id;
+            }
 
-
-    public function associateImagesWithProduct($images,$product){
-
-        $imagesNames=$this->livewireGroupImages($row,'products');
-        $this->associateImagesWithColor($imagesNames,$color);
-
-
-
-
-        foreach ($images as $image)
-         Images::create(['name'=>$image])->product()->associate($product->id)->save();
+        }
     }
 
-
-
-    // public function associateProductWithSize($sizes,$product,$index){
-        //     $product->sizes()->whereNotIn('id',collect($sizes)->pluck('id')->toArray())->delete();
-
-        //     foreach ($sizes as $key=>$row)
-        //     {
-        //         if(isset($row['id'])){
-        //             $size=Size::find($row['id']);
-        //             $size->update(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
-
-        //         }else{
-        //             $size=Size::create(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
-        //             $size->product()->associate($product->id);
-        //             $size->save();
-        //             $this->sizesIndex[$index][$key]['id']=$size->id;
-        //         }
-
-        //     }
-    // }
-
-
-
+    //images
+    public function associateImagesWithProduct($data,$product){
+        $imagesNames=$this->livewireGroupImages($data,'products');
+        foreach ($imagesNames as $image)
+        Images::create(['name'=>$image])->product()->associate($product->id)->save();
+    }
 
 
     // size and stock modal
@@ -252,21 +209,25 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $this->update_price=$this->sizes[$index]['price'];
         $this->update_sale=$this->sizes[$index]['sale'];
         $this->index_of_size=$index;
-
     }
+
+    // update size completed
     public function updateSizeComplete($index){
         $this->update_size=strtolower($this->update_size);
         $this->validate([
             'update_size' => ['required',Rule::notIn(collect($this->sizes)->except($this->index_of_size)->pluck('size'))],
             'update_stock' => 'required|integer|min:1',
             'update_price' => 'required|numeric',
-            'update_sale' => 'nullable|numeric|lt:price'
+            'update_sale' => 'nullable|numeric|lt:update_price'
         ]);
         $this->sizes[$this->index_of_size]['size']=$this->update_size;
         $this->sizes[$this->index_of_size]['stock']=$this->update_stock;
+        $this->sizes[$this->index_of_size]['price']=$this->update_price;
+        $this->sizes[$this->index_of_size]['sale']=$this->update_sale;
         $this->emit('updateSize',$index); // emit to hide modal size
 
     }
+
     public function deleteSize($index){
         unset($this->sizes[$index]);
         array_values($this->sizes);
@@ -288,34 +249,14 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $this->emit('addedAllSizes'); // emit to hide modal sizes
 
     }
+    public function resetVariables(){
+        $this->reset([
+            'name_ar','name_en',
+            'description_ar','description_en','image','product_banner',
+            'groupImage','slug','sizes','taxes_selected'
+        ]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
     // active or unactive category
@@ -360,3 +301,47 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
 }
+
+
+
+
+// 'productsIndex' =>'required_if:type,group',
+//             'productsIndex.*.product_id' => 'required_if:type,group|numeric|exists:products,id',
+//             'productsIndex.*.quantity' => 'required_if:type,group|numeric|min:1',
+//             public function groupType($product){
+//                 if ($this->type == 'group'){
+//                     $productsGroup=collect($this->productsIndex)->groupBy('product_id')->map(function ($value){
+//                         return [$value[0]['product_id'] => $value->sum('quantity')];
+//                     });
+//                     foreach ($productsGroup as $key =>$value){
+//                         $product->groups()->syncWithoutDetaching([$key=>['quantity'=>$value[$key]]]);
+//                     }
+//                 }else{
+//                     $product->groups()->detach();
+//                 }
+
+//             }
+//             public function resetVariables(){
+//                 $this->reset(['name_ar','name_en','description_ar',
+//                 'description_en','image','price','slug','type',
+//                 'sale','phone','whatsapp','YearOfManufacture','groupImage',]);
+//                 $this->categoriesIds=[];
+//                 $this->productsIndex=[];
+//                 $this->models=[];
+//             }
+
+//             public function addProduct(){
+//                 $this->productsIndex[]=['product_id' => '','quantity' => '' ];
+//             }
+
+//             public function deleteProduct($index){
+//                 unset($this->productsIndex[$index]);
+//                 array_values($this->productsIndex);
+//             }
+
+
+
+
+
+
+
