@@ -25,8 +25,8 @@ class CreateProductsTable extends Migration
             $table->string('image');
             $table->string('banner');
             $table->string('type');
-            $table->float('price',11,2);
-            $table->float('sale',11,2)->default(0);
+            $table->float('group_price',11,2)->nullable();
+            $table->float('group_sale',11,2)->default(0);
             $table->string('reviews')->default(0);
             $table->tinyInteger('isActive')->default(1);
             $table->unsignedBigInteger('user_id')->nullable();

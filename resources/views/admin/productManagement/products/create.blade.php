@@ -64,6 +64,8 @@
          window.Livewire.on('addedAllSizes',()=>{
             $('#sizesAndPrices').modal('hide');
         })
+
+
         window.Livewire.on('changeType',()=>{
             $('#my_multi_select1').multiSelect('refresh');
         })

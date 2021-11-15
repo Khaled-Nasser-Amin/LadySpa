@@ -11,7 +11,6 @@ class CreateProductsGroupsTable extends Migration
     {
         Schema::create('products_groups', function (Blueprint $table) {
             $table->id();
-            $table->text('sizes');
             $table->unsignedBigInteger('parent_product_id')->nullable();
             $table->foreign('parent_product_id')->references('id')->on('products')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('child_product_id')->nullable();

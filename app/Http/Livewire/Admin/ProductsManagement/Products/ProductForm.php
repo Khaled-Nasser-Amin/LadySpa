@@ -25,7 +25,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $description_ar,
         $description_en,
         $image,
-        $product_banner,
+        $banner,
         $groupImage,
         $slug,$type,
         $search;
@@ -36,12 +36,12 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     //add size
     public $size,$price,$sale,$stock,$sizes=[];
     public $update_size,$update_stock,$update_price,$update_sale,$index_of_size; // update size
-    protected $listeners=['edit'];
+    protected $listeners=['edit','selected_product'];
 
     public $index; //modal size and stock
 
 
-    public $productsIndex; //group of products
+    public $productsIndex,$products,$group_price,$group_sale,$product_sizes=[]; //group of products
 
 
     public function mount(){
@@ -49,8 +49,8 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $this->taxes_selected=[];
 
         $this->products=Product::where('type','single')->where('user_id',auth()->user()->id)->get();
-        $this->productsIndex[]=['product_id' => '','quantity' => '' ];
-
+        $this->productsIndex[]=['product_id' => '','size' => '' ,'quantity' => '' ];
+        $this->product_sizes[0]=[];
         $this->type="single";
 
 
@@ -60,14 +60,29 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public function updatedType(){
         $this->emit('changeType');
     }
+
+
+
     public function store(){
         $productStore=new ProductController();
-        $data=$this->validation(['image' => 'required|mimes:jpg,png,jpeg,gif','product_banner' => 'required|mimes:jpg,png,jpeg,gif']);
+        if($this->type == 'single'){
+            $data=$this->validation(array_merge(['sizes' =>'required|array|min:1'],$this->imageValidationForStore()));
+        }else{
+            $data=$this->validation(array_merge($this->imageValidationForStore(),$this->group_validation()));
+        }
+
         $data=$this->setSlug($data);
         $product=$productStore->store($data);
-        auth()->user()->products()->save($product);
         $this->associateProductWithSize($this->sizes,$product);
-        $this->associateImagesWithProduct($data,$product);
+
+        auth()->user()->products()->save($product);
+
+        if($this->type == 'single'){
+            $this->associateImagesWithProduct($data,$product);
+
+        }else{
+
+        }
         $product->taxes()->syncWithoutDetaching($this->taxes_selected);
         $this->resetVariables();
         $this->dispatchBrowserEvent('success', __('text.Product Added Successfully'));
@@ -137,11 +152,30 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
             'description_en' => 'nullable|string|max:255|',
             'taxes_selected'=>'required|array|min:1',
             'taxes_selected.*'=>'exists:taxes,id',
-            'sizes' =>'required|array|min:1',
-            'groupImage' => 'required|array|min:1',
-            'groupImage.*' => 'mimes:jpeg,jpg,png,webp',
+            'type' => ['required',Rule::in(['single','group'])],
+
 
         ],$image_validation));
+    }
+
+    //image validation
+    protected function imageValidationForStore()
+    {
+        return [
+            'image' => 'required|mimes:jpg,png,jpeg,gif',
+            'banner' => 'required|mimes:jpg,png,jpeg,gif',
+            'groupImage' => 'required|array|min:1',
+            'groupImage.*' => 'mimes:jpeg,jpg,png,webp',
+        ];
+    }
+    protected function imageValidationForUpdate()
+    {
+        return [
+            'image' => 'nullable|mimes:jpg,png,jpeg,gif',
+            'banner' => 'nullable|mimes:jpg,png,jpeg,gif',
+            'groupImage' => 'nullable|array|min:1',
+            'groupImage.*' => 'mimes:jpeg,jpg,png,webp',
+        ];
     }
 
     //handle sizes array
@@ -252,47 +286,17 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public function resetVariables(){
         $this->reset([
             'name_ar','name_en',
-            'description_ar','description_en','image','product_banner',
-            'groupImage','slug','sizes','taxes_selected'
+            'description_ar','description_en','image','banner',
+            'groupImage','slug','sizes','taxes_selected','group_price','group_sale'
         ]);
 
     }
 
 
-    // active or unactive category
-    protected function updateCategoryStatus($cat){
-        if($cat->status == 1)
-            return ;
-        $cat->update(['status' => 1]);
-        $cat->save();
-
-        if($cat->parent_id == 0)
-            return;
-        $this->updateCategoryStatus($cat->parent_category);
 
 
-    }
-
-    protected function deleteCategoryStatus($cat){
-        if($cat->products->where('isActive',1)->count() != 0 || $cat->child_categories->where('status',1)->count() > 0){
-           return ;
-        }else{
-            $cat->update(['status' => 0]);
-            $cat->save();
-            if( $cat->parent_id == 0)
-                return;
-            $this->deleteCategoryStatus($cat->parent_category);
-
-        }
-    }
-
-    //end active or unactive category
-
-
-
-
-      //set slug when slug = null
-      public function setSlug($data){
+    //set slug when slug = null
+    public function setSlug($data){
         if ($this->slug == null){
             $data['slug'] = $this->name_en.'-'.$this->name_ar;
         }
@@ -300,48 +304,59 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     }
 
+
+
+
+    //group of products
+
+
+    //select product =>  change sizes
+    public function selected_product($index,$product_id){
+        $this->product_sizes[$index]=Product::findOrFail($product_id)->sizes;
+
+    }
+
+    public function addProduct(){
+        $this->productsIndex[]=['product_id' => '','size' => '','quantity' => '' ];
+        $this->product_sizes[]=[];
+    }
+
+    public function deleteProduct($index){
+
+        unset($this->productsIndex[$index]);
+        array_values($this->productsIndex);
+
+        unset($this->product_sizes[$index]);
+        array_values($this->product_sizes);
+
+    }
+
+
+    public function groupType($product){
+        if ($this->type == 'group'){
+            $productsGroup=collect($this->productsIndex)->groupBy('product_id')->map(function ($value){
+                return [$value[0]['product_id'] => $value->sum('quantity')];
+            });
+            foreach ($productsGroup as $key =>$value){
+                $product->groups()->syncWithoutDetaching([$key=>['quantity'=>$value[$key]]]);
+            }
+        }else{
+            $product->groups()->detach();
+        }
+
+    }
+
+
+    protected function group_validation()
+    {
+        return [
+            'group_price' =>'required_if:type,group|numeric',
+            'group_sale' =>'nullable|numeric|lt:group_price|',
+            'productsIndex' =>'required_if:type,group|array|min:1',
+            'productsIndex.*.product_id' => 'required_if:type,group|numeric|exists:products,id',
+            'productsIndex.*.quantity' => 'required_if:type,group|numeric|min:1',
+            'productsIndex.*.size' => 'required_if:type,group|numeric|exists:sizes,id',
+        ];
+    }
+
 }
-
-
-
-
-// 'productsIndex' =>'required_if:type,group',
-//             'productsIndex.*.product_id' => 'required_if:type,group|numeric|exists:products,id',
-//             'productsIndex.*.quantity' => 'required_if:type,group|numeric|min:1',
-//             public function groupType($product){
-//                 if ($this->type == 'group'){
-//                     $productsGroup=collect($this->productsIndex)->groupBy('product_id')->map(function ($value){
-//                         return [$value[0]['product_id'] => $value->sum('quantity')];
-//                     });
-//                     foreach ($productsGroup as $key =>$value){
-//                         $product->groups()->syncWithoutDetaching([$key=>['quantity'=>$value[$key]]]);
-//                     }
-//                 }else{
-//                     $product->groups()->detach();
-//                 }
-
-//             }
-//             public function resetVariables(){
-//                 $this->reset(['name_ar','name_en','description_ar',
-//                 'description_en','image','price','slug','type',
-//                 'sale','phone','whatsapp','YearOfManufacture','groupImage',]);
-//                 $this->categoriesIds=[];
-//                 $this->productsIndex=[];
-//                 $this->models=[];
-//             }
-
-//             public function addProduct(){
-//                 $this->productsIndex[]=['product_id' => '','quantity' => '' ];
-//             }
-
-//             public function deleteProduct($index){
-//                 unset($this->productsIndex[$index]);
-//                 array_values($this->productsIndex);
-//             }
-
-
-
-
-
-
-

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\admin\productManagement\products;
 use App\Http\Controllers\Controller;
 
-use App\Models\Images;
 use App\Traits\ImageTrait;
 use App\Models\Product;
 use Illuminate\Support\Facades\Request;
@@ -14,8 +13,9 @@ class ProductController extends Controller
 
     public function store($request)
     {
-        $data=collect($request)->except(['image','colorsIndex'])->toArray();
-        $data=$this->livewireAddSingleImage($request,$data,'products');
+        $data=collect($request)->except(['image','sizes','productsIndex'])->toArray();
+        $data['image']=$this->add_single_image($request['image'],'products');
+        $data['banner']=$this->add_single_image($request['banner'],'products');
         $product=Product::create($data);
         return $product;
     }
@@ -44,6 +44,13 @@ class ProductController extends Controller
         $vendor_id=$product->user_id;
         $product->delete();
         return $vendor_id;
+    }
+
+    protected function add_single_image($image,$folder){
+        $path=$image->store('public/'.$folder);
+        $arr=explode('/',$path);
+        $imageName=end($arr);
+        return $imageName;
     }
 
     public function show(Request $request,Product $product,$slug){

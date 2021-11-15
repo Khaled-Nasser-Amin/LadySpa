@@ -1,6 +1,6 @@
 
 <h5 class="text-center">@lang('Single Product')</h5>
-<form wire:submit.prevent="{{$action}}" wire:key="3">
+<form wire:submit.prevent="{{$action}}">
     <div class="row">
         <div class="col-lg-6">
             <div class="p-4">
@@ -14,12 +14,6 @@
                     <input type="text" wire:model="name_en" class="form-control" id="name_en" name="name_en">
                     <x-general.input-error for="name_en" />
                 </div>
-                {{-- <div class="form-group">
-                    <label for="slug">{{__('text.Slug')}}</label>
-                    <input type="text" name="slug" wire:model="slug" class="form-control" id="slug" >
-                    <x-general.input-error for="slug" />
-                </div> --}}
-
 
                 <div class="form-group">
                     <label for="Description_ar">{{__('text.Description_ar')}}</label>
@@ -34,7 +28,7 @@
             </div>
         </div>
 
-        <div class="col-lg-6 p-4" wire:key="4">
+        <div class="col-lg-6 p-4">
 
             <div class="form-group mb-4" >
                 <label>{{__('text.Product Image')}} </label>
@@ -44,9 +38,9 @@
 
             <div class="form-group mb-4" >
                 <label>{{__('text.Product banner')}} </label>
-                <input type="file" wire:model="product_banner"   class="form-control" data-height="210" />
+                <input type="file" wire:model="banner"   class="form-control" data-height="210" />
             </div>
-            <x-general.input-error for="product_banner" />
+            <x-general.input-error for="banner" />
             <div class="form-group mb-4" >
                 <label>{{__('text.Gallery')}}</label>
                 <input type="file" wire:model="groupImage" class="form-control"  multiple data-height="210" />
@@ -55,7 +49,7 @@
 
             <div class="form-group " wire:ignore wire:key="first">
                 <label for="tax">{{__('text.Tax')}}</label>
-                <select multiple="multiple" wire:model="taxes_selected" class="multi-select form-control border-secondary"  id="my_multi_select1"  data-plugin="multiselect" wire:key="6">
+                <select multiple="multiple" wire:model="taxes_selected" class="multi-select form-control border-secondary"  id="my_multi_select1"  data-plugin="multiselect" >
                     @forelse ($taxes as $tax)
                         <option value='{{ $tax->id }}'   >{{ app()->getLocale() == 'ar' ? $tax->name_ar: $tax->name_en }} ({{  $tax->tax }}%)</option>
                     @empty

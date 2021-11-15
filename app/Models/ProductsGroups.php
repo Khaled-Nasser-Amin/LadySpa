@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class ProductsGroups extends Pivot
 {
 
-    protected $casts = [
-        'sizes' => 'array'
-    ];
+ public function sizes()
+ {
+     return $this->hasMany(ProductsGroupSizesAndQuantity::class,'group_id','id');
+ }
 
 }
