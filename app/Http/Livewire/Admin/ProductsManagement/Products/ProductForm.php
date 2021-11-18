@@ -73,19 +73,22 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
         $data=$this->setSlug($data);
         $product=$productStore->store($data);
-        $this->associateProductWithSize($this->sizes,$product);
+        $this->associateImagesWithProduct($data,$product);
+
 
         auth()->user()->products()->save($product);
 
         if($this->type == 'single'){
-            $this->associateImagesWithProduct($data,$product);
+            $this->associateProductWithSize($this->sizes,$product);
 
         }else{
-
+            $this->groupType($product);
         }
         $product->taxes()->syncWithoutDetaching($this->taxes_selected);
+
         $this->resetVariables();
         $this->dispatchBrowserEvent('success', __('text.Product Added Successfully'));
+
         create_activity('Product Created',auth()->user()->id,$product->user_id);
 
 
@@ -287,8 +290,9 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $this->reset([
             'name_ar','name_en',
             'description_ar','description_en','image','banner',
-            'groupImage','slug','sizes','taxes_selected','group_price','group_sale'
+            'groupImage','slug','sizes','taxes_selected','group_price','group_sale','productsIndex'
         ]);
+        $this->productsIndex[]=['product_id' => '','size' => '' ,'quantity' => '' ];
 
     }
 
@@ -313,7 +317,6 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     //select product =>  change sizes
     public function selected_product($index,$product_id){
         $this->product_sizes[$index]=Product::findOrFail($product_id)->sizes;
-
     }
 
     public function addProduct(){
@@ -335,13 +338,19 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public function groupType($product){
         if ($this->type == 'group'){
             $productsGroup=collect($this->productsIndex)->groupBy('product_id')->map(function ($value){
-                return [$value[0]['product_id'] => $value->sum('quantity')];
-            });
+                $group_by_sizes= $value->groupBy('size')->map(function ($value2){
+                     return ['size' =>$value2[0]['size'],'quantity' => $value2->sum('quantity')];
+                 });
+                 return  [$value[0]['product_id'],$group_by_sizes];
+             });
             foreach ($productsGroup as $key =>$value){
-                $product->groups()->syncWithoutDetaching([$key=>['quantity'=>$value[$key]]]);
+                $child_product_id=$value[0];
+                $product->child_products()->syncWithoutDetaching($child_product_id);
+                foreach ($value[1] as $key =>$value){
+                   $group_id=$product->child_products()->find($child_product_id)->pivot->id;
+                   Size::find($value['size'])->groups()->syncWithoutDetaching([$group_id => ['quantity' => $value['quantity']]]);
+                }
             }
-        }else{
-            $product->groups()->detach();
         }
 
     }
@@ -360,3 +369,4 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
 }
+// ->sizes()->syncWithoutDetaching([$value['size'] => ['quantity' => $value['quantity']]])

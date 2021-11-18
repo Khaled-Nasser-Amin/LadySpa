@@ -20,7 +20,6 @@ class CreateProductsGroupSizesAndQuantitiesTable extends Migration
             $table->foreign('size_id')->references('id')->on('sizes')->onDelete('cascade');
             $table->unsignedBigInteger('group_id')->nullable();
             $table->foreign('group_id')->references('id')->on('products_groups')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

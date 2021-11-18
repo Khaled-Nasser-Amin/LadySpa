@@ -14,8 +14,8 @@
                     <div class="carousel-inner">
                         @foreach ($images as $image)
                             <div class="carousel-item {{ $loop->index ==  0 ? 'active' : '' }}">
-                                <a href="{{ $image['name'] }}" target="_blanc">
-                                    <img class="d-block w-100" src="{{ $image['name'] }}" >
+                                <a href="{{ $image }}" target="_blanc">
+                                    <img class="d-block w-100" src="{{ $image }}" >
                                 </a>
                             </div>
                         @endforeach
@@ -33,13 +33,8 @@
 
             </div>
             <div class="col-md-6">
-                @can('isAdmin')
-                    <div class="row justify-content-between align-items-center">
-                        <h3><span class="text-pink"><strong>@lang('text.Store Name')</strong> | </span>{{ $product->user->store_name}}</h3>
-                        <a href="{{$product->user->image}}" target="_blank"><img src="{{$product->user->image}}" class="rounded-circle" style="width: 50px;height: 50px" alt="user-image"></a>
-                    </div>
-                @endcan
-                <div class="row justify-content-between align-items-center">
+
+                <div class="d-flex flex-row justify-content-between align-items-center">
                     <h5><span class="text-pink"><strong>@lang('text.Product Name')</strong> | </span>{{app()->getLocale() == 'ar' ?$product->name_ar:$product->name_en}}</h5>
                     <span><i class="mdi mdi-calendar" aria-hidden="true"></i> {{date('M d Y',strtotime($product->created_at))}}</span>
                 </div>
@@ -49,101 +44,88 @@
                 <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Description')</strong> | </span>{{  $product->description_en }}</h6>
 
                 @endif
+                <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Type')</strong> | </span>{{  $product->type }}</h6>
+                @if ($product->type == "group")
+                <h6>
+                    <br>
+                    @if (!$product->group_sale)
+                    <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted">{{$product->group_price}} @lang('text.SAR')</span>
+                    @else
+                        <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted"><del>{{$product->group_price}}</del> {{$product->group_sale}} @lang('text.SAR')</span>
+                    @endif
+                </h6>
+                @endif
 
-                <div class="table-responsive mx-0 px-0">
-                    <table class="table table-sm table-borderless mb-0 text-center mx-0 px-0">
-                        <thead>
-                            <tr>
-                                <th><span class="text-pink"><strong>@lang('text.Type Of Fabric')</strong></span></th>
-                                <th><span class="text-pink"><strong>@lang('text.Type Of Sleeve')</strong></span></th>
-                                <th><span class="text-pink"><strong>@lang('text.Category Name')</strong></span></th>
-                                <th><span class="text-pink"><strong>@lang('text.Additions')</strong></span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{$product->typeOfFabric}}</td>
-                                <td>{{$product->typeOfSleeve }}</td>
+                @if ($product->type == 'single')
+                <br><span class="text-pink"> {{__('text.Sizes')}} </span>
+                @elseif($product->type == 'group')
+                <br><span class="text-pink"> {{__('text.Products')}} </span>
 
-                                <td>
-                                    <a  @can('isAdmin')
-                                            href="/admin/category/{{$product->category()->withTrashed()->first()->id}}-{{$product->category()->withTrashed()->first()->slug}}"
-                                        @endcan
-                                            >{{app()->getLocale() == 'ar'? $product->category()->withTrashed()->first()->name_ar : $product->category()->withTrashed()->first()->name_en}}</a></td>
-                                <td>{{ $product->additions}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                @endif
 
-                <hr>
-                @foreach ($product->colors as $row)
-                    <div class="row">
-                        <div class="table-responsive col">
-                            <table class="table table-sm table-borderless mb-0 text-center">
-                                <tbody>
-                                <tr>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Color')</strong></th>
-                                    <td><span class="{{ $active_color == $row->id ? 'border border-info' : '' }}" wire:click="changeColor({{ $row->id }})"  style="cursor: pointer;background-color: {{ $row->color }}; width:30px;height:30px;border-radius:50%;display:inline-block;border-width:4px!important;"></span></td>
-                                </tr>
-                                <tr>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Price')</strong></th>
-                                    <td>{{ $row->price }}</td>
-                                </tr>
-                                <tr>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Sale')</strong></th>
-                                    <td>{{ $row->sale == 0 ? __('text.No Sale') : $row->sale }}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="table-responsive col">
-                            <table class="table table-sm table-borderless mb-0">
-                                <tbody>
-                                    @foreach ($row->sizes as $size)
-                                        <tr>
-                                            <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')</strong></th>
-                                            <td>{{ $size->size }}</td>
-                                            <th class="pl-0 w-25" scope="row"><strong>@lang('text.Stock')</strong></th>
-                                            <td>
-                                                @if($size->stock != 0)
-                                                {{  $size->stock }}
-
-                                                    @else
-                                                    <del class="text-danger">0</del>
-
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <hr>
-                @endforeach
-
-                <div class="row mb-2">
-
-
-                    <h4 class="text-pink">{{__('text.Taxes')}}</h4>
+                <div class="table-responsive col" >
                     <table class="table table-sm table-borderless mb-0">
                         <tbody>
-                            @foreach ($product->taxes as $tax)
+                            @if ($product->type == 'single')
+                                @forelse($product->sizes as $row)
+
+                                    <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')</strong></th>
+                                        <td>{{ $row->size }}</td>
+                                        <th class="pl-0 w-25" scope="row"><strong>@lang('text.Price')</strong></th>
+                                        @if ($row->sale == 0 || $row->sale == null)
+                                        <td><span class="text-muted">{{$row->price}} @lang('text.SAR')</span></td>
+                                        @else
+                                            <td><span class="text-muted"><del>{{$row->price}}</del> {{$row->sale}} @lang('text.SAR')</span></td>
+                                        @endif
+                                        <th class="pl-0 w-25" scope="row"><strong>@lang('text.Stock')</strong></th>
+                                        <td>
+                                            @if($row->stock != 0)
+                                            {{  $row->stock }}
+
+                                                @else
+                                                <del class="text-danger">0</del>
+
+                                            @endif
+                                        </td>
+                                    </tr>
+
+                                @empty
+
+                                @endforelse
+                            @elseif($product->type == 'group')
+                                @forelse ($product->child_products()->get() as $child)
                                 <tr>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Tax\'s Name')</strong></th>
-                                    <td>{{ app()->getLocale() == 'ar' ? $tax->name_ar :$tax->name_en }}</td>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Tax\'s Cost')</strong></th>
-                                    <td>
-                                        {{ $tax->tax }}%
-                                    </td>
+                                    <th style="font-size: larger">
+                                        {{ app()->getLocale() == 'ar' ? $child->name_ar : $child->name_en }}
+
+                                    </th>
                                 </tr>
-                            @endforeach
+                                @forelse($child->pivot->sizes()->get() as $row)
+
+                                <tr>
+                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')</strong></th>
+                                    <td class="text-muted">{{ $row->size }}</td>
+                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Quantity')</strong></th>
+                                    <td class="text-muted">{{ $row->pivot->quantity }}</td>
+
+                                </tr>
+
+                            @empty
+
+                            @endforelse
+                                @empty
+
+                                @endforelse
+
+
+                            @endif
 
                         </tbody>
                     </table>
                 </div>
+
+
 
             </div>
         </div>

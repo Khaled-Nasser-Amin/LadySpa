@@ -3,23 +3,19 @@
 namespace App\Http\Livewire\Admin\ProductsManagement\Products;
 
 use App\Http\Controllers\admin\productManagement\products\ProductController;
-use App\Models\Category;
 use App\Models\Product;
 use App\Models\Setting;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Livewire\WithPagination;
-
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Gate;
 
 class Products extends Component
 {
     use WithPagination,AuthorizesRequests;
-    public $price;
-    public $productName;
-    public $size;
-    public $date;
+    public $price,$date,$productName,$size,$product_type,$featured_non_featured;
+
+
 
     protected $listeners=['delete'];
 
@@ -68,7 +64,6 @@ class Products extends Component
 
     //update product's featured
     public function updateFeatured(Product $product){
-        $this->authorize('update',$product);
         $numberOfProducts=auth()->user()->products->where('featured',1)->count();
         if ($numberOfProducts < 6 || $product->featured == 1){
             if($product->featured == 0 ){
@@ -84,34 +79,34 @@ class Products extends Component
                 'featured'=>$featured
             ]);
         }else{
-            $this->dispatchBrowserEvent('danger',__('text.You have only 6 special products'));
+            $this->dispatchBrowserEvent('danger',__('text.You have only'). ' 6 ' . __('text.special products'));
         }
 
     }
 
 
     //update product's featured by admin  for slider
-    public function updateAdminFeatured(Product $product){
-        Gate::authorize('isAdmin');
-        $numberOfProducts=Product::where('featured_slider',1)->count();
-        if ($numberOfProducts < 10 || $product->featured_slider == 1){
-            if($product->featured_slider == 0 ){
-                $featured= 1;
-                create_activity('Added a product as a feature',auth()->user()->id,$product->user_id);
+        // public function updateAdminFeatured(Product $product){
+        //     Gate::authorize('isAdmin');
+        //     $numberOfProducts=Product::where('featured_slider',1)->count();
+        //     if ($numberOfProducts < 10 || $product->featured_slider == 1){
+        //         if($product->featured_slider == 0 ){
+        //             $featured= 1;
+        //             create_activity('Added a product as a feature',auth()->user()->id,$product->user_id);
 
-            }else{
-                $featured= 0;
-                create_activity('Removed a product as a feature',auth()->user()->id,$product->user_id);
-            }
+        //         }else{
+        //             $featured= 0;
+        //             create_activity('Removed a product as a feature',auth()->user()->id,$product->user_id);
+        //         }
 
-            $product->update([
-                'featured_slider'=>$featured
-            ]);
-        }else{
-            $this->dispatchBrowserEvent('danger',__('text.You have only 10 special products'));
-        }
+        //         $product->update([
+        //             'featured_slider'=>$featured
+        //         ]);
+        //     }else{
+        //         $this->dispatchBrowserEvent('danger',__('text.You have only 10 special products'));
+        //     }
 
-    }
+    // }
 
     //change product status
     public function updateStatus(Product $product){
@@ -139,49 +134,51 @@ class Products extends Component
 
     //search and return products paginated
     protected function search(){
-       return Product::join('sizes','sizes.product_id','products.id')->select('products.*')
-        ->when($this->price,function ($q) {
-                return $q->where('colors.price','=',$this->price)->select('products.*');
+       return Product::when($this->price,function ($q) {
+            if($this->product_type == 'single' || $this->product_type == ''){
+                return $q->join('sizes','sizes.product_id','products.id')->select('products.*')
+                ->where('sizes.price','=',$this->price)
+                ->orWhere('sizes.sale','=',$this->price);
+            }else{
+                return $q->where('products.group_price','=',$this->price)
+                ->orWhere('products.group_sale','=',$this->price);
+            }
         })
-
         ->when($this->size,function ($q) {
-            return $q->where('sizes.size','like','%'.$this->size.'%')->select('products.*');
+            return $q->join('sizes','sizes.product_id','products.id')->select('products.*')->where('sizes.size','like','%'.$this->size.'%');
         })
-        ->where(function($q){
-            return  $q->when($this->productName,function ($q){
-                    return $q->where('products.name_ar','like','%'.$this->productName.'%')
-                    ->orWhere('products.name_en','like','%'.$this->productName.'%');
-                })->when($this->date,function ($q)  {
+
+
+       ->where(function($q){
+           return  $q->when($this->productName,function ($q){
+
+                    return $q->where(function($q){
+                        return $q->where('products.name_ar','like','%'.$this->productName.'%')
+                        ->orWhere('products.name_en','like','%'.$this->productName.'%');
+                    })
+                    ->orWhere(function($q){
+                        return $q->whereHas('child_products', function (Builder $query) {
+                        $query ->where('name_ar','like','%'.$this->productName.'%')
+                        ->orWhere('name_en','like','%'.$this->productName.'%');
+                        });
+                    });
+
+                })
+                ->when($this->date,function ($q)  {
                     return $q->whereDate('products.created_at',$this->date);
+                })->when($this->product_type,function ($q)  {
+                    return $q->where('products.type',$this->product_type);
+                })->when($this->featured_non_featured,function ($q)  {
+                   $featured=$this->featured_non_featured == 'Featured' ? 1 : 0;
+                    return $q->where('products.featured',$featured);
                 });
-            })
-            ->distinct('products.id')->latest('products.created_at')->paginate(12);
-    }
-
-
-    //inactive or active category
-    protected function deleteCategoryStatus($cat){
-        if($cat->products->where('isActive',1)->count() != 0 || $cat->child_categories->where('status',1)->count() > 0){
-            return ;
-        }else{
-            $cat->update(['status' => 0]);
-            $cat->save();
-            if( $cat->parent_id == 0)
-                return;
-            $this->deleteCategoryStatus($cat->parent_category);
-
-        }
-    }
-
-    protected function updateCategoryStatus($cat){
-        if($cat->status == 1)
-            return ;
-        $cat->update(['status' => 1]);
-        $cat->save();
-        if($cat->parent_id == 0)
-            return;
-        $this->updateCategoryStatus($cat->parent_category);
-
+           })
+           ->distinct('products.id')->latest('products.created_at')
+           ->paginate(12);
 
     }
+
+
+
 }
+

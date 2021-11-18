@@ -10,6 +10,7 @@ use App\Http\Controllers\admin\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\admin\Profile\UserProfileController;
 use App\Http\Controllers\MyFatoorahController;
 use App\Http\Livewire\Admin\ProductsManagement\Activities\Activities;
+use App\Http\Livewire\Admin\ProductsManagement\Banners\Banners;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Livewire\Admin\ProductsManagement\Categories\Categories;
@@ -91,6 +92,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/activities', Activities::class)->name('admin.activities');
         Route::get('/refunds', Refunds::class)->name('admin.refunds');
         Route::get('/customers', Customers::class)->name('admin.customers');
+        Route::get('/banners', Banners::class)->name('admin.banners');
         Route::get('/products', Products::class)->name('admin.products');
         Route::get('/product-add', [ProductController::class,'addNewProduct']);
         Route::get('/products-update/{product}-{slug}', [ProductController::class,'updateProduct']);

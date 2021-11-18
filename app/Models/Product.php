@@ -40,12 +40,12 @@ class Product extends Model
     }
 
     public function groups(){
-        return $this->belongsToMany(Product::class,'products_groups','child_product_id','parent_product_id')->using(ProductsGroups::class);
+        return $this->belongsToMany(Product::class,'products_groups','child_product_id','parent_product_id')->using(ProductsGroups::class)->withPivot(['id']);
     }
 
     //this relation about existing product in table groups
     public function child_products(){
-        return $this->belongsToMany(Product::class,'products_groups','parent_product_id','child_product_id')->using(ProductsGroups::class);
+        return $this->belongsToMany(Product::class,'products_groups','parent_product_id','child_product_id')->using(ProductsGroups::class)->withPivot(['id']);
     }
 
 
@@ -55,6 +55,10 @@ class Product extends Model
 
     public function getImageAttribute($value){
         return asset('images/products/'.$value);
+    }
+
+    public function images(){
+        return $this->hasMany(Images::class);
     }
 
 }

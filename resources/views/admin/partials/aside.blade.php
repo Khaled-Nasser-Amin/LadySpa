@@ -11,6 +11,7 @@
                     <li><a href="{{route('admin.products')}}" class="text-dark"> <i class="mdi mdi-tshirt-crew"></i>{{__('text.Products')}}</a></li>
                     <li><a href="{{route('admin.orders')}}" class="text-dark"> <i class="mdi mdi-book-open-variant "></i>{{__('text.Orders')}}</a></li>
                     <li><a href="{{route('admin.customers')}}" class="text-dark"><i class="mdi mdi-account-multiple"></i>{{__('text.Users')}}</a></li>
+                    <li><a href="{{route('admin.banners')}}" class="text-dark"><i class="mdi mdi-image-multiple"></i>{{__('text.Banners')}}</a></li>
                     <li><a href="{{route('admin.shipping')}}" class="text-dark"><i class="mdi mdi-cash-marker"></i>{{__('text.Shipping Costs')}}</a></li>
                     <li><a href="{{route('admin.taxes')}}" class="text-dark"><i class="mdi mdi-currency-usd-off"></i>{{__('text.Taxes')}}</a></li>
                     <li><a href="{{route('admin.settings')}}" class="text-dark"><i class="mdi mdi-cogs"></i>{{__('text.Settings')}}</a></li>

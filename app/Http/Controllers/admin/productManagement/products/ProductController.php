@@ -54,7 +54,7 @@ class ProductController extends Controller
     }
 
     public function show(Request $request,Product $product,$slug){
-        $images[]=['name' => $product->image];
+        $images= array_merge([$product->image],$product->images->pluck('name')->toArray());
         return view('admin.productManagement.products.show',compact('product','images'));
     }
     public function addNewProduct(){

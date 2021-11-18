@@ -17,7 +17,7 @@
                         <div class="form-group row justify-content-between">
                             <div class="col-md-3 col-sm-6">
                                 <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" wire:key="{{ $loop->index }}">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" wire:key="{{ $loop->index }}">
                                          @if (isset($value['product_id']) && !empty($value['product_id']))
                                             @php
                                                 $product=App\Models\Product::find($value['product_id']);
@@ -29,10 +29,10 @@
                                          @endif
                                     </button>
 
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="height: 200px;overflow-y:auto;">
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $index }}" style="height: 200px;overflow-y:auto;" wire:key="{{ $loop->index }}">
                                         @if ($products->count() > 0)
                                             @foreach ($products as $product )
-                                            <a class="dropdown-item select_product" href="#"  data-index="{{ $index }}" data-product-id="{{ $product->id }}"  wire:key="{{ $loop->index }}">
+                                            <a class="dropdown-item select_product" href="#"  data-index="{{ $index }}" data-product-id="{{ $product->id }}" >
                                                 <img src="{{ $product->image }}" class="rounded-circle" style="width: 50px;height: 50px" alt="product-image">
                                                 <span>{{app()->getLocale() == 'ar' ? $product->name_ar : $product->name_en}}</span>
                                             </a>
@@ -82,6 +82,8 @@
         let id=$(this).data('product-id');
         window.Livewire.emit('selected_product',index,id)
         @this.set('productsIndex.'+index+'.product_id',id)
+        console.log(index,id);
+
 
     })
 

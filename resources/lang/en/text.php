@@ -148,7 +148,8 @@ return [
     'Contact us to activate your account' =>  'Contact us to activate your account',
     'Does Not Exist' =>  'Does Not Exist',
     'Deliery Service Provider Information' =>  'Deliery Service Provider Information',
-    'You have only 6 special products' =>  'You have only 6 special products',
+    'You have only' =>  'You have only',
+    'special products' =>  'special products',
     'Type your phone number' =>  'Type your phone number',
     'Log in to your account' =>  'Log in to your account',
     'Recover Password' =>  'Recover Password',
@@ -532,7 +533,7 @@ return [
 
     'Lady Spa'=>'Lady Spa',
     'Refunds'=>'Refunds',
-    ''=>'',
+    'SAR'=>'SAR',
     ''=>'',
     ''=>'',
     ''=>'',

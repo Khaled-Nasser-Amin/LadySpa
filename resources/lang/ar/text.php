@@ -62,7 +62,8 @@ return [
     'Review for' => 'تقيم ل',
     'Remove from Wishlist' => 'مسح من قائمتك المفضلة',
     'Add to Wishlist' => 'اضف الي قائمتك المفضلة',
-    'You have only 6 special products' => 'لديك 6 منتجات مميزة فقط',
+    'You have only' => 'لديك',
+    'special products' => 'منتجات مميزة',
     'Password Changed Successfully' => 'تم تغير كلمة المرور بنجاح',
     'Update Spare' => 'تعديل القطعة',
     'Full Name' => 'الاسم ثلاثي او رباعي',
@@ -506,7 +507,6 @@ return [
     'Your payment was successful!'=>'تم الدفع الخاص بك بنجاح!',
     'Your payment was successful!'=>'فشل الدفع الخاص بك!',
     'Failed'=>'!فشل',
-    'You have only 10 special products'=>'لديك 10 منتجات مميزة فقط',
     'Featured slider'=>'عرض كمميز رئيسي',
     'Invalid Password'=>'خطأ في كلمة المرور',
 
@@ -533,6 +533,7 @@ return [
     //lady spa
 
     'Refunds'=> 'المرتجعات',
+    'SAR'=> 'ر.س',
 
 
 ];

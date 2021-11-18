@@ -49,9 +49,9 @@
             </div>
 
             <!-- all products -->
-             <div class="row">
-                {{-- <x-admin.products.card-show :products="$products" /> --}}
-             </div>
+            <div class="row">
+                <x-admin.products.card-show :products="$products" />
+            </div>
 
             <!-- pagination -->
             <div>
