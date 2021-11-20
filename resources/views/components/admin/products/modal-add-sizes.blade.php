@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <div class="addSelectProduct">
 
-                    <div class="form-group row justify-content-between" >
+                    <div class="form-group " >
                         {{-- size modal --}}
                         <div class="col-12 row justify-content-between mx-0">
 
@@ -20,7 +20,7 @@
                             </button>
 
                             <x-admin.products.modal-size-and-stock :index="0"/>
-                            <x-admin.products.modal-update-size-and-stock :index="0" />
+                            <x-admin.products.modal-update-size-and-stock :index="0" :updateSize="$updateSize" />
 
                         </div>
                         <div class="px-2">
@@ -28,8 +28,12 @@
 
                         </div>
 
+                        <br>
+
                         <div class="col-12 " style="overflow-y: scroll">
                             @if (collect($sizes)->count() > 0)
+                            <h5>@lang('text.Active Sizes')</h5>
+
                                  <table class="table table-borderd text-center">
                                 <tr>
                                     <th>@lang('text.Size')</th>
@@ -39,7 +43,7 @@
                                     <th>@lang('text.Action')</th>
                                 </tr>
                                 @foreach ($sizes as $index => $value)
-                                    <tr>
+                                    <tr wire:key={{ $value['size'].$index }}>
                                         <td>{{ $value['size'] }}</td>
                                         <td>{{ $value['stock'] }}</td>
                                         <td>{{ $value['price'] }}</td>
@@ -47,6 +51,37 @@
                                         <td>
                                             <button data-toggle="modal" data-target="#updateSizeAndStock0" type="button" wire:click.prevent="updateSize({{ $index }})" class="btn btn-info btn-sm "><i class="mdi mdi-pencil"></i></button>
                                             <button wire:click.prevent="deleteSize({{ $index }})" class="btn btn-danger btn-sm "><i class="mdi mdi-delete"></i></button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                            </table>
+                            @endif
+
+                        </div>
+
+                        <br>
+
+                        <div class="col-12 " style="overflow-y: scroll">
+                            @if (collect($deletedSizes)->count() > 0)
+                            <h5>@lang('text.Deleted Sizes')</h5>
+
+                                 <table class="table table-borderd text-center">
+                                <tr>
+                                    <th>@lang('text.Size')</th>
+                                    <th>@lang('text.Stock')</th>
+                                    <th>@lang('text.Price')</th>
+                                    <th>@lang('text.Sale')</th>
+                                    <th>@lang('text.Action')</th>
+                                </tr>
+                                @foreach ($deletedSizes as $index => $value)
+                                    <tr wire:key={{ $value['size'].$index }}>
+                                        <td>{{ $value['size'] }}</td>
+                                        <td>{{ $value['stock'] }}</td>
+                                        <td>{{ $value['price'] }}</td>
+                                        <td>{{ $value['sale'] }}</td>
+                                        <td>
+                                            <button wire:click.prevent="restoreSize({{ $index }})" class="btn btn-info btn-sm "><i class="mdi mdi-delete-restore"></i></button>
                                         </td>
                                     </tr>
                                 @endforeach

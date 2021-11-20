@@ -69,9 +69,7 @@
         window.Livewire.on('changeType',()=>{
             $('#my_multi_select1').multiSelect('refresh');
         })
-         window.Livewire.on('updateColor',()=>{
-            $('#updateColorsAndPrices').modal('hide');
-        })
+
         window.Livewire.on('addSize',e=>{
             $('#sizeAndStock'+e).modal('hide');
         })

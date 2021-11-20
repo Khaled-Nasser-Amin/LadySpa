@@ -4,7 +4,7 @@
 
     @endif
     @if ($type == 'single')
-            <x-admin.products.single_product :action="$action" :taxes="$taxes" :sizes="$sizes" :index="$index" />
+            <x-admin.products.single_product :action="$action" :taxes="$taxes" :sizes="$sizes" :deletedSizes='$deletedSizes' :updateSize="$update_size" :index="$index" />
     @endif
     @if ($type == 'group')
         <x-admin.products.group_of_products :action="$action" :taxes="$taxes" :sizes="$sizes" :index="$index"/>

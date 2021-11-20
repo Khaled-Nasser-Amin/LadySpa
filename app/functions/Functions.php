@@ -102,3 +102,17 @@ function sizes_refund($order_id,$sizes){
     return Refund::where('order_id',$order_id)->whereIn('size_id',$sizes)->get();
 
 }
+
+
+
+//check for active collection or group of products
+function checkCollectionActive($product){
+    if($product->type == 'group'){
+        $deletedSizes=$product->child_products()->get()->map(function($value){
+            return $value->pivot->sizes()->onlyTrashed()->get();
+        });
+        $deletedProduct=$product->child_products()->onlyTrashed()->get()->count();
+        $deletedSizes=$deletedSizes->collapse()->count();
+        return $deletedProduct > 0 || $deletedSizes > 0;
+    }
+}

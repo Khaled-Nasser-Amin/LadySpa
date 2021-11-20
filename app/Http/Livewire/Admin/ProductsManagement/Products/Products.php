@@ -48,22 +48,18 @@ class Products extends Component
 
     //delete product
     public function delete(Product $product){
-        $this->authorize('delete',$product);
-        $cat=$product->category;
         $instance=new ProductController();
         $vendor_id=$instance->destroy($product);
-        if($cat && $cat->products->count() == 0){
-            $this->deleteCategoryStatus($cat);
-        }
         session()->flash('success',__('text.Product Deleted Successfully') );
         create_activity('Product Deleted',auth()->user()->id,$vendor_id);
-
-
     }
 
 
     //update product's featured
     public function updateFeatured(Product $product){
+        if(checkCollectionActive($product)){
+            return ;
+        }
         $numberOfProducts=auth()->user()->products->where('featured',1)->count();
         if ($numberOfProducts < 6 || $product->featured == 1){
             if($product->featured == 0 ){

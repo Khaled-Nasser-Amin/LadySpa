@@ -34,7 +34,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public $product;
 
     //add size
-    public $size,$price,$sale,$stock,$sizes=[];
+    public $size,$price,$sale,$stock,$sizes=[],$deletedSizes=[];
     public $update_size,$update_stock,$update_price,$update_sale,$index_of_size; // update size
     protected $listeners=['edit','selected_product'];
 
@@ -58,6 +58,10 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     //refresh jquery plugin
     public function updatedType(){
+        if($this->type == 'group'){
+            $this->products=Product::where('type','single')->where('user_id',auth()->user()->id)->get();
+
+        }
         $this->emit('changeType');
     }
 
@@ -95,51 +99,64 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
 
-    // public function edit(){
-        //     $this->authorize('update',$this->product);
-        //     $this->resetVariables();
-        //     foreach ($this->product->colors as $row){
-        //         foreach($row->sizes as $size){
-        //             $sizes[]=['id'=>$size->id,'size' => $size->size,'stock' => $size->stock];
-        //         }
-        //         $this->colorsIndex[]= ['id'=>$row->id,'color' => $row->color,'price'=> $row->price,'sale'=> $row->sale,'sizes'=> $sizes];
-        //         $sizes=[];
-        //     }
-        //     $this->name_ar= $this->product->name_ar;
-        //     $this->name_en=$this->product->name_en;
-        //     $this->taxes_selected=$this->product->taxes->pluck('id')->toArray();
-        //     $this->description_ar=$this->product->description_ar;
-        //     $this->description_en=$this->product->description_en;
-        //     $this->slug=$this->product->slug;
-        //     $this->typeOfFabric=$this->product->typeOfFabric;
-        //     $this->typeOfSleeve=$this->product->typeOfSleeve;
-        //     $this->additions=$this->product->additions;
-        //     $this->category_id=$this->product->category_id;
+    public function edit(){
+            $this->resetVariables();
+            foreach ($this->product->sizes as $row){
+                    $this->sizes[]=['id'=>$row->id,'size' => $row->size,'stock' => $row->stock,'price' => $row->price,'sale'=>$row->sale ];
 
-        //     $this->emit('refreshMultiSelect');
-        // }
+            }
 
-        // public function update($id){
-        //     $this->authorize('update',$this->product);
-        //     $productUpdate=new ProductController();
-        //     $data=$this->validation(['image' => 'nullable|mimes:jpg,png,jpeg,gif']);
-        //     $product=$productUpdate->update($data,$id);
-        //     $this->updateColorsAndPrice ($product);
-        //     if($product->wasChanged('category_id')){
-        //         $new_cat=Category::find($product->category_id);
-        //         $old_cat=Category::find($this->product->category_id);
-        //         $this->updateCategoryStatus($new_cat);
-        //         $this->deleteCategoryStatus($old_cat);
-        //     }
+            foreach ($this->product->sizes()->onlyTrashed()->get() as $row){
+                $this->deletedSizes[]=['id'=>$row->id,'size' => $row->size,'stock' => $row->stock,'price' => $row->price,'sale'=>$row->sale ];
 
-        //     if($product->wasChanged()){
-        //         create_activity('Product Updated',auth()->user()->id,$product->user_id);
-        //     }
+        }
+            $this->name_ar= $this->product->name_ar;
+            $this->name_en=$this->product->name_en;
+            $this->taxes_selected=$this->product->taxes->pluck('id')->toArray();
+            $this->description_ar=$this->product->description_ar;
+            $this->description_en=$this->product->description_en;
+            $this->slug=$this->product->slug;
+            $this->type=$this->product->type;
+            $this->group_price=$this->product->group_price;
+            $this->group_sale=$this->product->group_sale;
 
-        //     $this->dispatchBrowserEvent('success', __('text.Product Updated Successfully'));
+            if($this->type== 'group'){
+                $this->productsIndex=[];
+                $this->product_sizes=[];
+                foreach($this->product->child_products()->get() as $product){
+                    foreach($product->pivot->sizes as $size){
+                        $this->productsIndex[]=['product_id' => $product->id,'size' => $size->id,'quantity' => $size->pivot->quantity ];
+                        $this->product_sizes[]=$product->sizes;
+                    }
+
+                }
+            }
+
+            $this->emit('refreshMultiSelect');
+    }
+
+    public function update($id){
+            $productUpdate=new ProductController();
+            if($this->type == 'single'){
+                $data=$this->validation(array_merge(['sizes' =>'required|array|min:1'],$this->imageValidationForUpdate()));
+            }else{
+                $data=$this->validation(array_merge($this->imageValidationForUpdate(),$this->group_validation()));
+            }
+            $product=$productUpdate->update($data,$id);
+            if($this->type == 'single'){
+                $this->associateProductWithSize($this->sizes,$product);
+
+            }else{
+                $this->groupType($product);
+            }
+
+            if($product->wasChanged()){
+                create_activity('Product Updated',auth()->user()->id,$product->user_id);
+            }
+            $this->dispatchBrowserEvent('success', __('text.Product Updated Successfully'));
 
 
-    // }
+    }
 
     public function render()
     {
@@ -204,7 +221,11 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         {
             if(isset($row['id'])){
                 $size=Size::find($row['id']);
-                $size->update(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
+                if(!$size){
+                    $size=Size::onlyTrashed()->findOrFail($row['id']);
+                    $size->restore();
+                }
+                $size->update(['stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
 
             }else{
                 $size=Size::create(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
@@ -228,7 +249,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public function addSize($index){
         $this->size=strtolower($this->size);
         $this->validate([
-            'size' => ['required',Rule::notIn(collect($this->sizes)->pluck('size'))],
+            'size' => ['required',Rule::notIn(collect($this->sizes)->pluck('size')),Rule::notIn(collect($this->deletedSizes)->pluck('size'))],
             'stock' => 'required|integer|min:1',
             'price' => 'required|numeric|',
             'sale' => 'nullable|numeric|lt:price|',
@@ -266,8 +287,18 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
     public function deleteSize($index){
+        if(isset($this->sizes[$index]['id']) && $this->sizes[$index]['id'] > 0){
+            $this->deletedSizes[]=['id'=>$this->sizes[$index]['id'],'size' => $this->sizes[$index]['size'],'stock' => $this->sizes[$index]['stock'],'price' => $this->sizes[$index]['price'],'sale'=>$this->sizes[$index]['sale'] ];
+
+        }
         unset($this->sizes[$index]);
         array_values($this->sizes);
+    }
+    public function restoreSize($index){
+
+        $this->sizes[]=['id'=>$this->deletedSizes[$index]['id'],'size' => $this->deletedSizes[$index]['size'],'stock' => $this->deletedSizes[$index]['stock'],'price' => $this->deletedSizes[$index]['price'],'sale'=>$this->deletedSizes[$index]['sale'] ];
+        unset($this->deletedSizes[$index]);
+        array_values($this->deletedSizes);
     }
     //end size and stock modal
 
@@ -337,6 +368,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     public function groupType($product){
         if ($this->type == 'group'){
+            $product->child_products()->detach();
             $productsGroup=collect($this->productsIndex)->groupBy('product_id')->map(function ($value){
                 $group_by_sizes= $value->groupBy('size')->map(function ($value2){
                      return ['size' =>$value2[0]['size'],'quantity' => $value2->sum('quantity')];
@@ -369,4 +401,3 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
 }
-// ->sizes()->syncWithoutDetaching([$value['size'] => ['quantity' => $value['quantity']]])

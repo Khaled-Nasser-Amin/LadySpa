@@ -1,4 +1,4 @@
- @props(['index'])
+ @props(['index','updateSize'])
  <div wire:ignore.self class="modal fade" id="updateSizeAndStock{{ $index }}" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm bg-primary">
     <div class="modal-content">
@@ -11,7 +11,7 @@
             <div class="modal-body row">
                 <div class="col-md-6 col-sm-12">
                     <label for="size">{{__('text.Size')}}</label><br>
-                    <input type="size" class="form-control"  wire:model='update_size' id="size" ><br>
+                    <input type="size" class="form-control" name="update_size"   id="size" value="{{ $updateSize }}" disabled><br>
                     <x-general.input-error for="update_size" />
                 </div>
                 <div class="col-md-6 col-sm-12">

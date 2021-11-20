@@ -69,14 +69,13 @@
                 <button type="button" class="btn btn-primary d-block" data-toggle="modal" data-target="#sizesAndPrices">@lang('text.Add price for each size')</button>
             </div>
             <x-general.input-error for="sizes" />
-            <x-admin.products.modal-add-sizes :sizes="$sizes" :index="$index"/>
-            <x-admin.products.modal-update-sizes :sizes="$sizes" :index="$index" />
+            <x-admin.products.modal-add-sizes :sizes="$sizes" :deletedSizes='$deletedSizes' :index="$index" :updateSize="$updateSize"/>
 
 
         </div>
 
         <div class="text-center col-12">
-            <button type="submit" class="btn btn-success waves-effect waves-light">{{__('text.Submit')}}</button>
+            <button type="submit" class="btn btn-success waves-effect waves-light" wire:loading.attr="disabled" wire:target="image,groupImage,banner">{{__('text.Submit')}}</button>
         </div>
     </div>
 

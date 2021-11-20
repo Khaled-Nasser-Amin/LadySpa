@@ -10,7 +10,7 @@
                             @if ($product->type == 'group')
                                 <span class="badge badge-info" style="position: absolute;right:0">{{__('text.Group')}}</span>
                                 @if ($product->group_sale > 0)
-                                    <span class="badge badge-danger" style="position: absolute;right:13%">{{__('text.Sale')}}</span>
+                                    <span class="badge badge-danger" style="position: absolute;">{{__('text.Sale')}}</span>
 
                                 @endif
                             @endif
@@ -20,7 +20,7 @@
                                 @if ($product->type == 'group')
                                 <span class="badge badge-info" style="position: absolute;right:0">{{__('text.Group')}}</span>
                                 @if ($product->group_sale > 0)
-                                    <span class="badge badge-danger" style="position: absolute;right:13%">{{__('text.Sale')}}</span>
+                                    <span class="badge badge-danger" style="position: absolute;">{{__('text.Sale')}}</span>
 
                                 @endif
                             @endif
@@ -97,17 +97,25 @@
 
                                 @endforelse
                             @elseif($product->type == 'group')
-                                @forelse ($product->child_products()->get() as $child)
+                                @forelse ($product->child_products()->withTrashed()->get() as $child)
                                 <tr>
                                     <th style="font-size: larger">
                                         {{ app()->getLocale() == 'ar' ? $child->name_ar : $child->name_en }}
 
+                                        @if($child->deleted_at)
+                                            <i class="mdi mdi-alert-decagram text-danger"></i>
+                                        @endif
+
                                     </th>
                                 </tr>
-                                @forelse($child->pivot->sizes()->get() as $row)
+                                @forelse($child->pivot->sizes()->withTrashed()->get() as $row)
 
                                 <tr>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')</strong></th>
+                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')
+                                        @if($row->deleted_at)
+                                            <i class="mdi mdi-alert-decagram text-danger"></i>
+                                        @endif
+                                        </strong></th>
                                     <td class="text-muted">{{ $row->size }}</td>
                                     <th class="pl-0 w-25" scope="row"><strong>@lang('text.Quantity')</strong></th>
                                     <td class="text-muted">{{ $row->pivot->quantity }}</td>
@@ -146,8 +154,13 @@
                 <span class="text-pink">{{__('text.Description')}}</span>
                 <div class="slimscroll description_scroll mb-0">{{app()->getLocale() == 'ar' ?$product->description_ar:$product->description_en}}</div>
                 @endif
-                <button id="changeFeatured" wire:click.prevent="updateFeatured({{$product->id}})" class="btn btn-{{$product->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
-                {{-- <button id="changeSliderFeatured" wire:click.prevent="updateAdminFeatured({{$product->id}})" class="btn btn-{{$product->featured_slider == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured slider')}} <i class="far fa-star"></i></button> --}}
+
+                @if(!checkCollectionActive($product))
+                    <button id="changeFeatured" wire:click.prevent="updateFeatured({{$product->id}})" class="btn btn-{{$product->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
+                @else
+                <div class="alert alert-danger">@lang('text.In active collection becouse there are some data missing')</div>
+                @endif
+
             </div>
 
 

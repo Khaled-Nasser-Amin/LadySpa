@@ -50,21 +50,18 @@
     <script src="{{asset('libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js')}}"></script>
     @livewireScripts
     <script>
-         window.Livewire.on('addColor',()=>{
-            $('#colorsAndPrices').modal('hide');
-        })
-         window.Livewire.on('updateColor',()=>{
-            $('#updateColorsAndPrices').modal('hide');
+        window.Livewire.on('addedAllSizes',()=>{
+            $('#sizesAndPrices').modal('hide');
         })
         window.Livewire.on('addSize',e=>{
             $('#sizeAndStock'+e).modal('hide');
         })
-        window.Livewire.on('refreshMultiSelect',()=>{
-            $('#my_multi_select1').multiSelect('refresh');
-        })
 
         window.Livewire.on('updateSize',e=>{
             $('#updateSizeAndStock'+e).modal('hide');
+        })
+        window.Livewire.on('refreshMultiSelect',()=>{
+            $('#my_multi_select1').multiSelect('refresh');
         })
         $('#my_multi_select1').multiSelect();
 
