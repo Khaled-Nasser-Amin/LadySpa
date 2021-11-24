@@ -1,5 +1,5 @@
 @extends('admin.layouts.appLogged')
-@section('title','Add Product')
+@section('title',__('text.Add Product'))
 @push('css')
     <link rel="stylesheet" href="{{asset('css/toast.style.min.css')}}">
     @livewireStyles

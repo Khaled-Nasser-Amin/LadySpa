@@ -10,13 +10,10 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class ProductDetails extends Component
 {
     use AuthorizesRequests;
-    public $images,$product,$active_color;
+    public $images,$product;
 
 
-    public function changeColor(Color $color){
-        $this->active_color=$color->id;
-        $this->images=$color->images;
-    }
+
     public function render()
     {
         return view('components.admin.products.product-details');

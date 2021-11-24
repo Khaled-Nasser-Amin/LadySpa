@@ -6,6 +6,7 @@ use App\Http\Controllers\front\LandingPage;
 use App\Http\Controllers\admin\productManagement\categories\CategoryController;
 use App\Http\Controllers\admin\productManagement\orders\OrderController;
 use App\Http\Controllers\admin\productManagement\products\ProductController;
+use App\Http\Controllers\admin\productManagement\sessions\SessionController;
 use App\Http\Controllers\admin\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\admin\Profile\UserProfileController;
 use App\Http\Controllers\MyFatoorahController;
@@ -21,6 +22,7 @@ use App\Http\Livewire\Admin\ProductsManagement\Settings\Settings;
 use App\Http\Livewire\Admin\ProductsManagement\Products\Products;
 use App\Http\Livewire\Admin\ProductsManagement\RecycleBin\MainController;
 use App\Http\Livewire\Admin\ProductsManagement\Refunds\Refunds;
+use App\Http\Livewire\Admin\ProductsManagement\Sessions\Sessions;
 use App\Http\Livewire\Admin\ProductsManagement\Shipping\ShippingCosts;
 use App\Http\Livewire\Admin\ProductsManagement\Taxes\Taxes;
 use App\Http\Livewire\Admin\ProductsManagement\Vendors\Vendors;
@@ -93,6 +95,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/refunds', Refunds::class)->name('admin.refunds');
         Route::get('/customers', Customers::class)->name('admin.customers');
         Route::get('/banners', Banners::class)->name('admin.banners');
+
         Route::get('/products', Products::class)->name('admin.products');
         Route::get('/product-add', [ProductController::class,'addNewProduct']);
         Route::get('/products-update/{product}-{slug}', [ProductController::class,'updateProduct']);
@@ -101,6 +104,13 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/orders', Orders::class)->name('admin.orders');
         Route::get('/payment_token',Settings::class)->name('admin.settings');
         Route::get('/order/show/{order}', [OrderController::class,'show'])->name('order.show');
+
+
+        Route::get('/sessions', Sessions::class)->name('admin.sessions');
+        Route::get('/session-add', [SessionController::class,'addNewSession']);
+        Route::get('/session-update/{session}-{slug}', [SessionController::class,'updateSession']);
+        Route::get('/session-details/{session}-{slug}', [SessionController::class,'show']);
+
 
         Route::get('/recycle_bin', MainController::class)->name('admin.recycleBin');
 

@@ -241,7 +241,9 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public function associateImagesWithProduct($data,$product){
         $imagesNames=$this->livewireGroupImages($data,'products');
         foreach ($imagesNames as $image)
-        Images::create(['name'=>$image])->product()->associate($product->id)->save();
+        $product->images()->create([
+            'name'=>$image
+        ]);
     }
 
 

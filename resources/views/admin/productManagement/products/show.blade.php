@@ -1,5 +1,5 @@
 @extends('admin.layouts.appLogged')
-@section('title','Product Details')
+@section('title',__('text.Product Details'))
 @push('css')
     @livewireStyles
 @endpush

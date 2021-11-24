@@ -5,18 +5,20 @@
         <tr>
             <th>{{__('text.Image')}}</th>
             <th>{{__('text.Name')}}</th>
-            <th>{{__('text.Url')}}</th>
-            <th>{{__('text.Show in')}}</th>
             <th>{{__('text.Expired date')}}</th>
+            <th>{{__('text.Status')}}</th>
             <th>{{__('text.Action')}}</th>
         </tr>
         @forelse ($banners as $banner)
             <tr>
-                <td><img src="{{$banner->image}}"  style="width: 150px;height: 60px" alt="banner-image"></td>
+                <td>
+                    <a href="{{$banner->image}}" target="_blank">
+                        <img src="{{$banner->image}}"  style="width: 150px;height: 60px" alt="banner-image">
+                    </a>
+                </td>
                 <td>{{$banner->name}}</td>
-                <td>{{$banner->url}}</td>
-                <td>{{$banner->show_in == 'shop' ? __('text.Shop') : __('text.Dashboard')}}</td>
                 <td>{{$banner->expire_at}}</td>
+                <td>{{$banner->expire_at < now() ? 'expired' : 'active'}}</td>
                 <td><button class="btn btn-secondary"  data-toggle="modal" data-target="#EditBanner" wire:click.prevent="edit({{$banner->id}})">{{__('text.Edit')}}</button>
                     <button class="btn btn-danger" wire:click.prevent="confirmDelete({{$banner->id}})">{{__('text.Delete')}}</button>
                 </td>

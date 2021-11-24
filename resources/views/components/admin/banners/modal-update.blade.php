@@ -12,42 +12,26 @@
             <div class="modal-body">
 
                 <form  id="editBanner" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-md-6">
+                    <div class="d-flex flex-row">
+                        <div class="col-md-12">
                             <div class="form-group">
                                 <label for="name" class="control-label">{{__('text.Name')}}</label>
                                 <input type="text" wire:model="name" class="form-control" id="name" >
                                 <x-general.input-error for="name" />
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="showIn" class="control-label">{{__('text.Show in')}}</label>
-                                <select wire:model="show_in" id="showIn" class="form-control">
-                                    <option value="home">@lang('text.Dashboard')</option>
-                                    <option value="shop">@lang('text.Shop')</option>
-                                </select>
-                                <x-general.input-error for="show_in" />
-                            </div>
-                        </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group mb-4">
-                            <label>{{__('text.Add Image')}}</label>
-                            <input type="file"  wire:model="image"  data-height="210" />
-                            <x-general.input-error for="image" />
-                        </div>
-                    </div>
-                    <div class="row">
+                    <div class="d-flex flex-row">
                         <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="url" class="control-label">{{__('text.Url')}}</label>
-                                <input type="text" wire:model="url" class="form-control" id="url" >
-                                <x-general.input-error for="url" />
+                            <div class="form-group mb-4">
+                                <label>{{__('text.Add Image')}}</label>
+                                <input type="file"  wire:model="image"  data-height="210" />
+                                <x-general.input-error for="image" />
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+
+                    <div class="d-flex flex-row">
                         <div class="col-md-12">
                             <div class="form-group no-margin">
                                 <label for="date" class="control-label">{{__('text.Expired date')}}</label>

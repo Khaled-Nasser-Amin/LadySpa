@@ -8,8 +8,10 @@
                     <li class="menu-title text-dark" >{{__('text.Navigation')}}</li>
                     <li ><a href="{{route('admin.index')}}" class="text-dark"><i class="mdi mdi-view-dashboard"></i>{{__('text.Dashboard')}}</a></li>
 
-                    <li><a href="{{route('admin.products')}}" class="text-dark"> <i class="mdi mdi-tshirt-crew"></i>{{__('text.Products')}}</a></li>
+                    <li><a href="{{route('admin.products')}}" class="text-dark"> <i class="fab fa-product-hunt"></i>{{__('text.Products')}}</a></li>
                     <li><a href="{{route('admin.orders')}}" class="text-dark"> <i class="mdi mdi-book-open-variant "></i>{{__('text.Orders')}}</a></li>
+                    <li><a href="{{route('admin.sessions')}}" class="text-dark"> <i class="fas fa-hot-tub"></i>{{__('text.Sessions')}}</a></li>
+                    <li><a href="#" class="text-dark"> <i class="far fa-edit"></i>{{__('text.Reservations')}}</a></li>
                     <li><a href="{{route('admin.customers')}}" class="text-dark"><i class="mdi mdi-account-multiple"></i>{{__('text.Users')}}</a></li>
                     <li><a href="{{route('admin.banners')}}" class="text-dark"><i class="mdi mdi-image-multiple"></i>{{__('text.Banners')}}</a></li>
                     <li><a href="{{route('admin.shipping')}}" class="text-dark"><i class="mdi mdi-cash-marker"></i>{{__('text.Shipping Costs')}}</a></li>

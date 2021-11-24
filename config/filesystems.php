@@ -67,7 +67,9 @@ return [
 
     'links' => [
         public_path('images/users') => storage_path('app/public/users'),
+        public_path('images/banners') => storage_path('app/public/banners'),
         public_path('images/categories') => storage_path('app/public/categories'),
+        public_path('images/sessions') => storage_path('app/public/sessions'),
         public_path('images/products') => storage_path('app/public/products'),
     ],
 

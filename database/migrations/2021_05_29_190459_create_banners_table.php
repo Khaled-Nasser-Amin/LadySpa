@@ -17,8 +17,6 @@ class CreateBannersTable extends Migration
             $table->id();
             $table->string('image');
             $table->string('name');
-            $table->string('url')->nullable();
-            $table->string('show_in');
             $table->timestamp('expire_at')->nullable();
             $table->timestamps();
         });

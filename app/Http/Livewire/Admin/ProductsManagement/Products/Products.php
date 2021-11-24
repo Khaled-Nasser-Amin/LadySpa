@@ -15,6 +15,9 @@ class Products extends Component
     use WithPagination,AuthorizesRequests;
     public $price,$date,$productName,$size,$product_type,$featured_non_featured;
 
+    // public $price=150,$date,$productName='product1',$size='xl',$product_type='single',$featured_non_featured='Featured';
+
+
 
 
     protected $listeners=['delete'];
@@ -34,9 +37,8 @@ class Products extends Component
 
     public function render()
     {
-        $setting=Setting::find(1);
         $products=$this->search();
-        return view('admin.productManagement.products.index',compact('products','setting'))->extends('admin.layouts.appLogged')->section('content');
+        return view('admin.productManagement.products.index',compact('products'))->extends('admin.layouts.appLogged')->section('content');
     }
 
 
@@ -106,13 +108,11 @@ class Products extends Component
 
     //change product status
     public function updateStatus(Product $product){
-        $this->authorize('update',$product);
         if($product->isActive == 0 ){
             $status= 1;
             $product->update([
                 'isActive'=>$status
             ]);
-            $this->updateCategoryStatus($product->category);
             create_activity('Active a product',auth()->user()->id,$product->user_id);
 
         }else{
@@ -120,7 +120,6 @@ class Products extends Component
             $product->update([
                 'isActive'=>$status
             ]);
-            $this->deleteCategoryStatus($product->category);
             create_activity('Unactive a product',auth()->user()->id,$product->user_id);
         }
 
@@ -130,47 +129,67 @@ class Products extends Component
 
     //search and return products paginated
     protected function search(){
-       return Product::when($this->price,function ($q) {
-            if($this->product_type == 'single' || $this->product_type == ''){
-                return $q->join('sizes','sizes.product_id','products.id')->select('products.*')
-                ->where('sizes.price','=',$this->price)
-                ->orWhere('sizes.sale','=',$this->price);
-            }else{
-                return $q->where('products.group_price','=',$this->price)
-                ->orWhere('products.group_sale','=',$this->price);
-            }
-        })
-        ->when($this->size,function ($q) {
-            return $q->join('sizes','sizes.product_id','products.id')->select('products.*')->where('sizes.size','like','%'.$this->size.'%');
-        })
+       return Product::
+        when($this->size,function ($q) {
+            $q->where(function($q){
+                return $q->whereHas('sizes', function (Builder $query){
+                    return $query->where('size','like','%'.$this->size.'%');
 
 
-       ->where(function($q){
-           return  $q->when($this->productName,function ($q){
-
-                    return $q->where(function($q){
-                        return $q->where('products.name_ar','like','%'.$this->productName.'%')
-                        ->orWhere('products.name_en','like','%'.$this->productName.'%');
-                    })
-                    ->orWhere(function($q){
+                })->orWhere(function($q){
                         return $q->whereHas('child_products', function (Builder $query) {
-                        $query ->where('name_ar','like','%'.$this->productName.'%')
-                        ->orWhere('name_en','like','%'.$this->productName.'%');
+                            $query ->withTrashed()->whereHas('sizes', function (Builder $query) {
+                                $query->withTrashed()->where('size','like','%'.$this->size.'%');
+                            });
                         });
                     });
+            });
+        })
 
+        ->when($this->productName,function ($q){
+            $q->where(function($q){
+                return $q->where(function($q){
+                    return $q->where('products.name_ar','like','%'.$this->productName.'%')
+                    ->orWhere('products.name_en','like','%'.$this->productName.'%');
                 })
-                ->when($this->date,function ($q)  {
-                    return $q->whereDate('products.created_at',$this->date);
-                })->when($this->product_type,function ($q)  {
-                    return $q->where('products.type',$this->product_type);
-                })->when($this->featured_non_featured,function ($q)  {
-                   $featured=$this->featured_non_featured == 'Featured' ? 1 : 0;
-                    return $q->where('products.featured',$featured);
+                ->orWhere(function($q){
+                    return $q->whereHas('child_products', function (Builder $query) {
+                    $query ->withTrashed()->where('name_ar','like','%'.$this->productName.'%')
+                    ->orWhere('name_en','like','%'.$this->productName.'%');
+                    });
                 });
-           })
-           ->distinct('products.id')->latest('products.created_at')
-           ->paginate(12);
+            });
+        })
+
+
+
+        ->when($this->price,function ($q) {
+            $q->where(function($q){
+                return $q->whereHas('sizes', function (Builder $query){
+                    $query->where(function($q){
+                        $q->where('sizes.price','=',$this->price)
+                        ->orWhere('sizes.sale','=',$this->price);
+                    });
+
+                })->orWhere(function($q){
+                    return $q->where('products.group_price','=',$this->price)
+                    ->orWhere('products.group_sale','=',$this->price);
+                });
+            });
+
+        })
+
+
+        ->when($this->date,function ($q)  {
+            return $q->whereDate('products.created_at',$this->date);
+        })->when($this->product_type,function ($q)  {
+            return $q->where('products.type',$this->product_type);
+        })->when($this->featured_non_featured,function ($q)  {
+            $featured=$this->featured_non_featured == 'Featured' ? 1 : 0;
+            return $q->where('products.featured',$featured);
+        })
+        ->distinct('products.id')->latest('products.created_at')
+        ->paginate(12);
 
     }
 

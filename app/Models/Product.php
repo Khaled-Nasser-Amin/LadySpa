@@ -56,9 +56,11 @@ class Product extends Model
     public function getImageAttribute($value){
         return asset('images/products/'.$value);
     }
-
+    public function getBannerAttribute($value){
+        return asset('images/products/'.$value);
+    }
     public function images(){
-        return $this->hasMany(Images::class);
+        return $this->morphMany(Images::class,'images');
     }
 
 }

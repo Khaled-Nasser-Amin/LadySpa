@@ -122,7 +122,25 @@ class MyFatoorahController extends Controller
 
 
 
+    public function check_online_payment(Request $request){
+        $curl = curl_init("$this->apiURL/v2/SendPayment");
+        curl_setopt_array($curl, array(
+            CURLOPT_CUSTOMREQUEST  => 'POST',
+            CURLOPT_POSTFIELDS     => json_encode([]),
+            CURLOPT_HTTPHEADER     => array("Authorization: Bearer $this->apiKey", 'Content-Type: application/json'),
+            CURLOPT_RETURNTRANSFER => true,
+        ));
 
+        $response = curl_exec($curl);
+        $json = json_decode($response);
+        if (empty($error)) {
+            $error = (isset($json->Message)) ? $json->Message : (!empty($response) ? $response : 'API key or API URL is not correct');
+        }
+        if ($error == 'API key or API URL is not correct') {
+            return response()->json(['status' => false],404);
+        }
+        return response()->json(['status' => true],200);
+    }
 
     /* short cuts*/
 

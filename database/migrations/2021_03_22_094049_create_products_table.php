@@ -21,7 +21,6 @@ class CreateProductsTable extends Migration
             $table->string('description_ar')->nullable();
             $table->string('description_en')->nullable();
             $table->integer('featured')->default(0);
-            $table->integer('featured_slider')->default(0);
             $table->string('image');
             $table->string('banner');
             $table->string('type');
