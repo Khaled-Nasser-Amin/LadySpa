@@ -13,11 +13,11 @@ class SessionController extends Controller
 
     public function store($request)
     {
-        $data=collect($request)->except(['image','sizes','productsIndex','taxes_selected','banner'])->toArray();
-        $data['image']=$this->add_single_image($request['image'],'products');
-        $data['banner']=$this->add_single_image($request['banner'],'products');
-        $product=Product::create($data);
-        return $product;
+        $data=collect($request)->except(['image','additions','taxes_selected','banner'])->toArray();
+        $data['image']=$this->add_single_image($request['image'],'sessions');
+        $data['banner']=$this->add_single_image($request['banner'],'sessions');
+        $session=Xsession::create($data);
+        return $session;
     }
 
 

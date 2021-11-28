@@ -24,6 +24,16 @@
                         <textarea wire:model="description_en" class="form-control" name="description_en" id="Description_en" rows="5"></textarea>
                         <x-general.input-error for="description_en" />
                     </div>
+                    <div class="form-group">
+                        <label for="price">{{__('text.Price')}}</label><br>
+                        <input type="number" wire:model='price' class="form-control" id="price" autocomplete="none"><br>
+                        <x-general.input-error for="price" />
+                    </div>
+                    <div class="form-group">
+                        <label for="sale">{{__('text.Sale')}}</label><br>
+                        <input type="number" wire:model='sale' class="form-control" id="sale" autocomplete="none"><br>
+                        <x-general.input-error for="sale" />
+                    </div>
                 </div>
             </div>
 
@@ -65,10 +75,10 @@
 
                 <div class="form-group mx-2">
                     <label class="mr-2"> {{__('text.Additions')}}</label>
-                    <button type="button" class="btn btn-primary d-block" data-toggle="modal" data-target="#sizesAndPrices">@lang('text.Add Additions')</button>
+                    <button type="button" class="btn btn-primary d-block" data-toggle="modal" data-target="#AddAdditions">@lang('text.Add Additions')</button>
                 </div>
-                <x-general.input-error for="sizes" />
-                {{-- <x-admin.products.modal-add-sizes :sizes="$sizes" :deletedSizes='$deletedSizes' :index="$index" :updateSize="$updateSize"/> --}}
+                <x-general.input-error for="additions" />
+                <x-admin.sessions.modal-add-or-update-or-delete-additions :additions="$additions" :deletedAdditions='$deletedAdditions' :index="$index" :updateAddition="$updateAddition"/>
 
 
             </div>

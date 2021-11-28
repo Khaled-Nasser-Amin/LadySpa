@@ -15,4 +15,7 @@ class Tax extends Model
     public function products(){
         return $this->belongsToMany(Product::class,'products_taxes');
     }
+    public function sessions(){
+        return $this->belongsToMany(Xsession::class,'products_taxes','tax_id','session_id');
+    }
 }

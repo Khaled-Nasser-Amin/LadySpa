@@ -39,6 +39,9 @@ class User extends Authenticatable
     public function products(){
         return $this->hasMany(Product::class);
     }
+    public function sessions(){
+        return $this->hasMany(Xsession::class);
+    }
     public function getImageAttribute($value){
         return $value ? asset('images/users/'.$value):'https://ui-avatars.com/api/?name='.urlencode($this->name).'&color=7F9CF5&background=EBF4FF';
     }

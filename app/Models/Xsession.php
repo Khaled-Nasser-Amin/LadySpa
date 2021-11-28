@@ -24,9 +24,13 @@ class Xsession extends Model
 
 
     public function taxes(){
-        return $this->belongsToMany(Tax::class,'sessions_taxes');
+        return $this->belongsToMany(Tax::class,'sessions_taxes','session_id','tax_id');
     }
 
+    public function additions()
+    {
+        return $this->hasMany(Addition::class,'session_id');
+    }
 
 
     public function getSlugAttribute($value){

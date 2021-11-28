@@ -2,7 +2,8 @@
 
 namespace App\Http\Livewire\Admin\ProductsManagement\Sessions;
 
-use App\Http\Controllers\admin\productManagement\products\ProductController;
+use App\Http\Controllers\admin\productManagement\sessions\SessionController;
+use App\Models\Addition;
 use App\Models\Images;
 use App\Models\Product;
 use App\Models\Size;
@@ -28,15 +29,16 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $banner,
         $groupImage,
         $slug,$type,
+        $price,$sale,
         $search;
 
     public $action; // action for change form action between add new product and update product
     public $product;
 
-    //add size
-    public $size,$price,$sale,$stock,$sizes=[],$deletedSizes=[];
-    public $update_size,$update_stock,$update_price,$update_sale,$index_of_size; // update size
-    protected $listeners=['edit','selected_product'];
+    //add addition
+    public $addition_price,$addition_name_ar,$addition_name_en,$additions=[],$deletedAdditions=[];
+    public $updateAddition,$update_addition_name_ar,$update_addition_name_en,$update_addition_price,$index_of_addition; // update size
+    protected $listeners=['edit'];
 
     public $index; //modal size and stock
 
@@ -46,52 +48,23 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     public function mount(){
         $this->taxes=Tax::get();
         $this->taxes_selected=[];
-        $this->products=Product::where('type','single')->where('user_id',auth()->user()->id)->get();
-        $this->productsIndex[]=['product_id' => '','size' => '' ,'quantity' => '' ];
-        $this->product_sizes[0]=[];
-        $this->type="single";
     }
 
-    //refresh jquery plugin
-    public function updatedType(){
-        if($this->type == 'group'){
-            $this->products=Product::where('type','single')->where('user_id',auth()->user()->id)->get();
-
-        }
-        $this->emit('changeType');
-    }
 
 
 
     public function store(){
-        $productStore=new ProductController();
-        if($this->type == 'single'){
-            $data=$this->validation(array_merge(['sizes' =>'required|array|min:1'],$this->imageValidationForStore()));
-        }else{
-            $data=$this->validation(array_merge($this->imageValidationForStore(),$this->group_validation()));
-        }
-
+        $CreateSession=new SessionController();
+        $data=$this->validation($this->imageValidationForStore());
         $data=$this->setSlug($data);
-        $product=$productStore->store($data);
-        $this->associateImagesWithProduct($data,$product);
-
-
-        auth()->user()->products()->save($product);
-
-        if($this->type == 'single'){
-            $this->associateProductWithSize($this->sizes,$product);
-
-        }else{
-            $this->groupType($product);
-        }
-        $product->taxes()->syncWithoutDetaching($this->taxes_selected);
-
+        $session=$CreateSession->store($data);
+        $this->associateImagesWithSession($data,$session);
+        auth()->user()->sessions()->save($session);
+        $this->associateSessionWithAdditions($this->additions,$session);
+        $session->taxes()->syncWithoutDetaching($this->taxes_selected);
         $this->resetVariables();
-        $this->dispatchBrowserEvent('success', __('text.Product Added Successfully'));
-
-        create_activity('Product Created',auth()->user()->id,$product->user_id);
-
-
+        $this->dispatchBrowserEvent('success', __('text.Session Added Successfully'));
+        create_activity('Session Created',auth()->user()->id,$session->user_id);
     }
 
 
@@ -168,7 +141,9 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
             'description_en' => 'nullable|string|max:255|',
             'taxes_selected'=>'required|array|min:1',
             'taxes_selected.*'=>'exists:taxes,id',
-            'type' => ['required',Rule::in(['single','group'])],
+            'price' => 'required|numeric',
+            'sale' => 'nullable|numeric|lt:price',
+            'additions' =>'nullable|array',
 
 
         ],$image_validation));
@@ -194,132 +169,112 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         ];
     }
 
-    //handle sizes array
-    public function sizesAndPrice($product){
-        foreach ($this->sizes as $key => $row){
-            $size=Size::create([
-                'size' => $row['size'],
-                'stock' => $row['stock'],
-                'price' => $row['price'],
-                'sale' => trim($row['sale']) == '' || $row['sale'] == null ? 0 : $row['sale']
-            ]);
+    //additions with session
+    public function associateSessionWithAdditions($additions,$session){
+        $session->additions()->whereNotIn('id',collect($additions)->pluck('id')->toArray())->delete();
 
-            // $this->associateColorWithSize($row['sizes'],$color,$key);
-            $product->sizes()->save($size);
-        }
-    }
-
-    //sizes with product
-    public function associateProductWithSize($sizes,$product){
-        $product->sizes()->whereNotIn('id',collect($sizes)->pluck('id')->toArray())->delete();
-
-        foreach ($sizes as $key=>$row)
+        foreach ($additions as $key=>$row)
         {
             if(isset($row['id'])){
-                $size=Size::find($row['id']);
-                if(!$size){
-                    $size=Size::onlyTrashed()->findOrFail($row['id']);
-                    $size->restore();
+                $addition=Addition::find($row['id']);
+                if(!$addition){
+                    $addition=Addition::onlyTrashed()->findOrFail($row['id']);
+                    $addition->restore();
                 }
-                $size->update(['stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
+                $addition->update(['name_ar'=>$row['addition_name_ar'],'name_en'=>$row['addition_name_en'],'price'=>$row['addition_price']]);
 
             }else{
-                $size=Size::create(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
-                $size->product()->associate($product->id);
-                $size->save();
-                $this->sizes[$key]['id']=$size->id;
+                $addition=Addition::create(['name_ar'=>$row['addition_name_ar'],'name_en'=>$row['addition_name_en'],'price'=>$row['addition_price']]);
+                $addition->sessions()->associate($session->id);
+                $addition->save();
+                $this->additions[$key]['id']=$addition->id;
             }
 
         }
     }
 
     //images
-    public function associateImagesWithProduct($data,$product){
-        $imagesNames=$this->livewireGroupImages($data,'products');
+    public function associateImagesWithSession($data,$session){
+        $imagesNames=$this->livewireGroupImages($data,'sessions');
         foreach ($imagesNames as $image)
-        Images::create(['name'=>$image])->product()->associate($product->id)->save();
+        $session->images()->create(['name'=>$image]);
     }
 
 
-    // size and stock modal
-    public function addSize($index){
-        $this->size=strtolower($this->size);
+    //add new addition modal
+    public function addAddition(){
+        $this->addition_name_ar=strtolower($this->addition_name_ar);
+        $this->addition_name_en=strtolower($this->addition_name_en);
         $this->validate([
-            'size' => ['required',Rule::notIn(collect($this->sizes)->pluck('size')),Rule::notIn(collect($this->deletedSizes)->pluck('size'))],
-            'stock' => 'required|integer|min:1',
-            'price' => 'required|numeric|',
-            'sale' => 'nullable|numeric|lt:price|',
+            'addition_name_ar' => ['required',Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_ar')),Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_en'))],
+            'addition_name_en' => ['required',Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_en')),Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_ar'))],
+            'addition_price' => 'required|numeric|',
         ]);
-        $this->sizes[]=['size' => $this->size,'stock' => $this->stock,'price' => $this->price,'sale' => $this->sale];
+        $this->additions[]=['addition_name_ar' => $this->addition_name_ar,'addition_name_en' => $this->addition_name_en,'addition_price' => $this->addition_price];
 
-        $this->resetVariablesAfterAddSize();
+        $this->resetVariablesAfterAddAddition();
 
-        $this->emit('addSize',$index); // emit to hide modal size
+        $this->emit('addAddition'); // emit to hide modal addition
     }
 
-    public function updateSize($index){
-        $this->update_size=$this->sizes[$index]['size'];
-        $this->update_stock=$this->sizes[$index]['stock'];
-        $this->update_price=$this->sizes[$index]['price'];
-        $this->update_sale=$this->sizes[$index]['sale'];
-        $this->index_of_size=$index;
+    public function updateAddition($index){
+        $this->update_addition_name_ar=$this->additions[$index]['addition_name_ar'];
+        $this->update_addition_name_en=$this->additions[$index]['addition_name_en'];
+        $this->update_addition_price=$this->additions[$index]['addition_price'];
+        $this->index_of_addition=$index;
     }
 
     // update size completed
-    public function updateSizeComplete($index){
-        $this->update_size=strtolower($this->update_size);
+    public function updateAdditionComplete(){
+        $this->update_addition_name_ar=strtolower($this->update_addition_name_ar);
+        $this->update_addition_name_en=strtolower($this->update_addition_name_en);
         $this->validate([
-            'update_size' => ['required',Rule::notIn(collect($this->sizes)->except($this->index_of_size)->pluck('size'))],
-            'update_stock' => 'required|integer|min:1',
+            'update_addition_name_ar' => ['required',Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_ar')),Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_en'))],
+            'update_addition_name_en' => ['required',Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_en')),Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_ar'))],
             'update_price' => 'required|numeric',
-            'update_sale' => 'nullable|numeric|lt:update_price'
         ]);
-        $this->sizes[$this->index_of_size]['size']=$this->update_size;
-        $this->sizes[$this->index_of_size]['stock']=$this->update_stock;
-        $this->sizes[$this->index_of_size]['price']=$this->update_price;
-        $this->sizes[$this->index_of_size]['sale']=$this->update_sale;
-        $this->emit('updateSize',$index); // emit to hide modal size
+        $this->additions[$this->index_of_addition]['addition_name_ar']=$this->update_addition_name_ar;
+        $this->additions[$this->index_of_addition]['addition_name_en']=$this->update_addition_name_en;
+        $this->additions[$this->index_of_addition]['addition_price']=$this->update_addition_price;
+        $this->emit('updateAddition'); // emit to hide modal size
 
     }
 
-    public function deleteSize($index){
-        if(isset($this->sizes[$index]['id']) && $this->sizes[$index]['id'] > 0){
-            $this->deletedSizes[]=['id'=>$this->sizes[$index]['id'],'size' => $this->sizes[$index]['size'],'stock' => $this->sizes[$index]['stock'],'price' => $this->sizes[$index]['price'],'sale'=>$this->sizes[$index]['sale'] ];
-
+    public function deleteAddition($index){
+        if(isset($this->additions[$index]['id']) && $this->additions[$index]['id'] > 0){
+            $this->deletedAdditions[]=['id'=>$this->additions[$index]['id'],'name' => $this->additions[$index]['name'],'price' => $this->sizes[$index]['price']];
         }
-        unset($this->sizes[$index]);
-        array_values($this->sizes);
+        unset($this->additions[$index]);
+        array_values($this->additions);
     }
-    public function restoreSize($index){
+    public function restoreAddition($index){
 
-        $this->sizes[]=['id'=>$this->deletedSizes[$index]['id'],'size' => $this->deletedSizes[$index]['size'],'stock' => $this->deletedSizes[$index]['stock'],'price' => $this->deletedSizes[$index]['price'],'sale'=>$this->deletedSizes[$index]['sale'] ];
-        unset($this->deletedSizes[$index]);
-        array_values($this->deletedSizes);
+        $this->additions[]=['id'=>$this->deletedAdditions[$index]['id'],'size' => $this->deletedAdditions[$index]['size'],'stock' => $this->deletedAdditions[$index]['stock'],'price' => $this->deletedSizes[$index]['price'],'sale'=>$this->deletedSizes[$index]['sale'] ];
+        unset($this->deletedAdditions[$index]);
+        array_values($this->deletedAdditions);
     }
     //end size and stock modal
 
 
     //resetVariables
-    public function resetVariablesAfterAddSize(){
-         $this->size='';
-         $this->stock='';
-         $this->price='';
-         $this->sale='';
+    public function resetVariablesAfterAddAddition(){
+         $this->addition_name_ar='';
+         $this->addition_name_en='';
+         $this->addition_price='';
     }
 
 
-    public function addedAllSizes(){
-        $this->validate(['sizes'=>'required|array|min:1']);
-        $this->emit('addedAllSizes'); // emit to hide modal sizes
+    public function addedAllAdditions(){
+        $this->validate(['additions'=>'nullable|array|min:1']);
+        $this->emit('addedAllAdditions'); // emit to hide modal additions
 
     }
     public function resetVariables(){
         $this->reset([
             'name_ar','name_en',
-            'description_ar','description_en','image','banner',
-            'groupImage','slug','sizes','taxes_selected','group_price','group_sale','productsIndex'
+            'description_ar','description_en','image','banner','price','sale',
+            'groupImage','slug','taxes_selected','additions'
         ]);
-        $this->productsIndex[]=['product_id' => '','size' => '' ,'quantity' => '' ];
 
     }
 
@@ -335,65 +290,5 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     }
 
-
-
-
-    //group of products
-
-
-    //select product =>  change sizes
-    public function selected_product($index,$product_id){
-        $this->product_sizes[$index]=Product::findOrFail($product_id)->sizes;
-    }
-
-    public function addProduct(){
-        $this->productsIndex[]=['product_id' => '','size' => '','quantity' => '' ];
-        $this->product_sizes[]=[];
-    }
-
-    public function deleteProduct($index){
-
-        unset($this->productsIndex[$index]);
-        array_values($this->productsIndex);
-
-        unset($this->product_sizes[$index]);
-        array_values($this->product_sizes);
-
-    }
-
-
-    public function groupType($product){
-        if ($this->type == 'group'){
-            $product->child_products()->detach();
-            $productsGroup=collect($this->productsIndex)->groupBy('product_id')->map(function ($value){
-                $group_by_sizes= $value->groupBy('size')->map(function ($value2){
-                     return ['size' =>$value2[0]['size'],'quantity' => $value2->sum('quantity')];
-                 });
-                 return  [$value[0]['product_id'],$group_by_sizes];
-             });
-            foreach ($productsGroup as $key =>$value){
-                $child_product_id=$value[0];
-                $product->child_products()->syncWithoutDetaching($child_product_id);
-                foreach ($value[1] as $key =>$value){
-                   $group_id=$product->child_products()->find($child_product_id)->pivot->id;
-                   Size::find($value['size'])->groups()->syncWithoutDetaching([$group_id => ['quantity' => $value['quantity']]]);
-                }
-            }
-        }
-
-    }
-
-
-    protected function group_validation()
-    {
-        return [
-            'group_price' =>'required_if:type,group|numeric',
-            'group_sale' =>'nullable|numeric|lt:group_price|',
-            'productsIndex' =>'required_if:type,group|array|min:1',
-            'productsIndex.*.product_id' => 'required_if:type,group|numeric|exists:products,id',
-            'productsIndex.*.quantity' => 'required_if:type,group|numeric|min:1',
-            'productsIndex.*.size' => 'required_if:type,group|numeric|exists:sizes,id',
-        ];
-    }
 
 }

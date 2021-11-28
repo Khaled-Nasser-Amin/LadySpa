@@ -198,21 +198,6 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         ];
     }
 
-    //handle sizes array
-    public function sizesAndPrice($product){
-        foreach ($this->sizes as $key => $row){
-            $size=Size::create([
-                'size' => $row['size'],
-                'stock' => $row['stock'],
-                'price' => $row['price'],
-                'sale' => trim($row['sale']) == '' || $row['sale'] == null ? 0 : $row['sale']
-            ]);
-
-            // $this->associateColorWithSize($row['sizes'],$color,$key);
-            $product->sizes()->save($size);
-        }
-    }
-
     //sizes with product
     public function associateProductWithSize($sizes,$product){
         $product->sizes()->whereNotIn('id',collect($sizes)->pluck('id')->toArray())->delete();
