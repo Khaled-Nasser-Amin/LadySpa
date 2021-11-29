@@ -45,12 +45,12 @@
 
             {{--search boxes--}}
             <div class="row">
-                {{-- <x-admin.sessions.search-boxes  /> --}}
+                <x-admin.sessions.search-boxes  />
             </div>
 
             <!-- all products -->
             <div class="row">
-                {{-- <x-admin.sessions.card-show :sessions="$sessions" /> --}}
+                <x-admin.sessions.card-show :sessions="$sessions" />
             </div>
 
             <!-- pagination -->

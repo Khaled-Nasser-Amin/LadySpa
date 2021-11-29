@@ -12,10 +12,10 @@
 
             <!-- start page title -->
            <x-admin.general.page-title>
-               <li class="breadcrumb-item"><a href="/admin/products">{{__('text.Products')}} </a></li>
-               <li class="breadcrumb-item active"> {{__('text.Product Details')}}</li>
+               <li class="breadcrumb-item"><a href="/admin/sessions">{{__('text.Sessions')}} </a></li>
+               <li class="breadcrumb-item active"> {{__('text.Session Details')}}</li>
                 <x-slot name="title">
-                    <h4 class="page-title">{{__('text.Product Details')}} </h4>
+                    <h4 class="page-title">{{__('text.Session Details')}} </h4>
                 </x-slot>
            </x-admin.general.page-title>
 
@@ -24,7 +24,7 @@
             <!-- end page title -->
 
             <div class="row">
-                @livewire('admin.products-management.products.product-details',['images' => $images , 'product' => $product])
+                @livewire('admin.products-management.sessions.session-details',['images' => $images , 'session' => $session])
             </div>
             <!-- end row -->
 

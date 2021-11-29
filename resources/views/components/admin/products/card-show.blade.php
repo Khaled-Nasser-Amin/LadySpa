@@ -36,7 +36,7 @@
                             <div><i class="mdi mdi-dots-horizontal h4 m-0 text-muted"></i></div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/admin/products-update/{{$product->id}}-{{$product->slug}}">{{__('text.Edit')}}</a>
+                            <a class="dropdown-item" href="/admin/product-update/{{$product->id}}-{{$product->slug}}">{{__('text.Edit')}}</a>
                             <a class="dropdown-item" href="/admin/product-details/{{$product->id}}-{{$product->slug}}">{{__('text.Show')}}</a>
                             <button class="dropdown-item" type="button" wire:click="confirmDelete({{$product->id}})">{{__('text.Delete')}}</button>
                         </div>

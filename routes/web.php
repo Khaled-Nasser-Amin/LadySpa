@@ -98,7 +98,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
 
         Route::get('/products', Products::class)->name('admin.products');
         Route::get('/product-add', [ProductController::class,'addNewProduct']);
-        Route::get('/products-update/{product}-{slug}', [ProductController::class,'updateProduct']);
+        Route::get('/product-update/{product}-{slug}', [ProductController::class,'updateProduct']);
         Route::get('/product-details/{product}-{slug}', [ProductController::class,'show']);
 
         Route::get('/orders', Orders::class)->name('admin.orders');

@@ -3,15 +3,15 @@
 
         <div class="col-sm-6 col-md-4">
             <div class="form-group">
-                <label for="field-00" class="control-label">{{__('text.Product Name')}}</label>
-                <input type="text" wire:model="productName" class="form-control" id="field-00" placeholder="{{__('text.Product Name')}}...">
+                <label for="field-00" class="control-label">{{__('text.Session Name')}}</label>
+                <input type="text" wire:model="sessionName" class="form-control" id="field-00" placeholder="{{__('text.Session Name')}}...">
             </div>
         </div>
 
         <div class="col-sm-6 col-md-4">
             <div class="form-group">
-                <label for="field-4" class="control-label">{{__('text.Size')}}</label>
-                <input type="text" wire:model="size" class="form-control" id="field-4" placeholder="42">
+                <label for="field-4" class="control-label">{{__('text.Addition Name')}}</label>
+                <input type="text" wire:model="addition_name" class="form-control" id="field-4" placeholder="42">
             </div>
         </div>
         <div class="col-sm-6 col-md-4">
@@ -29,14 +29,11 @@
         </div>
         <div class="col-sm-6 col-md-4">
             <div class="form-group">
-                <label for="field-7" class="control-label">{{__('text.Product Type')}}</label>
-                <select  id="field-7" class="form-control" wire:model="product_type">
-                    <option value=""></option>
-                    <option value="single">@lang('text.Single')</option>
-                    <option value="group">@lang('text.Group')</option>
-                </select>
+                <label for="field-33" class="control-label">{{__('text.Addition Price')}}</label>
+                <input type="text" wire:model="addition_price" class="form-control" id="field-33" placeholder="{{__('text.Search By Addition Price')}}">
             </div>
         </div>
+
         <div class="col-sm-6 col-md-4">
             <div class="form-group">
                 <label for="field-6" class="control-label">{{__('text.Featured And Non Featured')}}</label>

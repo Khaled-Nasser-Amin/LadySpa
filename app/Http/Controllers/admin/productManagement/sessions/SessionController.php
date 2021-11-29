@@ -24,36 +24,36 @@ class SessionController extends Controller
 
     public function update($request,$id)
     {
-        $product=Product::findOrFail($id);
-        $data=collect($request)->except(['image','productsIndex','taxes_selected','sizes','banner'])->toArray();
-        $this->updateImage($request,$product,$data);
-        $product->update($data);
-        $product->taxes()->detach();
-        $product->taxes()->syncWithoutDetaching($request['taxes_selected']);
-        $product->save();
-        return $product;
+        $session=Xsession::findOrFail($id);
+        $data=collect($request)->except(['image','additions','taxes_selected','banner'])->toArray();
+        $this->updateImage($request,$session,$data);
+        $session->update($data);
+        $session->taxes()->detach();
+        $session->taxes()->syncWithoutDetaching($request['taxes_selected']);
+        $session->save();
+        return $session;
     }
 
-    protected function updateImage($request,$product,$data){
+    protected function updateImage($request,$session,$data){
         if ($request['image']){
-            if(!$product->has('orders')){
-                $this->delete_single_image($product,'image');
+            if(!$session->has('reservations')){
+                $this->delete_single_image($session,'image');
             }
-            $data['image']=$this->add_single_image($request['image'],'products');
+            $data['image']=$this->add_single_image($request['image'],'sessions');
         }
 
         if ($request['banner']){
-            if(!$product->has('orders')){
-                $this->delete_single_image($product,'banner');
+            if(!$session->has('reservations')){
+                $this->delete_single_image($session,'banner');
             }
-            $data['banner']=$this->add_single_image($request['banner'],'products');
+            $data['banner']=$this->add_single_image($request['banner'],'sessions');
         }
 
     }
-    public function destroy($product)
+    public function destroy($session)
     {
-        $vendor_id=$product->user_id;
-        $product->delete();
+        $vendor_id=$session->user_id;
+        $session->delete();
         return $vendor_id;
     }
 
@@ -63,15 +63,15 @@ class SessionController extends Controller
         $imageName=end($arr);
         return $imageName;
     }
-    protected function delete_single_image($product,$attr){
-        if ($product->getAttributes()[$attr] && File::exists(storage_path('app/public/products/'.$product->getAttributes()[$attr]))){
-            unlink(storage_path('app\public\products\\').$product->getAttributes()[$attr]);
+    protected function delete_single_image($session,$attr){
+        if ($session->getAttributes()[$attr] && File::exists(storage_path('app/public/sessions/'.$session->getAttributes()[$attr]))){
+            unlink(storage_path('app\public\sessions\\').$session->getAttributes()[$attr]);
         }
     }
 
-    public function show(Request $request,Product $product,$slug){
-        $images= array_merge([$product->image],$product->images->pluck('name')->toArray());
-        return view('admin.productManagement.products.show',compact('product','images'));
+    public function show(Request $request,Xsession $session,$slug){
+        $images= array_merge([$session->image],$session->images->pluck('name')->toArray());
+        return view('admin.productManagement.sessions.show',compact('session','images'));
     }
     public function addNewSession(){
         return view('admin.productManagement.sessions.create');

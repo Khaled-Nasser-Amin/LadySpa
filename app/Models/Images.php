@@ -15,6 +15,11 @@ class Images extends Model
     }
 
     public function getNameAttribute($value){
-        return asset('images/products/'.$value);
+        if($this->images_type == 'App\Models\Xsession'){
+            return asset('images/sessions/'.$value);
+
+        }else{
+            return asset('images/products/'.$value);
+        }
     }
 }

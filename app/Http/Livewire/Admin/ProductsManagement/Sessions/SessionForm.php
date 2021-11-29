@@ -33,7 +33,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $search;
 
     public $action; // action for change form action between add new product and update product
-    public $product;
+    public $session;
 
     //add addition
     public $addition_price,$addition_name_ar,$addition_name_en,$additions=[],$deletedAdditions=[];
@@ -70,59 +70,37 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     public function edit(){
         $this->resetVariables();
-        foreach ($this->product->sizes as $row){
-                $this->sizes[]=['id'=>$row->id,'size' => $row->size,'stock' => $row->stock,'price' => $row->price,'sale'=>$row->sale ];
+        foreach ($this->session->additions as $row){
+                $this->additions[]=['id'=>$row->id,'addition_name_ar' => $row->name_ar,'addition_name_en' => $row->name_en,'addition_price' => $row->price];
 
         }
 
-        foreach ($this->product->sizes()->onlyTrashed()->get() as $row){
-            $this->deletedSizes[]=['id'=>$row->id,'size' => $row->size,'stock' => $row->stock,'price' => $row->price,'sale'=>$row->sale ];
+        foreach ($this->session->additions()->onlyTrashed()->get() as $row){
+            $this->deletedAdditions[]=['id'=>$row->id,'addition_name_ar' => $row->name_ar,'addition_name_en' => $row->name_en,'addition_price' => $row->price];
 
         }
-        $this->name_ar= $this->product->name_ar;
-        $this->name_en=$this->product->name_en;
-        $this->taxes_selected=$this->product->taxes->pluck('id')->toArray();
-        $this->description_ar=$this->product->description_ar;
-        $this->description_en=$this->product->description_en;
-        $this->slug=$this->product->slug;
-        $this->type=$this->product->type;
-        $this->group_price=$this->product->group_price;
-        $this->group_sale=$this->product->group_sale;
-
-        if($this->type== 'group'){
-            $this->productsIndex=[];
-            $this->product_sizes=[];
-            foreach($this->product->child_products()->get() as $product){
-                foreach($product->pivot->sizes as $size){
-                    $this->productsIndex[]=['product_id' => $product->id,'size' => $size->id,'quantity' => $size->pivot->quantity ];
-                    $this->product_sizes[]=$product->sizes;
-                }
-
-            }
-        }
-
+        $this->name_ar= $this->session->name_ar;
+        $this->name_en=$this->session->name_en;
+        $this->taxes_selected=$this->session->taxes->pluck('id')->toArray();
+        $this->description_ar=$this->session->description_ar;
+        $this->description_en=$this->session->description_en;
+        $this->slug=$this->session->slug;
+        $this->price=$this->session->price;
+        $this->sale=$this->session->sale;
         $this->emit('refreshMultiSelect');
     }
 
     public function update($id){
-        $productUpdate=new ProductController();
-        if($this->type == 'single'){
-            $data=$this->validation(array_merge(['sizes' =>'required|array|min:1'],$this->imageValidationForUpdate()));
-        }else{
-            $data=$this->validation(array_merge($this->imageValidationForUpdate(),$this->group_validation()));
-        }
-        $product=$productUpdate->update($data,$id);
-        if($this->type == 'single'){
-            $this->associateProductWithSize($this->sizes,$product);
+        $sessionUpdate=new SessionController();
+        $data=$this->validation($this->imageValidationForUpdate());
 
-        }else{
-            $this->groupType($product);
-        }
+        $session=$sessionUpdate->update($data,$id);
+        $this->associateSessionWithAdditions($this->additions,$session);
 
-        if($product->wasChanged()){
-            create_activity('Product Updated',auth()->user()->id,$product->user_id);
+        if($session->wasChanged()){
+            create_activity('Session Updated',auth()->user()->id,$session->user_id);
         }
-        $this->dispatchBrowserEvent('success', __('text.Product Updated Successfully'));
+        $this->dispatchBrowserEvent('success', __('text.Session Updated Successfully'));
 
 
     }
@@ -231,7 +209,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $this->validate([
             'update_addition_name_ar' => ['required',Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_ar')),Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_en'))],
             'update_addition_name_en' => ['required',Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_en')),Rule::notIn(collect($this->additions)->except($this->index_of_addition)->pluck('addition_name_ar'))],
-            'update_price' => 'required|numeric',
+            'update_addition_price' => 'required|numeric',
         ]);
         $this->additions[$this->index_of_addition]['addition_name_ar']=$this->update_addition_name_ar;
         $this->additions[$this->index_of_addition]['addition_name_en']=$this->update_addition_name_en;
@@ -242,14 +220,14 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     public function deleteAddition($index){
         if(isset($this->additions[$index]['id']) && $this->additions[$index]['id'] > 0){
-            $this->deletedAdditions[]=['id'=>$this->additions[$index]['id'],'name' => $this->additions[$index]['name'],'price' => $this->sizes[$index]['price']];
+            $this->deletedAdditions[]=['id'=>$this->additions[$index]['id'],'addition_name_ar' => $this->additions[$index]['addition_name_ar'],'addition_name_en' => $this->additions[$index]['addition_name_en'],'addition_price' => $this->additions[$index]['addition_price']];
         }
         unset($this->additions[$index]);
         array_values($this->additions);
     }
     public function restoreAddition($index){
 
-        $this->additions[]=['id'=>$this->deletedAdditions[$index]['id'],'size' => $this->deletedAdditions[$index]['size'],'stock' => $this->deletedAdditions[$index]['stock'],'price' => $this->deletedSizes[$index]['price'],'sale'=>$this->deletedSizes[$index]['sale'] ];
+        $this->additions[]=['id'=>$this->deletedAdditions[$index]['id'],'addition_name_ar' => $this->deletedAdditions[$index]['addition_name_ar'],'addition_name_en' => $this->deletedAdditions[$index]['addition_name_en'],'addition_price' => $this->deletedAdditions[$index]['addition_price'] ];
         unset($this->deletedAdditions[$index]);
         array_values($this->deletedAdditions);
     }
@@ -265,7 +243,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
 
     public function addedAllAdditions(){
-        $this->validate(['additions'=>'nullable|array|min:1']);
+        $this->validate(['additions'=>'nullable|array|min:0']);
         $this->emit('addedAllAdditions'); // emit to hide modal additions
 
     }

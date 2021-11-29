@@ -10,7 +10,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class SessionDetails extends Component
 {
     use AuthorizesRequests;
-    public $images,$product;
+    public $images,$session;
 
 
 

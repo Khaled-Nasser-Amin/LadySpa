@@ -32,88 +32,47 @@
 
 
             </div>
+
             <div class="col-md-6">
 
                 <div class="d-flex flex-row justify-content-between align-items-center">
-                    <h5><span class="text-pink"><strong>@lang('text.Product Name')</strong> | </span>{{app()->getLocale() == 'ar' ?$product->name_ar:$product->name_en}}</h5>
-                    <span><i class="mdi mdi-calendar" aria-hidden="true"></i> {{date('M d Y',strtotime($product->created_at))}}</span>
+                    <h5><span class="text-pink"><strong>@lang('text.Session Name')</strong> | </span>{{app()->getLocale() == 'ar' ? $session->name_ar: $session->name_en}}</h5>
+                    <span><i class="mdi mdi-calendar" aria-hidden="true"></i> {{date('M d Y',strtotime($session->created_at))}}</span>
                 </div>
-                @if( $product->description_ar )
-                    <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Description')</strong> | </span>{{  $product->description_ar }}</h6>
-                @elseif ($product->description_en)
-                <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Description')</strong> | </span>{{  $product->description_en }}</h6>
+                @if( $session->description_ar )
+                    <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Description')</strong> | </span>{{  $session->description_ar }}</h6>
+                @elseif ($session->description_en)
+                <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Description')</strong> | </span>{{  $session->description_en }}</h6>
 
                 @endif
-                <h6 class="pt-1"><span class="text-pink"><strong>@lang('text.Type')</strong> | </span>{{  $product->type }}</h6>
-                @if ($product->type == "group")
+
                 <h6>
                     <br>
-                    @if (!$product->group_sale)
-                    <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted">{{$product->group_price}} @lang('text.SAR')</span>
+                    @if (!$session->sale)
+                    <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted">{{$session->price}} @lang('text.SAR')</span>
                     @else
-                        <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted"><del>{{$product->group_price}}</del> {{$product->group_sale}} @lang('text.SAR')</span>
+                        <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted"><del>{{$session->price}}</del> {{$session->sale}} @lang('text.SAR')</span>
                     @endif
                 </h6>
-                @endif
 
-                @if ($product->type == 'single')
-                <br><span class="text-pink"> {{__('text.Sizes')}} </span>
-                @elseif($product->type == 'group')
-                <br><span class="text-pink"> {{__('text.Products')}} </span>
-
+                @if ($session->additions()->count() > 0)
+                <br><span class="text-pink"> {{__('text.Additions')}} </span>
                 @endif
 
                 <div class="table-responsive col" >
                     <table class="table table-sm table-borderless mb-0">
                         <tbody>
-                            @if ($product->type == 'single')
-                                @forelse($product->sizes as $row)
+                            @if ($session->additions()->count() > 0)
+                                @forelse($session->additions as $row)
 
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')</strong></th>
-                                        <td>{{ $row->size }}</td>
+                                        <th class="pl-0 w-25" scope="row"><strong>@lang('text.Addition Name')</strong></th>
+                                        <td>{{ app()->getLocale() == 'ar' ? $row->name_ar:$row->name_en }}</td>
                                         <th class="pl-0 w-25" scope="row"><strong>@lang('text.Price')</strong></th>
-                                        @if ($row->sale == 0 || $row->sale == null)
                                         <td><span class="text-muted">{{$row->price}} @lang('text.SAR')</span></td>
-                                        @else
-                                            <td><span class="text-muted"><del>{{$row->price}}</del> {{$row->sale}} @lang('text.SAR')</span></td>
-                                        @endif
-                                        <th class="pl-0 w-25" scope="row"><strong>@lang('text.Stock')</strong></th>
-                                        <td>
-                                            @if($row->stock != 0)
-                                            {{  $row->stock }}
 
-                                                @else
-                                                <del class="text-danger">0</del>
-
-                                            @endif
-                                        </td>
                                     </tr>
 
-                                @empty
-
-                                @endforelse
-                            @elseif($product->type == 'group')
-                                @forelse ($product->child_products()->get() as $child)
-                                <tr>
-                                    <th style="font-size: larger">
-                                        {{ app()->getLocale() == 'ar' ? $child->name_ar : $child->name_en }}
-
-                                    </th>
-                                </tr>
-                                @forelse($child->pivot->sizes()->get() as $row)
-
-                                <tr>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')</strong></th>
-                                    <td class="text-muted">{{ $row->size }}</td>
-                                    <th class="pl-0 w-25" scope="row"><strong>@lang('text.Quantity')</strong></th>
-                                    <td class="text-muted">{{ $row->pivot->quantity }}</td>
-
-                                </tr>
-
-                            @empty
-
-                            @endforelse
                                 @empty
 
                                 @endforelse
@@ -124,8 +83,6 @@
                         </tbody>
                     </table>
                 </div>
-
-
 
             </div>
         </div>
