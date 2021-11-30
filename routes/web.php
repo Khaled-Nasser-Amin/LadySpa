@@ -53,20 +53,21 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
     Route::get('/register',Register::class)->name('front.register')->middleware('guest');
 
 
-    // //login
-    // Route::get('/admin', function () {
-    //     return view('admin.auth.login');
-    // })->middleware('guest');
-    // Route::get('/admin/login',[AuthController::class,'index'])->name('index');
-    // Route::post('/admin/login',[AuthController::class,'login'])->name('login')->middleware("throttle:6,2");
+    //login
+    Route::get('/admin', function () {
+        return view('admin.auth.login');
+    })->middleware('guest');
+    Route::get('/admin/login',[AuthController::class,'index'])->name('index');
+    Route::post('/admin/login',[AuthController::class,'login'])->name('login')->middleware("throttle:6,2");
 
 
    //login super_admin
    Route::get('/super_admin', function () {
     return view('admin.auth.login_super_admin');
 })->middleware('guest');
-   Route::get('/super_admin/login',[AuthController::class,'index'])->name('login');
-   Route::post('/super_admin/login',[AuthController::class,'login'])->name('login_super_admin')->middleware("throttle:6,2");
+   Route::get('/super_admin/login',[AuthController::class,'index_super_admin'])->name('index_super_admin');
+   Route::post('/super_admin/login',[AuthController::class,'login_super_admin'])->name('login_super_admin')->middleware("throttle:6,2");
+
 
 
    //payment

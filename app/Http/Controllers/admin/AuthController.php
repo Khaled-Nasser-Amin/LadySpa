@@ -23,20 +23,48 @@ class AuthController extends Controller
 
 
      //login super admin
-     public function index(){
+    public function index(){
+        if(session()->has('super_admin') && session()->get('super_admin') == 1){
+            session()->forget('super_admin');
+            return redirect()->route('index_super_admin');
+        }
+        return view('admin.auth.login');
+    }
+
+    public function login(Request $request){
+        $user=$this->login_validation($request);
+
+        if(User::onlyTrashed()->where('email',$request->email)->first()){
+            return redirect()->back()->withErrors(['email'=>__('text.This account deleted,contact us to restore it.')]);
+        }
+        if(!$user || $user->role == 'admin'){
+            return redirect()->back()->withErrors(['email'=>__('text.These credentials do not match our records.')]);
+
+        }
+
+        $this->checkUserActivation($user);
+        $cred=$this->getCredentials($request);
+
+        return  $this->loginCheck($request,$user,$cred);
+
+    }
+
+    //login super admin
+    public function index_super_admin(){
         return view('admin.auth.login_super_admin');
     }
-    public function login(Request $request){
+    public function login_super_admin(Request $request){
 
         $user=$this->login_validation($request);
 
-        if(!$user){
+        if(!$user || $user->role != 'admin'){
             return redirect()->back()->withErrors(['email'=>__('text.These credentials do not match our records.')]);
         }
 
         $cred=$this->getCredentials($request);
         return $this->loginCheck($request,$user,$cred);
     }
+
 
     protected function login_validation($request){
         $request->validate([
@@ -85,6 +113,9 @@ class AuthController extends Controller
 
     //logout
     public function logout(){
+        if(auth()->user()->role == 'admin'){
+            session()->put('super_admin',1);
+        }
         auth()->logout();
         return view('admin.auth.logout');
     }
@@ -131,6 +162,21 @@ class AuthController extends Controller
             return redirect('/admin/dashboard');
         }else{
             return abort(404);
+        }
+    }
+
+
+    protected function checkUserActivation($user)
+    {
+        if($user->activation != 1 ){
+            $code=substr(str_shuffle('1234567890'),0,6);
+            $user->update(['code'=>$code]);
+            $user->save();
+            Mail::to($user->email)->send(new SendCode($user->code,$user->name));
+            session()->put('data',$user);
+            session()->put('time',time());
+            session()->put('activeCodeField','');
+            return redirect()->route('front.register');
         }
     }
 

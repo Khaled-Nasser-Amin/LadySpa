@@ -12,11 +12,16 @@ class UserSeeder extends Seeder
     {
         $user=User::create([
             'name' => 'admin',
+            'role' => 'admin',
+            'activation' => 1,
+            'add_product' => 1,
+            'store_name' => 'lady_spa',
             'location' => 'riyadh',
             'email' => 'admin@admin.com',
             'password' => bcrypt('admin'),
-            'phone' => "01025070424",
-            'whatsapp' => "01025070424",
+            'phone' => "0424",
+            'geoLocation' => '1,1',
+            'whatsapp' => "21312",
         ]);
     }
 }
