@@ -3,7 +3,6 @@
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\front\LandingPage;
-use App\Http\Controllers\admin\productManagement\categories\CategoryController;
 use App\Http\Controllers\admin\productManagement\orders\OrderController;
 use App\Http\Controllers\admin\productManagement\products\ProductController;
 use App\Http\Controllers\admin\productManagement\sessions\SessionController;
@@ -12,11 +11,10 @@ use App\Http\Controllers\admin\Profile\UserProfileController;
 use App\Http\Controllers\MyFatoorahController;
 use App\Http\Livewire\Admin\ProductsManagement\Activities\Activities;
 use App\Http\Livewire\Admin\ProductsManagement\Banners\Banners;
+use App\Http\Livewire\Admin\ProductsManagement\Codes\Codes;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use App\Http\Livewire\Admin\ProductsManagement\Categories\Categories;
 use App\Http\Livewire\Admin\ProductsManagement\Customers\Customers;
-use App\Http\Livewire\Admin\ProductsManagement\Delivery\DeliverySerivceProvider;
 use App\Http\Livewire\Admin\ProductsManagement\Orders\Orders;
 use App\Http\Livewire\Admin\ProductsManagement\Settings\Settings;
 use App\Http\Livewire\Admin\ProductsManagement\Products\Products;
@@ -92,6 +90,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/user/profile', [UserProfileController::class, 'show'])->name('profile.show');
         Route::get('/shipping', ShippingCosts::class)->name('admin.shipping');
         Route::get('/taxes', Taxes::class)->name('admin.taxes');
+        Route::get('/codes', Codes::class)->name('admin.codes');
         Route::get('/activities', Activities::class)->name('admin.activities');
         Route::get('/refunds', Refunds::class)->name('admin.refunds');
         Route::get('/customers', Customers::class)->name('admin.customers');
