@@ -4,9 +4,6 @@ namespace App\Http\Livewire\Admin\ProductsManagement\Sessions;
 
 use App\Http\Controllers\admin\productManagement\sessions\SessionController;
 use App\Models\Addition;
-use App\Models\Images;
-use App\Models\Product;
-use App\Models\Size;
 use App\Models\Tax;
 use App\Traits\ImageTrait;
 use Illuminate\Validation\Rule;
@@ -29,7 +26,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
         $banner,
         $groupImage,
         $slug,$type,
-        $price,$sale,
+        $price,$sale,$external_price,$external_sale,
         $search;
 
     public $action; // action for change form action between add new product and update product

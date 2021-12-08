@@ -25,6 +25,8 @@ class CreateXsessionsTable extends Migration
             $table->string('banner');
             $table->float('price',11,2);
             $table->float('sale',11,2)->nullable();
+            $table->float('external_price',11,2)->nullable();
+            $table->float('external_sale',11,2)->nullable();
             $table->string('reviews')->default(0);
             $table->tinyInteger('isActive')->default(1);
             $table->unsignedBigInteger('user_id')->nullable();

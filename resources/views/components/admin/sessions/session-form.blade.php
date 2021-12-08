@@ -24,16 +24,17 @@
                         <textarea wire:model="description_en" class="form-control" name="description_en" id="Description_en" rows="5"></textarea>
                         <x-general.input-error for="description_en" />
                     </div>
-                    <div class="form-group">
-                        <label for="price">{{__('text.Price')}}</label><br>
-                        <input type="number" wire:model='price' class="form-control" id="price" autocomplete="none"><br>
-                        <x-general.input-error for="price" />
+                    <div class="form-group mx-2">
+                        <label class="mr-2"> {{__('text.Price and Sale')}}</label>
+                        <button type="button" class="btn btn-primary d-block" data-toggle="modal" data-target="#priceAndSale">@lang('text.Add Session Price')</button>
                     </div>
-                    <div class="form-group">
-                        <label for="sale">{{__('text.Sale')}}</label><br>
-                        <input type="number" wire:model='sale' class="form-control" id="sale" autocomplete="none"><br>
-                        <x-general.input-error for="sale" />
-                    </div>
+                    <x-general.input-error for="price" />
+                    <x-general.input-error for="sale" />
+                    <x-general.input-error for="external_price" />
+                    <x-general.input-error for="external_sale" />
+                    <x-admin.sessions.modal-add-or-update-price :price="$price" :sale="$sale" :external_price="$external_price" :external_sale="$external_sale"/>
+
+
                 </div>
             </div>
 
@@ -100,3 +101,7 @@
     @endpush
 
 </div>
+
+
+
+
