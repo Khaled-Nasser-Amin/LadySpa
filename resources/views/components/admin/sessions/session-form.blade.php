@@ -29,10 +29,11 @@
                         <button type="button" class="btn btn-primary d-block" data-toggle="modal" data-target="#priceAndSale">@lang('text.Add Session Price')</button>
                     </div>
                     <x-general.input-error for="price" />
+                    <br>
                     <x-general.input-error for="sale" />
-                    <x-general.input-error for="external_price" />
-                    <x-general.input-error for="external_sale" />
-                    <x-admin.sessions.modal-add-or-update-price :price="$price" :sale="$sale" :external_price="$external_price" :external_sale="$external_sale"/>
+                    <x-general.input-error for="external_price" /> <br>
+                    <x-general.input-error for="external_sale" /> <br>
+                    <x-admin.sessions.modal-add-or-update-price :price="$price" :sale="$sale" :externalService="$external_service" :external_price="$external_price" :external_sale="$external_sale"/>
 
 
                 </div>

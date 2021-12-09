@@ -151,7 +151,9 @@ class Sessions extends Component
         ->when($this->price,function ($q) {
             $q->where(function($q){
                 return $q->where('xsessions.price','=',$this->price)
-                ->orWhere('xsessions.sale','=',$this->price);
+                ->orWhere('xsessions.sale','=',$this->price)
+                ->orWhere('xsessions.external_price','=',$this->price)
+                ->orWhere('xsessions.external_sale','=',$this->price);
             });
 
         })

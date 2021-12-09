@@ -86,9 +86,16 @@
 
                         <li><br>
                             @if (!$session->sale)
-                            <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted">{{$session->price}} @lang('text.SAR')</span>
+                            <span class="text-pink"> {{__('text.Internal price')}} </span>| <span class="text-muted">{{$session->price}} @lang('text.SAR')</span>
                             @else
-                                <span class="text-pink"> {{__('text.Price')}} </span>| <span class="text-muted"><del>{{$session->price}}</del> {{$session->sale}} @lang('text.SAR')</span>
+                                <span class="text-pink"> {{__('text.Internal price')}} </span>| <span class="text-muted"><del>{{$session->price}}</del> {{$session->sale}} @lang('text.SAR')</span>
+                            @endif
+                        </li>
+                        <li>
+                            @if ($session->external_price > 0 && !$session->external_sale)
+                            <span class="text-pink"> {{__('text.External price')}} </span>| <span class="text-muted">{{$session->external_price}} @lang('text.SAR')</span>
+                            @elseif($session->external_price > 0 && $session->external_sale > 0)
+                                <span class="text-pink"> {{__('text.External price')}} </span>| <span class="text-muted"><del>{{$session->external_price}}</del> {{$session->external_sale}} @lang('text.SAR')</span>
                             @endif
                         </li>
 
