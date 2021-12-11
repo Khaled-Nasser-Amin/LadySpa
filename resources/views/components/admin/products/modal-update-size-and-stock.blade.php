@@ -25,7 +25,7 @@
                     <x-general.input-error for="update_price" />
                 </div>
                 <div class="col-md-6 col-sm-12">
-                    <label for="sale">{{__('text.Sale')}}</label><br>
+                    <label for="sale">{{__('text.Price after sale')}}</label><br>
                     <input type="sale" class="form-control"  wire:model='update_sale' id="sale" ><br>
                     <x-general.input-error for="update_sale" />
                 </div>

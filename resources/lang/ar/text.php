@@ -525,7 +525,7 @@ return [
     'Not Returned Yet'=>'لم يتم ارجاعها بعد',
     'Item Status'=>'حالة المنتج',
 
-    'Sale Price'=>'السعر بعد التخفيض',
+    'Price after sale'=>'السعر بعد التخفيض',
     'Completed Orders' => 'الطلبات المكتملة',
 
 

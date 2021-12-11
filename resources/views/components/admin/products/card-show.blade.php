@@ -10,7 +10,7 @@
                             @if ($product->type == 'group')
                                 <span class="badge badge-info" style="position: absolute;right:0">{{__('text.Group')}}</span>
                                 @if ($product->group_sale > 0)
-                                    <span class="badge badge-danger" style="position: absolute;">{{__('text.Sale')}}</span>
+                                    <span class="badge badge-danger" style="position: absolute;">{{__('text.Price after sale')}}</span>
 
                                 @endif
                             @endif
@@ -20,7 +20,7 @@
                                 @if ($product->type == 'group')
                                 <span class="badge badge-info" style="position: absolute;right:0">{{__('text.Group')}}</span>
                                 @if ($product->group_sale > 0)
-                                    <span class="badge badge-danger" style="position: absolute;">{{__('text.Sale')}}</span>
+                                    <span class="badge badge-danger" style="position: absolute;">{{__('text.Price after sale')}}</span>
 
                                 @endif
                             @endif

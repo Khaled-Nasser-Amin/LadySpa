@@ -25,7 +25,7 @@
                     <x-general.input-error for="price" />
                 </div>
                 <div class="col-md-6 col-sm-12">
-                    <label for="sale">{{__('text.Sale')}}</label><br>
+                    <label for="sale">{{__('text.Price after sale')}}</label><br>
                     <input type="number" wire:model='sale' class="form-control" id="sale" autocomplete="none"><br>
                     <x-general.input-error for="sale" />
                 </div>

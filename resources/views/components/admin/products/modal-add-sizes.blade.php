@@ -39,7 +39,7 @@
                                     <th>@lang('text.Size')</th>
                                     <th>@lang('text.Stock')</th>
                                     <th>@lang('text.Price')</th>
-                                    <th>@lang('text.Sale')</th>
+                                    <th>@lang('text.Price after sale')</th>
                                     <th>@lang('text.Action')</th>
                                 </tr>
                                 @foreach ($sizes as $index => $value)
@@ -71,7 +71,7 @@
                                     <th>@lang('text.Size')</th>
                                     <th>@lang('text.Stock')</th>
                                     <th>@lang('text.Price')</th>
-                                    <th>@lang('text.Sale')</th>
+                                    <th>@lang('text.Price after sale')</th>
                                     <th>@lang('text.Action')</th>
                                 </tr>
                                 @foreach ($deletedSizes as $index => $value)

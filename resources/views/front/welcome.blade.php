@@ -7,7 +7,8 @@
 
         <title>@lang('text.Lady Store') | @lang('text.Home')</title>
         <!-- tailwindcss -->
-        <link rel="stylesheet" href="https://unpkg.com/tailwindcss/dist/tailwind.min.css" />
+        <link rel="stylesheet" href="{{ asset('css/tailwind.min.css') }}" />
+
         <!--Replace with your tailwind.css once created-->
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" />
 

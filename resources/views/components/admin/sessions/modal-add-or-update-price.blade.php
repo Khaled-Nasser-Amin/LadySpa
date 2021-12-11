@@ -24,7 +24,7 @@
 
                         </div>
                         <div class="form-group">
-                            <label for="sale">{{ __('text.Sale') }}</label><br>
+                            <label for="sale">{{ __('text.Price after sale') }}</label><br>
                             <input type="number" wire:model='sale' class="form-control" id="sale"
                                 autocomplete="none"><br>
                             <x-general.input-error for="sale" />
@@ -62,7 +62,7 @@
 
                             </div>
                             <div class="form-group">
-                                <label for="external_sale">{{ __('text.Sale') }}</label><br>
+                                <label for="external_sale">{{ __('text.Price after sale') }}</label><br>
                                 <input type="number" wire:model='external_sale' class="form-control"
                                     id="external_sale" autocomplete="none"><br>
                                 <x-general.input-error for="external_sale" />

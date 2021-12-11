@@ -524,7 +524,7 @@ return [
     'Item Status'=>'Item Status',
 
 
-    'Sale Price'=>'Sale Price',
+    'Price after sale'=>'Price after sale',
     'Completed Orders' => 'Completed Orders',
 
 
