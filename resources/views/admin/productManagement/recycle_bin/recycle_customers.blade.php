@@ -17,6 +17,7 @@
                     <th>{{__('text.Email')}}</th>
                     <th>{{__('text.Phone Number')}}</th>
                     <th>{{__('text.Number of Orders')}}</th>
+                    <th>{{__('text.Number of Sessions')}}</th>
                     <th>{{__('text.Status')}}</th>
                     <th>{{__('text.Action')}}</th>
                 </tr>
@@ -27,6 +28,7 @@
                         <td>{{$user->email}}</td>
                         <td>{{$user->phone}}</td>
                         <td> {{$user->orders->count()}}</td>
+                        <td> session_count</td>
                         <td>{{ $user->activation == 0 ? __('text.Non Active'): __('text.Active') }}</td>
                         <td>
                             <button  wire:click.prevent="confirmRestore({{$user->id}})" class="btn btn-primary mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Restore')}}</button>

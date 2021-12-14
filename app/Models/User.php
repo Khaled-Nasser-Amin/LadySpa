@@ -70,4 +70,10 @@ class User extends Authenticatable
         return $this->hasMany(Activity::class,'belongs_to_id');
     }
 
+
+    public function codes()
+    {
+        return $this->hasMany(Promocode::class);
+    }
+
 }

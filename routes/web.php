@@ -11,7 +11,7 @@ use App\Http\Controllers\admin\Profile\UserProfileController;
 use App\Http\Controllers\MyFatoorahController;
 use App\Http\Livewire\Admin\ProductsManagement\Activities\Activities;
 use App\Http\Livewire\Admin\ProductsManagement\Banners\Banners;
-use App\Http\Livewire\Admin\ProductsManagement\Codes\Codes;
+use App\Http\Livewire\Admin\ProductsManagement\PromoCodes\PromoCodes;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Livewire\Admin\ProductsManagement\Customers\Customers;
@@ -90,7 +90,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/user/profile', [UserProfileController::class, 'show'])->name('profile.show');
         Route::get('/shipping', ShippingCosts::class)->name('admin.shipping');
         Route::get('/taxes', Taxes::class)->name('admin.taxes');
-        Route::get('/codes', Codes::class)->name('admin.codes');
+        Route::get('/promocodes', PromoCodes::class)->name('admin.promocodes');
         Route::get('/activities', Activities::class)->name('admin.activities');
         Route::get('/refunds', Refunds::class)->name('admin.refunds');
         Route::get('/customers', Customers::class)->name('admin.customers');

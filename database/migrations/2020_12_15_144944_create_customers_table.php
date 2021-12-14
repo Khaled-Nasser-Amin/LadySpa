@@ -22,6 +22,8 @@ class CreateCustomersTable extends Migration
             $table->tinyInteger('activation')->default(0);
             $table->string('password');
             $table->string('image')->nullable();
+            $table->unsignedBigInteger('special_code_id')->nullable();
+            $table->foreign('special_code_id')->references('id')->on('promocodes');
             $table->timestamps();
             $table->softDeletes();
 

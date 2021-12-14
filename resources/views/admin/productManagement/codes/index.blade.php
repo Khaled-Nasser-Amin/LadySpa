@@ -28,7 +28,7 @@
             <br>
             <div class="row">
                 <div class="col-sm-12">
-                    <x-admin.codes.modal-add :codes="$codes" :code="$code" />
+                    <x-admin.codes.modal-add :codes="$codes" :code="$code" :typeOfDiscount="$type_of_discount" />
                     <!-- Responsive modal -->
                     <button class="btn btn-primary waves-effect waves-light" data-toggle="modal" data-target="#AddNewCode">
                         {{__('text.Generate new code')}}
@@ -38,6 +38,8 @@
             <br>
             <div class="row">
                 <div class="col-sm-12">
+
+                    <x-admin.codes.search-boxes />
                     <x-admin.codes.table-show :codes="$codes" />
                     {{$codes->links()}}
                 </div>

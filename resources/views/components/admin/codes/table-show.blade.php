@@ -1,13 +1,19 @@
 
 <div class="card-box" style="overflow-y: scroll">
-    <input type="text" class="form-control col-md-4 col-sm-8 mb-4" placeholder="{{__('text.Search')}}..." wire:model="search">
-    <table  class="table table-striped table-secondary text-center" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+        <table  class="table table-striped table-secondary text-center" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
         <thead>
         <tr>
 
-            <th>{{__('text.Name_ar')}}</th>
-            <th>{{__('text.Name_en')}}</th>
-            <th>{{__('text.Tax')}}</th>
+            <th>{{__('text.Code')}}</th>
+            <th>{{__('text.Start date')}}</th>
+            <th>{{__('text.End date')}}</th>
+            <th>{{__('text.Limitation')}}</th>
+            <th>{{__('text.Number of used times')}}</th>
+            <th>{{__('text.For')}}</th>
+            <th>{{__('text.Type of code')}}</th>
+            <th>{{__('text.Type of discount')}}</th>
+            <th>{{__('text.Value')}}</th>
+            <th>{{__('text.The maximum discount')}} / {{__('text.The minimum purchase')}}</th>
             <th>{{__('text.Action')}}</th>
         </tr>
         </thead>
@@ -16,9 +22,16 @@
         @forelse($codes as $code)
             <tr>
 
-                <td><span >{{$code->name_ar}}</span></td>
-                <td><span >{{$code->name_en}}</span></td>
-                <td><span >{{$code->tax}}%</span></td>
+                <td>{{$code->code}}</td>
+                <td>{{$code->start_date}}</td>
+                <td>{{$code->end_date}}</td>
+                <td>{{$code->limitation}}</td>
+                <td>{{$code->used_customers->count()}}</td>
+                <td>{{$code->for}}</td>
+                <td>{{$code->type_of_code}}</td>
+                <td>{{$code->type_of_discount}}</td>
+                <td>{{$code->value}} {{ $code->type_of_discount =='percentage' ? '%' : __('text.RAS') }}</td>
+                <td>{{$code->condition}} @lang('text.RAS')</td>
 
                 <td>
                     <button type="button" wire:click="confirmDelete({{$code->id}})" class="btn btn-danger waves-effect waves-light btn-sm">
@@ -29,7 +42,7 @@
             </tr>
 
         @empty
-            <tr><td colspan="4" class="text-center">{{__('text.No Data Yet')}}</td></tr>
+            <tr><td colspan="11" class="text-center">{{__('text.No Data Yet')}}</td></tr>
         @endforelse
 
         </tbody>

@@ -13,7 +13,7 @@
                     <li><a href="{{route('admin.sessions')}}" class="text-dark"> <i class="fas fa-hot-tub"></i>{{__('text.Sessions')}}</a></li>
                     <li><a href="#" class="text-dark"> <i class="far fa-edit"></i>{{__('text.Reservations')}}</a></li>
                     <li><a href="{{route('admin.customers')}}" class="text-dark"><i class="mdi mdi-account-multiple"></i>{{__('text.Users')}}</a></li>
-                    <li><a href="{{route('admin.codes')}}" class="text-dark"><i class="mdi mdi-sale"></i>{{__('text.Codes')}}</a></li>
+                    <li><a href="{{route('admin.promocodes')}}" class="text-dark"><i class="mdi mdi-sale"></i>{{__('text.Promotion Codes')}}</a></li>
                     <li><a href="{{route('admin.banners')}}" class="text-dark"><i class="mdi mdi-image-multiple"></i>{{__('text.Banners')}}</a></li>
                     <li><a href="{{route('admin.shipping')}}" class="text-dark"><i class="mdi mdi-cash-marker"></i>{{__('text.Shipping Costs')}}</a></li>
                     <li><a href="{{route('admin.taxes')}}" class="text-dark"><i class="mdi mdi-currency-usd-off"></i>{{__('text.Taxes')}}</a></li>

@@ -41,6 +41,8 @@
                                 <th>{{__('text.Email')}}</th>
                                 <th>{{__('text.Phone Number')}}</th>
                                 <th>{{__('text.Number of Orders')}}</th>
+                                <th>{{__('text.Number of Sessions')}}</th>
+                                <th>{{__('text.Special Code')}}</th>
                                 <th>{{__('text.Status')}}</th>
                                 <th>{{__('text.Action')}}</th>
                             </tr>
@@ -51,11 +53,40 @@
                                     <td>{{$user->email}}</td>
                                     <td>{{$user->phone}}</td>
                                     <td> {{$user->orders->count()}}</td>
+                                    <td> session_count</td>
+                                    <td>
+                                        @if($user->activation == 0 )
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" wire:key="{{ $loop->index }}">
+                                                @if ($user->)
+
+                                                @else
+                                                    @lang('text.Select special code')
+                                                @endif
+                                            </button>
+
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $index }}" style="height: 200px;overflow-y:auto;" wire:key="{{ $loop->index }}">
+                                                @if ($products->count() > 0)
+                                                    @foreach ($products as $product )
+                                                    <a class="dropdown-item select_product" href="#"  data-index="{{ $index }}" data-product-id="{{ $product->id }}" >
+                                                        <img src="{{ $product->image }}" class="rounded-circle" style="width: 50px;height: 50px" alt="product-image">
+                                                        <span>{{app()->getLocale() == 'ar' ? $product->name_ar : $product->name_en}}</span>
+                                                    </a>
+                                                    @endforeach
+                                                @else
+                                                <span class="text-muted">@lang('text.No Data Yet')</span>
+                                                @endif
+
+                                            </div>
+
+                                        </div>
+                                        @endif
+                                    </td>
                                     <td>{{ $user->activation == 0 ? __('text.Non Active'): __('text.Active') }}</td>
                                     <td><button class="btn btn-danger" wire:click.prevent="confirmDelete({{$user->id}})">{{__('text.Delete')}}</button></td>
                                 </tr>
                             @empty
-                                <tr><td colspan="7" class="text-center">{{__('text.No Data Yet')}}</td></tr>
+                                <tr><td colspan="9" class="text-center">{{__('text.No Data Yet')}}</td></tr>
                             @endforelse
 
                         </table>

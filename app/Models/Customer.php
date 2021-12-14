@@ -44,4 +44,8 @@ class Customer extends Authenticatable
     public function getImageAttribute($value){
         return $value ? asset('images/users/'.$value):'https://ui-avatars.com/api/?name='.urlencode($this->name).'&color=7F9CF5&background=EBF4FF';
     }
+
+    public function used_promocodes(){
+        return $this->belongsToMany(Promocode::class,'used_codes','code_id','customer_id');
+    }
 }

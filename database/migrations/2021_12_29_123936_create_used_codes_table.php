@@ -18,7 +18,7 @@ class CreateUsedCodesTable extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->unsignedBigInteger('code_id')->nullable();
-            $table->foreign('code_id')->references('id')->on('codes')->onDelete('cascade');
+            $table->foreign('code_id')->references('id')->on('promocodes')->onDelete('cascade');
         });
     }
 
