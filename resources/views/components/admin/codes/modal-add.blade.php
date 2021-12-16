@@ -23,12 +23,12 @@
                         </div>
                         <div class="col-md-12 d-flex flex-row justify-content-between px-0 mx-0">
                             <div class="form-group col-md-6">
-                                <label for="start_date" class="control-label">{{__('text.Start Date')}}</label>
+                                <label for="start_date" class="control-label">{{__('text.Start date')}}</label>
                                 <input type="datetime-local" wire:model="start_date" class="form-control" id="start_date" >
                                 <x-general.input-error for="start_date" />
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="end_date" class="control-label">{{__('text.End Date')}}</label>
+                                <label for="end_date" class="control-label">{{__('text.End date')}}</label>
                                 <input type="datetime-local" wire:model="end_date" class="form-control" id="end_date" >
                                 <x-general.input-error for="end_date" />
                             </div>
@@ -80,7 +80,7 @@
                                     <input type="number" wire:model="value" class="form-control" id="value" placeholder="10%">
                                 @else
                                     <label for="value" class="control-label">{{__('text.Amount')}}</label>
-                                    <input type="number" wire:model="value" class="form-control" id="value" placeholder="20 @lang("text.RAS")">
+                                    <input type="number" wire:model="value" class="form-control" id="value" placeholder="20 @lang("text.SAR")">
                                 @endif
 
                                 <x-general.input-error for="value" />
@@ -88,10 +88,10 @@
                             <div class="form-group col-md-6">
                                 @if ($typeOfDiscount == 'percentage')
                                     <label for="condition" class="control-label">{{__('text.The maximum discount')}}</label>
-                                    <input type="number" wire:model="condition" class="form-control" id="condition" placeholder="80 @lang("text.RAS")">
+                                    <input type="number" wire:model="condition" class="form-control" id="condition" placeholder="80 @lang("text.SAR")">
                                 @else
                                     <label for="condition" class="control-label">{{__('text.The minimum purchase')}}</label>
-                                    <input type="number" wire:model="condition" class="form-control" id="condition" placeholder="200 @lang("text.RAS")">
+                                    <input type="number" wire:model="condition" class="form-control" id="condition" placeholder="200 @lang("text.SAR")">
                                 @endif
                                <x-general.input-error for="condition" />
                             </div>

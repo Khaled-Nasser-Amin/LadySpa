@@ -46,7 +46,7 @@
                                 <th>{{__('text.Status')}}</th>
                                 <th>{{__('text.Action')}}</th>
                             </tr>
-                            @forelse ($users as $user)
+                            @forelse ($users as $index => $user)
                                 <tr>
                                     <td><a href="{{$user->image}}" target="_blank"><img src="{{$user->image}}" class="rounded-circle" style="width: 50px;height: 50px" alt="user-image"></a></td>
                                     <td>{{$user->name}}</td>
@@ -55,24 +55,33 @@
                                     <td> {{$user->orders->count()}}</td>
                                     <td> session_count</td>
                                     <td>
-                                        @if($user->activation == 0 )
+                                        @if($user->activation == 1 )
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ $index }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" wire:key="{{ $loop->index }}">
-                                                @if ($user->)
-
+                                                @php
+                                                    $code=$user->specialCode;
+                                                @endphp
+                                                @if ($code && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count())
+                                                    {{ $code->code }}
                                                 @else
                                                     @lang('text.Select special code')
                                                 @endif
                                             </button>
 
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $index }}" style="height: 200px;overflow-y:auto;" wire:key="{{ $loop->index }}">
-                                                @if ($products->count() > 0)
-                                                    @foreach ($products as $product )
-                                                    <a class="dropdown-item select_product" href="#"  data-index="{{ $index }}" data-product-id="{{ $product->id }}" >
-                                                        <img src="{{ $product->image }}" class="rounded-circle" style="width: 50px;height: 50px" alt="product-image">
-                                                        <span>{{app()->getLocale() == 'ar' ? $product->name_ar : $product->name_en}}</span>
+                                                @if ($specialCodes->count() > 0)
+                                                    @foreach ($specialCodes as $code )
+
+                                                    {{-- ddddd --}}
+                                                    <a class="dropdown-item" href="#"  wire:click.prevent="assignSpecialCodeToCustomer({{ $user->id }},{{ $code->id }})">
+                                                        <span>{{ $code->code }} ({{$code->limitation-$code->spcialCustomers->count() }})</span>
                                                     </a>
                                                     @endforeach
+                                                    @if ($code && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count())
+                                                        <a class="dropdown-item bg-soft-dark" href="#" wire:click.prevent="cancelSpecialCode({{ $user->id }})">
+                                                            <span>@lang('text.Cancel special code')</span>
+                                                        </a>
+                                                    @endif
                                                 @else
                                                 <span class="text-muted">@lang('text.No Data Yet')</span>
                                                 @endif

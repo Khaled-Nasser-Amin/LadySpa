@@ -48,4 +48,9 @@ class Customer extends Authenticatable
     public function used_promocodes(){
         return $this->belongsToMany(Promocode::class,'used_codes','code_id','customer_id');
     }
+
+    public function specialCode()
+    {
+        return $this->belongsTo(Promocode::class,'special_code_id')->where('type_of_code','special');
+    }
 }

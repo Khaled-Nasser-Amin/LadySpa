@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Category;
+// use App\Models\Category;
 use Aloha\Twilio\Twilio;
 use App\Models\Activity;
 use App\Models\Refund;
@@ -20,61 +20,61 @@ function send_sms($to,$message){
 
 }
 
-function recursion($id ,$sub_mark='',$bg_color,$counter_color=0){
-    $array_bg_color=['bg-danger','bg-dark','bg-success','bg-warning','bg-info'];
-    $category=Category::withTrashed()->find($id);
-    if(!$category->trashed()){
-        $name=app()->getLocale() == 'ar' ? $category->name_ar : $category->name_en;
-        echo "<option class='text-white py-5 ".$bg_color."' value='".$category->id."'>".$sub_mark.$name ."</option>";
-        $bg_color=$array_bg_color[$counter_color];
-        $sub_mark='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_mark;
-    }
+// function recursion($id ,$sub_mark='',$bg_color,$counter_color=0){
+//     $array_bg_color=['bg-danger','bg-dark','bg-success','bg-warning','bg-info'];
+//     $category=Category::withTrashed()->find($id);
+//     if(!$category->trashed()){
+//         $name=app()->getLocale() == 'ar' ? $category->name_ar : $category->name_en;
+//         echo "<option class='text-white py-5 ".$bg_color."' value='".$category->id."'>".$sub_mark.$name ."</option>";
+//         $bg_color=$array_bg_color[$counter_color];
+//         $sub_mark='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_mark;
+//     }
 
-    foreach($category->child_categories()->withTrashed()->get() as $cat){
-        if($counter_color == 4){
-            $counter_color=0;
-        }
+//     foreach($category->child_categories()->withTrashed()->get() as $cat){
+//         if($counter_color == 4){
+//             $counter_color=0;
+//         }
 
-        if ($cat->child_categories->count() > 0) {
-            recursion($cat->id,$sub_mark,$bg_color,($counter_color+1));
-        }else{
-             $name=app()->getLocale() == 'ar' ? $cat->name_ar : $cat->name_en;
-            echo "<option class='text-white py-5 ".$bg_color."' value='".$cat->id."'>".$sub_mark.$name ."</option>";
-        }
+//         if ($cat->child_categories->count() > 0) {
+//             recursion($cat->id,$sub_mark,$bg_color,($counter_color+1));
+//         }else{
+//              $name=app()->getLocale() == 'ar' ? $cat->name_ar : $cat->name_en;
+//             echo "<option class='text-white py-5 ".$bg_color."' value='".$cat->id."'>".$sub_mark.$name ."</option>";
+//         }
 
-    }
+//     }
 
-}
+// }
 
 
-function update_category_recursion($id ,$sub_mark='',$bg_color,$counter_color=0,$categories){
-    if(in_array($id,$categories)){
-        $array_bg_color=['bg-danger','bg-dark','bg-success','bg-warning','bg-info'];
-        $category=Category::withTrashed()->find($id);
+// function update_category_recursion($id ,$sub_mark='',$bg_color,$counter_color=0,$categories){
+//     if(in_array($id,$categories)){
+//         $array_bg_color=['bg-danger','bg-dark','bg-success','bg-warning','bg-info'];
+//         $category=Category::withTrashed()->find($id);
 
-        if(!$category->trashed()){
-            $name=app()->getLocale() == 'ar' ? $category->name_ar : $category->name_en;
-            echo "<option class='text-white py-5 ".$bg_color."' value='".$category->id."'>".$sub_mark.$name ."</option>";
-            $bg_color=$array_bg_color[$counter_color];
-            $sub_mark='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_mark;
-        }
+//         if(!$category->trashed()){
+//             $name=app()->getLocale() == 'ar' ? $category->name_ar : $category->name_en;
+//             echo "<option class='text-white py-5 ".$bg_color."' value='".$category->id."'>".$sub_mark.$name ."</option>";
+//             $bg_color=$array_bg_color[$counter_color];
+//             $sub_mark='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$sub_mark;
+//         }
 
-        foreach($category->child_categories()->withTrashed()->get() as $cat){
+//         foreach($category->child_categories()->withTrashed()->get() as $cat){
 
-            if($counter_color == 4){
-                $counter_color=0;
-            }
-            if(in_array($cat->id,$categories)){
-                if ($cat->child_categories->count() > 0) {
-                    update_category_recursion($cat->id,$sub_mark,$bg_color,($counter_color+1),$categories);
-                }else{
-                     $name=app()->getLocale() == 'ar' ? $cat->name_ar : $cat->name_en;
-                    echo "<option class='text-white py-5 ".$bg_color."' value='".$cat->id."'>".$sub_mark.$name ."</option>";
-                }
-            }
-        }
-    }
-}
+//             if($counter_color == 4){
+//                 $counter_color=0;
+//             }
+//             if(in_array($cat->id,$categories)){
+//                 if ($cat->child_categories->count() > 0) {
+//                     update_category_recursion($cat->id,$sub_mark,$bg_color,($counter_color+1),$categories);
+//                 }else{
+//                      $name=app()->getLocale() == 'ar' ? $cat->name_ar : $cat->name_en;
+//                     echo "<option class='text-white py-5 ".$bg_color."' value='".$cat->id."'>".$sub_mark.$name ."</option>";
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 function create_activity($activity_action,$vendor_id,$belongs_to_id){

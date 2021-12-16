@@ -33,7 +33,7 @@ class Banners extends Component
         return $this->validate([
             'name' => 'required|string|max:255|unique:banners',
             'image' => 'required|mimes:jpg,png,jpeg,gif',
-            'expire_at' => 'nullable|date|after_or_equal:today',
+            'expire_at' => 'nullable|date|after_or_equal:now',
         ]);
     }
     public function edit($id){

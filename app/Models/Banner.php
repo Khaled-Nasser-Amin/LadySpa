@@ -9,7 +9,7 @@ class Banner extends Model
 {
     use HasFactory;
 
-    protected $fillable=['image','name','show_in'];
+    protected $fillable=['image','name','expire_at'];
     public function getImageAttribute($value){
         return asset('images/banners/'.$value);
     }

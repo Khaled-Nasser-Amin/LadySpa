@@ -3,7 +3,9 @@
 namespace App\Http\Livewire\Admin\ProductsManagement\Customers;
 
 use App\Models\Customer;
+use App\Models\Promocode;
 use App\Traits\ImageTrait;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -25,7 +27,33 @@ class Customers extends Component
     }
     public function render()
     {
-        $users=Customer::when($this->status  == 2 || $this->status  == 1,function($q){
+        $users=$this->search();
+
+        $specialCodes=Promocode::where('type_of_code','special')->get()->filter(function($code) {
+            if (Carbon::now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count()) {
+              return $code;
+            }
+          });
+        return view('admin.productManagement.customers.index',compact('users','specialCodes'))->extends('admin.layouts.appLogged')->section('content');
+    }
+
+    public function assignSpecialCodeToCustomer(Customer $customer,Promocode $code)
+    {
+        if($code->type_of_code == 'special'  && Carbon::now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count()){
+            $code->spcialCustomers()->save($customer);
+        }
+    }
+
+    public function cancelSpecialCode(Customer $customer)
+    {
+        if($customer->specialCode){
+            $customer->specialCode()->dissociate()->save();
+        }
+    }
+
+    protected function search()
+    {
+       return Customer::when($this->status  == 2 || $this->status  == 1,function($q){
             $this->status  == 2 ? $q->where('activation',0):$q->where('activation',1);
         })
         ->where(function($q){
@@ -37,6 +65,5 @@ class Customers extends Component
         })
 
         ->latest()->paginate(10);
-        return view('admin.productManagement.customers.index',compact('users'))->extends('admin.layouts.appLogged')->section('content');
     }
 }

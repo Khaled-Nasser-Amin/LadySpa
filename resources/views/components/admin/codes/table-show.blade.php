@@ -30,8 +30,8 @@
                 <td>{{$code->for}}</td>
                 <td>{{$code->type_of_code}}</td>
                 <td>{{$code->type_of_discount}}</td>
-                <td>{{$code->value}} {{ $code->type_of_discount =='percentage' ? '%' : __('text.RAS') }}</td>
-                <td>{{$code->condition}} @lang('text.RAS')</td>
+                <td>{{$code->value}} {{ $code->type_of_discount =='percentage' ? '%' : __('text.SAR') }}</td>
+                <td>{{$code->condition}} @lang('text.SAR')</td>
 
                 <td>
                     <button type="button" wire:click="confirmDelete({{$code->id}})" class="btn btn-danger waves-effect waves-light btn-sm">

@@ -19,7 +19,7 @@
             <!-- start page title -->
             <x-admin.general.page-title>
                 <li class="breadcrumb-item"><a href="/admin/sessions">{{__('text.Sessions')}}</a></li>
-                <li class="breadcrumb-item active"> {{__('text.Edit Session')}}</li>
+                <li class="breadcrumb-item active"> {{__('text.Update Session')}}</li>
                 <x-slot name="title">
                     <h4 class="page-title">{{__('text.Edit')}} </h4>
                 </x-slot>

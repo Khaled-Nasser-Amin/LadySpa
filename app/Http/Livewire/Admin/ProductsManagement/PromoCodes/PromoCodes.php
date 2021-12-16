@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Admin\ProductsManagement\PromoCodes;
 
+use App\Models\Customer;
 use App\Models\Promocode;
 use App\Traits\ImageTrait;
 use Illuminate\Validation\Rule;
@@ -29,6 +30,11 @@ class PromoCodes extends Component
         $this->emit('confirmDelete', $id);
     }
     public function delete(Promocode $code){
+
+        Customer::where('special_code_id',$code->id)->each(function($customer){
+            $customer->specialCode()->dissociate()->save();
+
+        });
         $code->delete();
         session()->flash('success',__('text.Deleted Successfully'));
         create_activity('Promotion Code Deleted',auth()->user()->id,auth()->user()->id);

@@ -17,4 +17,10 @@ class Promocode extends Model
     public function used_customers(){
         return $this->belongsToMany(Promocode::class,'used_codes','customer_id','code_id');
     }
+
+    public function spcialCustomers()
+    {
+        return $this->hasMany(Customer::class,'special_code_id');
+    }
+
 }
