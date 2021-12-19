@@ -21,6 +21,7 @@ class CreateXsessionsTable extends Migration
             $table->string('description_ar')->nullable();
             $table->string('description_en')->nullable();
             $table->integer('featured')->default(0);
+            $table->time('time');
             $table->string('image');
             $table->string('banner');
             $table->float('price',11,2);

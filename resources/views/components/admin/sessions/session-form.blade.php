@@ -1,4 +1,25 @@
 <div>
+    @push('css')
+    <style>
+        .without::-webkit-datetime-edit-ampm-field {
+            display: none;
+        }
+        input[type=time]::-webkit-clear-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+        }
+    </style>
+    @endpush
     <form wire:submit.prevent="{{$action}}">
         <div class="row">
             <div class="col-lg-6">
@@ -68,11 +89,52 @@
                         @endforelse
                     </select>
                 </div>
-
                 <div class="mb-2">
                     <x-general.input-error for="taxes_selected" />
 
                 </div>
+
+                <div class="mb-4" >
+                    <label>{{__('text.Time')}}</label>
+                    <div class="d-flex flex-row">
+                        <div class="col-md-4" >
+                            <label for="hours">@lang('text.Hours')</label>
+                            <select class="form-control" wire:model="hour" >
+                                <option></option>
+
+                                @for ( $i = 0 ; $i < 25 ; $i++  )
+                                    @if ($i<10)
+                                        <option value="0{{ $i }}"> 0{{ $i }}</option>
+                                    @else
+                                        <option value="{{ $i }}"> {{ $i }}</option>
+                                    @endif
+                                @endfor
+                            </select>
+                            <x-general.input-error for="hour" />
+
+                        </div>
+                        <div class="col-md-4" >
+                            <label for="minutes">@lang('text.Minutes')</label>
+                            <select class="form-control"  wire:model="minutes">
+                                <option></option>
+
+                                @for ( $i = 0 ; $i < 60 ; $i++  )
+
+                                    @if ($i<10)
+                                        <option value="0{{ $i }}"> 0{{ $i }}</option>
+                                    @else
+                                        <option value="{{ $i }}"> {{ $i }}</option>
+                                    @endif
+                                @endfor
+                            </select>
+                            <x-general.input-error for="minutes" />
+
+                        </div>
+                    </div>
+
+                </div>
+                <x-general.input-error for="time" />
+
 
 
                 <div class="form-group mx-2">
@@ -98,7 +160,9 @@
                 @this.set('taxes_selected',$(this).val());
             })
 
+
         </script>
+
     @endpush
 
 </div>

@@ -62,6 +62,9 @@
                         <span class="text-pink"> {{__('text.External Price')}} </span>| <span class="text-muted"><del>{{$session->external_price}}</del> {{$session->external_sale}} @lang('text.SAR')</span>
                     @endif
                 </h6>
+                <h6>
+                    <span class="text-pink"> {{__('text.Time')}} </span>| <span class="text-muted">{{$session->time}}</span><br>
+                </h6>
 
                 @if ($session->additions()->count() > 0)
                 <br><span class="text-pink"> {{__('text.Additions')}} </span>

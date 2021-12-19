@@ -18,6 +18,9 @@ class SessionForm extends Component
     public
         $name_ar,
         $name_en,
+        $time,
+        $hour,
+        $minutes,
         $taxes,
         $taxes_selected,
         $description_ar,
@@ -83,6 +86,10 @@ class SessionForm extends Component
         $this->description_ar = $this->session->description_ar;
         $this->description_en = $this->session->description_en;
         $this->slug = $this->session->slug;
+        $this->time = $this->session->time;
+        $time_arr=explode(':',$this->time);
+        $this->hour = $time_arr[0];
+        $this->minutes = $time_arr[1];
         $this->price = $this->session->price;
         $this->sale = $this->session->sale;
         $this->external_price = $this->session->external_price;
@@ -116,6 +123,15 @@ class SessionForm extends Component
             $this->external_price = null;
             $this->external_sale = null;
         }
+
+        if($this->hour == "00" && $this->minutes == "00"){
+            $this->time=null;
+
+
+        }else{
+            $this->time=$this->hour.":".$this->minutes;
+
+        }
         return $this->validate(array_merge([
             'name_ar' => 'required|string|max:255|',
             'name_en' => 'required|string|max:255|',
@@ -129,6 +145,11 @@ class SessionForm extends Component
             'external_price' => [Rule::requiredIf($this->external_service)],
             'external_sale' => 'nullable|numeric|lt:external_price',
             'additions' => 'nullable|array',
+            'time' => 'required|date_format:H:i',
+            'hour' => 'required|date_format:H',
+            'minutes' => 'required|date_format:i',
+
+
 
 
         ], $image_validation));

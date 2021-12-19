@@ -100,6 +100,7 @@
                         </li>
 
                 </ul>
+                <span class="text-pink"> {{__('text.Time')}} </span>| <span class="text-muted">{{$session->time}}</span><br>
 
                 @if($session->description_ar || $session->description_en)
                 <span class="text-pink">{{__('text.Description')}}</span>

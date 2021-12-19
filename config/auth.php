@@ -56,15 +56,7 @@ return [
             'driver' => 'passport',
             'provider' => 'customers',
         ],
-        'delivery_service_provider' => [
-            'driver' => 'session',
-            'provider' => 'delivery_service_providers',
-        ],
 
-        'delivery_service_provider_api' => [
-            'driver' => 'passport',
-            'provider' => 'delivery_service_providers',
-        ],
     ],
 
     /*
@@ -93,10 +85,7 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
         ],
-        'delivery_service_providers' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\DeliveryServiceProvider::class,
-        ],
+
 
         // 'users' => [
         //     'driver' => 'database',
@@ -132,12 +121,7 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
-        'delivery_service_providers' => [
-            'provider' => 'delivery_service_providers',
-            'table' => 'password_resets',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+
 
     ],
 
