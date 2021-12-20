@@ -17,10 +17,11 @@ class ProductCollection extends JsonResource
     {
         if($this->isActive == 1 && $this->sizes->sum('stock') > 0){
             return [
-                    'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
-                    'image' => $this->image,
-                    'id' => $this->id,
-                 ];
+                'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
+                'image' => $this->image,
+                'type' => $this->type,
+                'id' => $this->id,
+            ];
         }
 
     }

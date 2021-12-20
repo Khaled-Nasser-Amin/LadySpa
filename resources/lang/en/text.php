@@ -613,6 +613,10 @@ return [
     'Hours'=>'Hours',
     'Minutes'=>'Minutes',
     'Session Added Successfully'=>'Session Added Successfully',
+    'Session'=>'Session',
+    'In active collection becouse there are some data missing'=>'Inactive collection becouse there are some data missing',
+    'Update Product'=>'Update Product',
+    'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 

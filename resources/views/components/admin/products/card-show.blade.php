@@ -112,7 +112,7 @@
 
                                 <tr>
                                     <th class="pl-0 w-25" scope="row"><strong>@lang('text.Size')
-                                        @if($row->deleted_at)
+                                        @if($row->deleted_at || $row->pivot->quantity > $row->stock)
                                             <i class="mdi mdi-alert-decagram text-danger"></i>
                                         @endif
                                         </strong></th>
@@ -156,7 +156,7 @@
                 @endif
 
                 @if(!checkCollectionActive($product))
-                    <button id="changeFeatured" wire:click.prevent="updateFeatured({{$product->id}})" class="btn btn-{{$product->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
+                    <button id="changeFeatured" wire:click.prevent="updateFeatured({{$product->id}})" wire:key="{{$product->id}}" class="btn btn-{{$product->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
                 @else
                 <div class="alert alert-danger">@lang('text.In active collection becouse there are some data missing')</div>
                 @endif

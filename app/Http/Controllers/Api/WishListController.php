@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class WishListController extends Controller
 {
     use Responses;
-    public function updateWishList(Request $request){
+    public function updateWishListProduct(Request $request){
         app()->setlocale($request->lang);
         $product=Product::find($request->product_id);
         if($product){

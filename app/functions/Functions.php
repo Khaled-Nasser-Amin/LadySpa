@@ -108,11 +108,21 @@ function sizes_refund($order_id,$sizes){
 //check for active collection or group of products
 function checkCollectionActive($product){
     if($product->type == 'group'){
+        $out_of_stock=0;
+        foreach($product->child_products()->get() as $child){
+            foreach($child->pivot->sizes()->get() as $row){
+                if($row->pivot->quantity > $row->stock){
+                    $out_of_stock++;
+                }
+            }
+        }
+
         $deletedSizes=$product->child_products()->get()->map(function($value){
             return $value->pivot->sizes()->onlyTrashed()->get();
         });
+        $InactiveProducts=$product->child_products()->where('isActive',0)->get()->count();
         $deletedProduct=$product->child_products()->onlyTrashed()->get()->count();
         $deletedSizes=$deletedSizes->collapse()->count();
-        return $deletedProduct > 0 || $deletedSizes > 0;
+        return $deletedProduct > 0 || $deletedSizes > 0  || $out_of_stock > 0 || $InactiveProducts > 0;
     }
 }

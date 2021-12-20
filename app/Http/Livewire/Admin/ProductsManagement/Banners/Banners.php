@@ -44,6 +44,7 @@ class Banners extends Component
     }
 
     public function update(){
+
         $data= $this->UpdateBannerRequestValidate($this->ids);
         $banner=Banner::findOrFail($this->ids);
         if ($this->image != null){
@@ -60,10 +61,12 @@ class Banners extends Component
     }
 
     public function UpdateBannerRequestValidate($Id){
+
         return $this->validate([
             'name' =>['required' , Rule::unique('banners','name')->ignore($Id)],
             'image' => 'nullable|mimes:jpg,png,jpeg,gif',
-            'expire_at' => 'nullable|date|after_or_equal:today',
+            'expire_at' => 'nullable|date|after_or_equal:now',
+
         ]);
 
     }

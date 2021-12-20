@@ -5,7 +5,7 @@ use App\Http\Controllers\Api\delivery_service_provider\ProfileController as Deli
 
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Category_ProductsController;
+use App\Http\Controllers\Api\Vendors_ProductsController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\delivery_service_provider\OrderController as DeliveryOrderController;
 use App\Http\Controllers\Api\ProfileController;
@@ -34,9 +34,9 @@ Route::middleware(['Auth:customer_api', 'scope:customer'])->post('/user', functi
 
 
 
-Route::middleware(['Auth:delivery_service_provider_api', 'scope:delivery'])->post('/delivery_service_provider', function (Request $request) {
-    return response()->json($request->user(), 200);
-});
+// Route::middleware(['Auth:delivery_service_provider_api', 'scope:delivery'])->post('/delivery_service_provider', function (Request $request) {
+//     return response()->json($request->user(), 200);
+// });
 
 
 
@@ -71,15 +71,14 @@ Route::group(['prefix' => 'user'], function () {
 
 
     Route::group(['middleware' => ['Auth:customer_api', 'scope:customer']], function () {
+
+        Route::post('/banners', [Vendors_ProductsController::class, 'banners']);
+
         //products
-        Route::post('/product', [Category_ProductsController::class, 'product']);
+        Route::post('/products', [Vendors_ProductsController::class, 'vendor_products']);
+        Route::post('/product_details', [Vendors_ProductsController::class, 'product_details']);
+        Route::post('/vendors_products', [Vendors_ProductsController::class, 'vendors_products']);
 
-        Route::post('/featured_slider_products', [Category_ProductsController::class, 'featured_slider_products']);
-
-
-        //categories
-        Route::post('/categories', [Category_ProductsController::class, 'parent_categories']);
-        Route::post('/category', [Category_ProductsController::class, 'category_products']);
 
 
         //reviews
@@ -88,7 +87,7 @@ Route::group(['prefix' => 'user'], function () {
 
 
         //favorites
-        Route::post('/favorite', [WishListController::class, 'updateWishList']);
+        Route::post('/favorite_product', [WishListController::class, 'updateWishListProduct']);
 
 
         //orders
@@ -129,52 +128,52 @@ Route::group(['prefix' => 'user'], function () {
 
 
 //Routes for Delivery service provider
-Route::group(['prefix' => 'delivery_service_provider'], function () {
+// Route::group(['prefix' => 'delivery_service_provider'], function () {
 
-    //resend
-    Route::post('/resend-code', [DeliveryAuthController::class, 'resend'])->middleware('throttle:5,1');
-    //
+//     //resend
+//     Route::post('/resend-code', [DeliveryAuthController::class, 'resend'])->middleware('throttle:5,1');
+//     //
 
-    //register
-    Route::post('/active-account', [DeliveryAuthController::class, 'activeAccount'])->middleware('throttle:5,1');
-    Route::post('/register', [DeliveryAuthController::class, 'store']);
+//     //register
+//     Route::post('/active-account', [DeliveryAuthController::class, 'activeAccount'])->middleware('throttle:5,1');
+//     Route::post('/register', [DeliveryAuthController::class, 'store']);
 
-    //
+//     //
 
 
-    //login
-    Route::post('/login', [DeliveryAuthController::class, 'login'])->middleware('throttle:5,1');
-    Route::post('/logout', [DeliveryAuthController::class, 'logout']);
-    //
+//     //login
+//     Route::post('/login', [DeliveryAuthController::class, 'login'])->middleware('throttle:5,1');
+//     Route::post('/logout', [DeliveryAuthController::class, 'logout']);
+//     //
 
-    //change passowrd
-    Route::post('/forget-password', [DeliveryAuthController::class, 'forgetPassword'])->middleware('throttle:5,1');
-    Route::post('/check-otp', [DeliveryAuthController::class, 'checkOtp'])->middleware('throttle:5,1');
-    Route::post('/change-password', [DeliveryAuthController::class, 'changePassword'])->middleware('throttle:5,1');
+//     //change passowrd
+//     Route::post('/forget-password', [DeliveryAuthController::class, 'forgetPassword'])->middleware('throttle:5,1');
+//     Route::post('/check-otp', [DeliveryAuthController::class, 'checkOtp'])->middleware('throttle:5,1');
+//     Route::post('/change-password', [DeliveryAuthController::class, 'changePassword'])->middleware('throttle:5,1');
 
-    //
+//     //
 
-    Route::group(['middleware' => ['Auth:delivery_service_provider_api', 'scope:delivery']], function () {
+//     Route::group(['middleware' => ['Auth:delivery_service_provider_api', 'scope:delivery']], function () {
 
-        //orders
-        Route::post('/all_orders', [DeliveryOrderController::class, 'all_orders']);
-        Route::post('/all_completed_orders', [DeliveryOrderController::class, 'all_completed_orders']);
-        Route::post('/order_details', [DeliveryOrderController::class, 'order_details']);
-        Route::post('/update_order_status', [DeliveryOrderController::class, 'updateOrderStatus']);
-        //
+//         //orders
+//         Route::post('/all_orders', [DeliveryOrderController::class, 'all_orders']);
+//         Route::post('/all_completed_orders', [DeliveryOrderController::class, 'all_completed_orders']);
+//         Route::post('/order_details', [DeliveryOrderController::class, 'order_details']);
+//         Route::post('/update_order_status', [DeliveryOrderController::class, 'updateOrderStatus']);
+//         //
 
-        //profile
-        Route::post('/change_image', [DeliveryProfileController::class, 'changeImage']);
-        Route::post('/change_personal_id', [DeliveryProfileController::class, 'changePersonalId']);
-        Route::post('/change_driving_license', [DeliveryProfileController::class, 'changeDrivingLicense']);
-        Route::post('/change_name', [DeliveryProfileController::class, 'changeName']);
-        Route::post('/change_email', [DeliveryProfileController::class, 'changeEmail']);
-        Route::post('/check_email_otp', [DeliveryProfileController::class, 'checkEmailOtp'])->middleware('throttle:5,1');
-        Route::post('/change_phone', [DeliveryProfileController::class, 'changePhone']);
-        Route::post('/check_phone_otp', [DeliveryProfileController::class, 'checkPhoneOtp'])->middleware('throttle:5,1');
-        Route::post('/change_password', [DeliveryProfileController::class, 'changePassword']);
-        Route::post('/resend_otp', [DeliveryProfileController::class, 'resend'])->middleware('throttle:5,1');
-    });
-});
+//         //profile
+//         Route::post('/change_image', [DeliveryProfileController::class, 'changeImage']);
+//         Route::post('/change_personal_id', [DeliveryProfileController::class, 'changePersonalId']);
+//         Route::post('/change_driving_license', [DeliveryProfileController::class, 'changeDrivingLicense']);
+//         Route::post('/change_name', [DeliveryProfileController::class, 'changeName']);
+//         Route::post('/change_email', [DeliveryProfileController::class, 'changeEmail']);
+//         Route::post('/check_email_otp', [DeliveryProfileController::class, 'checkEmailOtp'])->middleware('throttle:5,1');
+//         Route::post('/change_phone', [DeliveryProfileController::class, 'changePhone']);
+//         Route::post('/check_phone_otp', [DeliveryProfileController::class, 'checkPhoneOtp'])->middleware('throttle:5,1');
+//         Route::post('/change_password', [DeliveryProfileController::class, 'changePassword']);
+//         Route::post('/resend_otp', [DeliveryProfileController::class, 'resend'])->middleware('throttle:5,1');
+//     });
+// });
 
 //

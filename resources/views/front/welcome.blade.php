@@ -5,14 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta content="@lang('text.Women\'s clothing online stores')" name="description" />
 
-        <title>@lang('text.Lady Store') | @lang('text.Home')</title>
+        <title>@lang('text.Lady Spa') | @lang('text.Home')</title>
         <!-- tailwindcss -->
         <link rel="stylesheet" href="{{ asset('css/tailwind.min.css') }}" />
 
         <!--Replace with your tailwind.css once created-->
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" />
 
-        <link rel="icon" href="{{asset('images/icons/dress_icon.jpg')}}" type="image/icon type">
+        <link rel="icon" href="{{asset('images/icons/spa.png')}}" type="image/icon type">
 
 
         <style>
