@@ -11,6 +11,8 @@ class Order extends Model
     use HasFactory;
     protected $guarded=[];
 
+
+    //single product with order
     public function sizes(){
         return $this->belongsToMany(Size::class,'orders_sizes','order_id','size_id')->withPivot(['quantity','size','price','tax','amount','total_amount']);
     }
@@ -19,6 +21,17 @@ class Order extends Model
         return $this->belongsToMany(Product::class,'orders_products')->withPivot(['name_ar','name_en','image']);
 
     }
+
+    //group products with order
+    public function group_products(){
+        return $this->belongsToMany(Product::class,'orders_group_products')->withPivot(['price','tax','amount','total_amount']);
+
+    }
+
+    public function group_products_sizes(){
+        return $this->belongsToMany(Size::class,'orders_group_products_sizes','order_id','size_id')->withPivot(['quantity','size']);
+    }
+
     public function customer(){
         return $this->belongsTo(Customer::class,'user_id','id');
 

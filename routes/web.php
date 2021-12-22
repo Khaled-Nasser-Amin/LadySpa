@@ -103,6 +103,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/payment_token',Settings::class)->name('admin.settings');
         Route::get('/order/show/{order}', [OrderController::class,'show'])->name('order.show');
 
+        Route::get('/vendors', Vendors::class)->name('admin.vendors');
+
 
         Route::get('/sessions', Sessions::class)->name('admin.sessions');
         Route::get('/session-add', [SessionController::class,'addNewSession']);

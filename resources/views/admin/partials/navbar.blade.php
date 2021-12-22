@@ -41,10 +41,11 @@
     <div class="logo-box" style="background-color: #f8f8f8">
         <a href="{{route('admin.index')}}" class="logo text-center">
             <span class="logo-lg text-pink " style="font-size: 20px;font-weight:bold">
+                <img src="{{ asset('images/logo.png') }}" alt="logo" style="width:50px;height:50px">
                 Lady Spa
             </span>
             <span class="logo-sm">
-                 <span class="logo-sm-text-dark text-pink">Lady</span>
+                <img src="{{ asset('images/logo.png') }}" alt="logo" style="width:50px;height:50px">
             </span>
         </a>
     </div>

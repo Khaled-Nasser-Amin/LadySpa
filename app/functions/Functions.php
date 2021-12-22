@@ -5,6 +5,7 @@ use Aloha\Twilio\Twilio;
 use App\Models\Activity;
 use App\Models\Refund;
 use App\Models\Setting;
+use Carbon\Carbon;
 
 function send_sms($to,$message){
     $setting=Setting::find(1);
@@ -124,5 +125,31 @@ function checkCollectionActive($product){
         $deletedProduct=$product->child_products()->onlyTrashed()->get()->count();
         $deletedSizes=$deletedSizes->collapse()->count();
         return $deletedProduct > 0 || $deletedSizes > 0  || $out_of_stock > 0 || $InactiveProducts > 0;
+    }
+}
+
+function checkPromoCode($user,$special_code,$normal_code,$request_code,$for){
+    if($special_code && !$user->used_promocodes()->find($special_code->id) && $special_code->code == $request_code
+         && Carbon::now()->between($special_code->start_date, $special_code->end_date)
+         && $special_code->limitation > $special_code->used_customers->count()
+         && $special_code->type_of_code == 'special'
+         && ($special_code->for == 'general' || $special_code->for == $for)
+    ){
+        return [
+            'type' => $special_code->type_of_discount,
+            'value' => $special_code->value,
+            'constraint' => $special_code->condition,
+        ];
+    }elseif($normal_code && !$user->used_promocodes()->find($normal_code->id) && Carbon::now()->between($normal_code->start_date, $normal_code->end_date)
+        && $normal_code->limitation > $normal_code->used_customers->count()
+        && $normal_code->type_of_code == 'normal'
+        && ($normal_code->for == 'general' || $normal_code->for == $for)){
+        return [
+            'type' => $normal_code->type_of_discount,
+            'value' => $normal_code->value,
+            'constraint' => $normal_code->condition,
+        ];
+    }else{
+        return false;
     }
 }

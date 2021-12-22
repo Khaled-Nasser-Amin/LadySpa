@@ -616,7 +616,7 @@ return [
     'Session'=>'Session',
     'In active collection becouse there are some data missing'=>'Inactive collection becouse there are some data missing',
     'Update Product'=>'Update Product',
-    'Limitation'=>'Limitation',
+    'Product group not available'=>'Product group not available',
     'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 

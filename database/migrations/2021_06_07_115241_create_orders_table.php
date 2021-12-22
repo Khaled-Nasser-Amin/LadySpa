@@ -22,12 +22,13 @@ class CreateOrdersTable extends Migration
             $table->float('total_amount',11,2)->nullable();
             $table->float('shipping',11,2)->nullable();
             $table->float('taxes',11,2)->nullable();
+            $table->float('discount',11,2)->nullable();
             $table->string('order_status')->default('pending');
             $table->string('payment_status')->default('unpaid');
-            $table->string('location');
+            $table->string('address');
+            $table->string('description');
             $table->string('receiver_phone');
-            $table->string('receiver_first_name');
-            $table->string('receiver_last_name');
+            $table->string('receiver_name');
             $table->timestamps();
         });
     }

@@ -4,13 +4,13 @@
         <div class="flex-1 mb-0 text-black">
           <a class="text-pink-600 no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="#">
             <a class="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="{{ route('front.index') }}">
-                <img src="{{ asset('images/lady_logo.webp') }}" style="width:60px;height:77px;display:inline;" alt="">
-              @lang('text.Lady Store')
+                <img src="{{ asset('images/logo.png') }}" style="width:60px;height:77px;display:inline;" alt="">
+              @lang('text.Lady Spa')
             </a>
           </a>
         </div>
         <div class="flex-1 pt-5">
-            <h1 class="text-gray-500 text-xl"> 2021 &copy;  <a href="">@lang('text.Lady Store')</a></h1>
+            <h1 class="text-gray-500 text-xl"> 2021 &copy;  <a href="">@lang('text.Lady Spa')</a></h1>
         </div>
         <div class="flex-1 pt-4">
             <a href="{{ LaravelLocalization::getLocalizedURL('ar', null, [], true) }}" class="text-gray-500" >

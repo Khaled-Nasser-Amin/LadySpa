@@ -19,11 +19,8 @@ class ProductGroupCollection extends JsonResource
             'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
             'image' => $this->image,
             'id' => $this->id,
-            'sizes' => [
-                'size' =>$this->pivot->sizes()->get()->pluck('size'),
-                'quantity' => $this->pivot->sizes()->get()->pluck('pivot.quantity'),
-            ],
-
+            'sizes' =>$this->pivot->sizes()->get()->pluck('size'),
+            'quantities' => $this->pivot->sizes()->get()->pluck('pivot.quantity'),
         ];
 
     }

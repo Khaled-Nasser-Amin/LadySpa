@@ -6,9 +6,9 @@
 
 @component('mail::panel')
 @component('mail::table')
-|@lang('text.Product Name')|@lang('text.Color')|@lang('text.Size')|@lang('text.Stock')|
+|@lang('text.Product Name')|@lang('text.Size')|@lang('text.Stock')|
 |:-------------:|:-------------:|:--------:|:------------:|
-|{{ $product_name }}|<span class="label label-danger w-100" style="height:25px;width:25px;border-radius:10px;background-color: {{ $color }};display:inline-block"></span>|{{ $size }}|0|
+|{{ $product_name }}|{{ $size }}|0|
 @endcomponent
 @endcomponent
 

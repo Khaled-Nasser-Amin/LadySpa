@@ -92,6 +92,7 @@ Route::group(['prefix' => 'user'], function () {
 
         //orders
         Route::post('/check_online_payment', [MyFatoorahController::class, 'check_online_payment']);
+        Route::post('/check_promocode', [OrderController::class, 'check_promocode']);
         Route::post('/order', [OrderController::class, 'store']);
         Route::post('/cancel_order', [OrderController::class, 'cancel_order']);
         Route::post('/check_stock', [OrderController::class, 'check_stock']);

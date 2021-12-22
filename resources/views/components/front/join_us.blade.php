@@ -1,7 +1,7 @@
 <div class="pt-24 md:pt-0 mx-5 mb-0" id="join_us">
-    <div class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center mb-0">
+    <div  class="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center mb-0">
       <!--Left Col-->
-      <div class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
+      <div style="padding-top:120px " class="flex flex-col w-full md:w-2/5 justify-center items-start text-center md:text-left">
         <h1 class="my-4 text-5xl font-bold leading-tight">
             @lang('text.Women\'s clothing online stores')
         </h1>
@@ -13,8 +13,8 @@
         </a>
       </div>
       <!--Right Col-->
-      <div class="w-full md:w-3/5 py-0 text-center mb-0">
-        <img class="w-full md:w-4/5 z-50" style="max-height:860px" src="{{ asset('images/lady_logo.webp') }}" />
+      <div class="w-full md:w-3/5 py-0 text-center mb-0" style="">
+        <img class="w-full md:w-4/5 z-50" style=" width:100%;margin:150px 0 0 0  " src="{{ asset('images/logo.png') }}" />
       </div>
     </div>
   </div>

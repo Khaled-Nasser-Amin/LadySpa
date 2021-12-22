@@ -2,7 +2,7 @@
     <div class="w-full container mx-auto flex flex-wrap items-center justify-between mt-0 py-2">
       <div class="pl-4 flex items-center">
         <a class="toggleColour text-white no-underline hover:no-underline font-bold text-2xl lg:text-4xl" href="{{ route('front.index') }}">
-            <img src="{{ asset('images/lady_logo.webp') }}" style="width:60px;height:77px;display:inline;" alt="">
+            <img src="{{ asset('images/logo.png') }}" style="width:60px;height:77px;display:inline;" alt="">
           @lang('text.Lady Spa')
         </a>
       </div>

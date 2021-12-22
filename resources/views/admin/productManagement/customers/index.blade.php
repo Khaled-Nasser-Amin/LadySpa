@@ -77,7 +77,7 @@
                                                         <span>{{ $code->code }} ({{$code->limitation-$code->spcialCustomers->count() }})</span>
                                                     </a>
                                                     @endforeach
-                                                    @if ($code && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count())
+                                                    @if ($code && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count() && $user->special_code_id)
                                                         <a class="dropdown-item bg-soft-dark" href="#" wire:click.prevent="cancelSpecialCode({{ $user->id }})">
                                                             <span>@lang('text.Cancel special code')</span>
                                                         </a>

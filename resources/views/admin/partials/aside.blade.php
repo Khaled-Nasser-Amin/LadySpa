@@ -1,4 +1,4 @@
-<div class="left-side-menu" style="background-image: url('{{ asset('images/lady_logo.webp') }}'); background-size:contain;background-color:#e6dddd">
+<div class="left-side-menu" style="background-color:#e6dddd">
 
     <div class="slimscroll-menu">
 
@@ -12,6 +12,7 @@
                     <li><a href="{{route('admin.orders')}}" class="text-dark"> <i class="mdi mdi-book-open-variant "></i>{{__('text.Orders')}}</a></li>
                     <li><a href="{{route('admin.sessions')}}" class="text-dark"> <i class="fas fa-hot-tub"></i>{{__('text.Sessions')}}</a></li>
                     <li><a href="#" class="text-dark"> <i class="far fa-edit"></i>{{__('text.Reservations')}}</a></li>
+                    <li><a href="{{route('admin.vendors')}}" class="text-dark"><i class="mdi mdi-account-group"></i>{{__('text.Vendors')}}</a></li>
                     <li><a href="{{route('admin.customers')}}" class="text-dark"><i class="mdi mdi-account-multiple"></i>{{__('text.Users')}}</a></li>
                     <li><a href="{{route('admin.promocodes')}}" class="text-dark"><i class="mdi mdi-sale"></i>{{__('text.Promotion Codes')}}</a></li>
                     <li><a href="{{route('admin.banners')}}" class="text-dark"><i class="mdi mdi-image-multiple"></i>{{__('text.Banners')}}</a></li>
