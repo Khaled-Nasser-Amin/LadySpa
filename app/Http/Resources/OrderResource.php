@@ -19,13 +19,15 @@ class OrderResource extends JsonResource
             'location' => $this->location,
             'order_status' => $this->order_status,
             'receiver_phone' => $this->receiver_phone,
-            'receiver_name' => $this->receiver_first_name. " ". $this->receiver_last_name,
+            'receiver_name' => $this->receiver,
             'payment_way' => $this->payment_way,
+            'description' => $this->description,
             'lat_long' => $this->lat_long,
             'total' => number_format($this->total_amount,2),
             'subtotal' => number_format($this->subtotal,2),
             'shipping' => number_format($this->shipping,2),
             'taxes' => number_format($this->taxes,2),
+            'discount' => number_format($this->discount,2),
         ];
 
     }

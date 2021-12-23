@@ -24,8 +24,8 @@ class CreateSettingsTable extends Migration
             $table->integer('contact_whatsapp')->nullable();
             $table->integer('contact_phone')->nullable();
             $table->string('contact_email')->nullable();
-            $table->float('fixed_shipping_cost')->default(100);
-            $table->string('shipping_status')->default('fixed_shipping');
+            $table->float('shipping_cost_by_kilometer')->default(100);
+            $table->string('shipping_status')->default('by_kilometer');
             $table->timestamps();
         });
     }

@@ -61,7 +61,7 @@
                                                 @php
                                                     $code=$user->specialCode;
                                                 @endphp
-                                                @if ($code && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count())
+                                                @if ($code  && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count())
                                                     {{ $code->code }}
                                                 @else
                                                     @lang('text.Select special code')
@@ -71,13 +71,14 @@
                                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $index }}" style="height: 200px;overflow-y:auto;" wire:key="{{ $loop->index }}">
                                                 @if ($specialCodes->count() > 0)
                                                     @foreach ($specialCodes as $code )
+                                                        @if (!$user->used_promocodes()->find($code->id))
+                                                            <a class="dropdown-item" href="#"  wire:click.prevent="assignSpecialCodeToCustomer({{ $user->id }},{{ $code->id }})">
+                                                                <span>{{ $code->code }} ({{$code->limitation-$code->spcialCustomers->count() }})</span>
+                                                            </a>
+                                                        @endif
 
-                                                    {{-- ddddd --}}
-                                                    <a class="dropdown-item" href="#"  wire:click.prevent="assignSpecialCodeToCustomer({{ $user->id }},{{ $code->id }})">
-                                                        <span>{{ $code->code }} ({{$code->limitation-$code->spcialCustomers->count() }})</span>
-                                                    </a>
                                                     @endforeach
-                                                    @if ($code && now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count() && $user->special_code_id)
+                                                    @if ($code &&  now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count() && $user->special_code_id)
                                                         <a class="dropdown-item bg-soft-dark" href="#" wire:click.prevent="cancelSpecialCode({{ $user->id }})">
                                                             <span>@lang('text.Cancel special code')</span>
                                                         </a>

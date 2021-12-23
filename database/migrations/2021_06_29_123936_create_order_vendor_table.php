@@ -19,6 +19,9 @@ class CreateOrderVendorTable extends Migration
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->unsignedBigInteger('vendor_id')->nullable();
             $table->foreign('vendor_id')->references('id')->on('users');
+            $table->float('taxes',11,2);
+            $table->float('subtotal',11,2);
+            $table->float('total_amount',11,2);
         });
     }
 

@@ -26,6 +26,7 @@ class CreateOrdersTable extends Migration
             $table->string('order_status')->default('pending');
             $table->string('payment_status')->default('unpaid');
             $table->string('address');
+            $table->string('lat_long');
             $table->string('description');
             $table->string('receiver_phone');
             $table->string('receiver_name');

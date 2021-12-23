@@ -39,7 +39,7 @@ class Customers extends Component
 
     public function assignSpecialCodeToCustomer(Customer $customer,Promocode $code)
     {
-        if($code->type_of_code == 'special'  && Carbon::now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count()){
+        if($code->type_of_code == 'special'  && !$customer->used_promocodes()->find($code->id) &&  Carbon::now()->between($code->start_date, $code->end_date) && $code->limitation > $code->spcialCustomers->count()){
             $code->spcialCustomers()->save($customer);
         }
     }

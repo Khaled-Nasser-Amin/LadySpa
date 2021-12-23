@@ -67,24 +67,22 @@ class OrderController extends Controller
             return $product_group_validate;
         }
 
-        $data=$request->except(['sizes_id','lang','groups_id']);
+        $data=$request->except(['sizes_id','lang','groups_id','promocode']);
         $order=Order::create($data);
         $user=$request->user();
         $user->orders()->save($order);
         $subtotal=0;
-        $discount=0;
         $taxes=0;
         $vendors=[];
         $products=[];
-        $sizes=[];
 
 
         // calculate data
-        $this->calcOrder($this->groups_id,$sizes_id,$subtotal,$taxes,$order,$products,$sizes,$vendors);
+        $this->calcOrder($request->groups_id,$sizes_id,$subtotal,$taxes,$order,$products,$vendors);
 
 
         //associate data with order
-        $this->associateDataWithOrder($user,$vendors,$request->promocode,$order,$products,$sizes,$subtotal,$taxes);
+        $this->associateDataWithOrder($user,$vendors,$request->promocode,$order,$products,$subtotal,$taxes);
 
 
         //send mail if size became empty
@@ -117,7 +115,7 @@ class OrderController extends Controller
             'lat_long' => 'required',
             'receiver_phone' => 'required|numeric',
             'receiver_name' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
         ];
     }
 
@@ -127,7 +125,7 @@ class OrderController extends Controller
             $size=Size::find($row['id']);
             if(!$size){
                 return $this->error(__('text.Not Found'),404);
-            }elseif($size->product()->isActive == 0 || !$size->color->product){
+            }elseif($size->product->isActive == 0 || !$size->product){
                 return $this->error(__('text.Product is inactive'),403);
             }elseif($size->stock <= 0){
                 return $this->error(__('text.Out of Stock'),402);
@@ -137,9 +135,7 @@ class OrderController extends Controller
             elseif($row['quantity'] == $size->stock){
                 $empty_sizes[]=$size;
             }
-            elseif(!$size->color){
-                return $this->error(__('text.Color is inactive'),400);
-            }
+
         }
         return 'done';
     }
@@ -147,19 +143,22 @@ class OrderController extends Controller
     // check if the group of product availabel or not
     protected function checkIfGroupExist($groups_id)
     {
-        foreach($groups_id as $row){
-            $product=Product::where('type','group')->where('id',$row['id'])->first();
-            if(!$product  || checkCollectionActive($product)){
-                return $this->error(__('text.Not Found'),404);
-            }elseif(checkCollectionActive($product)){
-                return $this->error(__('text.Product group not available'),404);
+        if(collect($groups_id)->count() > 0){
+            foreach($groups_id as $row){
+                $product=Product::where('type','group')->where('id',$row['id'])->first();
+                if(!$product  || checkCollectionActive($product)){
+                    return $this->error(__('text.Not Found'),404);
+                }elseif(checkCollectionActive($product)){
+                    return $this->error(__('text.Product group not available'),404);
+                }
             }
+            return 'done';
         }
-        return 'done';
+
     }
 
     // associate sizes with order and calculate stock and taxes, subtotal , total_amount
-    protected function calcOrder(&$groups_id,&$sizes_id,&$subtotal,&$taxes,&$order,&$products,&$sizes,&$vendors){
+    protected function calcOrder($groups_id,$sizes_id,&$subtotal,&$taxes,&$order,&$products,&$vendors){
         foreach($sizes_id as $row){
             $size=Size::find($row['id']);
             $finalPrice=$size->sale == 0 ? $size->price : $size->sale;
@@ -167,13 +166,13 @@ class OrderController extends Controller
             $tax=$size->product->taxes->sum('tax') == 0 ? 0:(($finalPrice* $size->product->taxes->sum('tax'))/100)*$row['quantity'];
             $taxes  += $tax;
             $vendors[]=['vendor_id'=>$size->product->user_id,'tax' => $tax,'subtotal'=>( $finalPrice* $row['quantity'])];
-            $sizes[]=['size_id' => $size->id,'quantity' => $row['quantity'] , 'amount' =>$finalPrice ,'total_amount' => $finalPrice*$row['quantity'],'size'=> $size->size ];
-            $size->order()->syncWithoutDetaching([$order->id => ['quantity' => $row['quantity'],'size' => $size->size,'price'=> $finalPrice ,'tax'=>$tax]]);
+            $size->order()->syncWithoutDetaching([$order->id => ['quantity' => $row['quantity'],'size' => $size->size,'price'=> $finalPrice ,'tax'=>$tax,'amount'=>$finalPrice*$row['quantity'],'total_amount'=>($finalPrice*$row['quantity'])+$tax]]);
             $size->update(['stock' => ($size->stock-$row['quantity'])]);
             $products[]=['product_id'=>$size->product_id];
 
         }
-        foreach($groups_id as $row){
+        if(collect($groups_id)->count() > 0){
+            foreach($groups_id as $row){
             $product=Product::where('type','group')->where('id',$row['id'])->first();
             $finalPrice=$product->group_sale == 0 ? $product->group_price : $product->group_sale;
             $subtotal += ( $finalPrice* $row['quantity']);
@@ -190,18 +189,19 @@ class OrderController extends Controller
                 }
             }
 
-            // $products[]=['product_id'=>$size->product_id];
         }
+        }
+
     }
 
 
     //associate everything with order
-    protected function associateDataWithOrder($user,$vendors,$promocode,$order,$products,$sizes,$subtotal,$taxes){
+    protected function associateDataWithOrder($user,$vendors,$promocode,$order,$products,$subtotal,$taxes){
         $discount=$this->calculatePromoCode($promocode,$user,$subtotal);
-        $order->update(['total_amount' => $subtotal+$taxes,'subtotal' => $subtotal,'taxes' => $taxes,'discount' => $discount]);
+        $this->associatePromotionCode($discount,$promocode,$user);
+        $order->update(['total_amount' => ($subtotal+$taxes-$discount),'subtotal' => $subtotal,'taxes' => $taxes,'discount' => $discount]);
         $order->save();
         $this->associateProducts($products,$order);
-        $this->associateSizes($sizes,$order);
         $this->associateVendors($vendors,$order);
 
     }
@@ -213,14 +213,14 @@ class OrderController extends Controller
         $normal_code=Promocode::where('code',$promocode)->where('type_of_code','normal')->first();
         $result=checkPromoCode($user,$user->specialCode,$normal_code,$promocode,'products');
         if($result){
-            if($result['type_of_discount'] == 'precentage'){
+            if($result['type'] == 'percentage'){
                 $discount=($result['value']*$subtotal)/100;
                 if($result['constraint'] < $discount){
                     return $result['constraint'];
                 }else{
                     return $discount;
                 }
-            }elseif($result['type_of_discount'] == 'amount'){
+            }elseif($result['type'] == 'amount'){
                 if($subtotal >= $result['constraint']){
                     return $result['value'];
                 }else{
@@ -234,12 +234,25 @@ class OrderController extends Controller
         }
     }
 
+    //associate promotion code with user
+    protected function associatePromotionCode($discount,$promocode,$user)
+    {
+        if($discount != 0){
+            $code=Promocode::where('code',$promocode)->first();
+            $code->used_customers()->syncWithoutDetaching($user->id);
+            if($code->type_of_code ="special"){
+                $user->specialCode()->dissociate()->save();
+            }
+        }
+
+    }
+
     //associate vendors with order
     protected function associateVendors($vendors,$order){
         $collect=collect($vendors);
         $vendors_id=$collect->pluck('vendor_id')->unique();
         foreach($vendors_id as $id){
-            $vendor=User::findOrFail($id);
+            $vendor=User::find($id);
             $geoLocation=explode(',',$vendor->geoLocation);
             $vendors_lat_long[]=['lat' => $geoLocation[0],'long' => $geoLocation[1]];
             $tax=$collect->where('vendor_id',$id)->sum('tax');
@@ -252,9 +265,9 @@ class OrderController extends Controller
         //calculate shipping
         $this->calculate_shipping($order,$vendors_lat_long);
 
-        //send email to lady_store
+        //send email to lady_spa
         if($vendors_id->search(1) == 0){
-            $vendor=User::findOrFail(1);
+            $vendor=User::find(1);
             $this->sendEmailToVendors($vendor,$order);
         }
     }
@@ -269,19 +282,6 @@ class OrderController extends Controller
         }
     }
 
-    //associate colors with order
-    protected function associateColors($colors,$order){
-        $collect=collect($colors);
-        $colors_id=$collect->pluck('color_id')->unique();
-        foreach($colors_id as $id){
-            $quantity=$collect->where('color_id',$id)->sum('quantity');
-            $amount=$collect->firstWhere('color_id',$id)['amount'];
-            $color=$collect->firstWhere('color_id',$id)['color'];
-            $total_amount=$collect->where('color_id',$id)->sum('total_amount');
-            $order->colors()->syncWithoutDetaching([$id => ['quantity' =>$quantity,'amount'=>$amount,'total_amount'=>$total_amount,'color'=>$color]]);
-
-        }
-    }
 
 
     //send mail to all vendors in this order with order card
@@ -313,6 +313,12 @@ class OrderController extends Controller
         $order->update(['shipping' => $shipping_cost,'total_amount' => $order->total_amount+$shipping_cost]);
         $order->save();
     }
+
+
+
+
+
+
 
 
     //cancel order
