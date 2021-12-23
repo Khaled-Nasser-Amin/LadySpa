@@ -234,7 +234,7 @@ return [
     'Update Geo Location' => 'تعديل الموقع الجغرافي',
     'Update store\'s Location.' => 'تعديل الموقع الجغرافي للمتجر',
     'Active' => 'مُفعل',
-    'Your order' => 'طلبك',
+    'Your Order' => 'طلبك',
     'Hello,' => 'مرحبا,',
     'Reset Password' => 'استعادة كلمة المرور',
     'Non Active' => 'غير مُفعل',

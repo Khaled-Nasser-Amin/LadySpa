@@ -617,6 +617,10 @@ return [
     'In active collection becouse there are some data missing'=>'Inactive collection becouse there are some data missing',
     'Update Product'=>'Update Product',
     'Product group not available'=>'Product group not available',
+    'Discount'=>'Discount',
+    'Address'=>'Address',
+    'Consest of'=>'Consest of',
+    'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 

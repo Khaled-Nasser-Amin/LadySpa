@@ -76,7 +76,6 @@
                             <tr>
                                 <th>{{__('text.Order\'s Number')}}</th>
                                 @can('isAdmin')
-                                    <th>{{__('text.Assign To Delivery Provider')}}</th>
                                     <th>{{__('text.Receiver\'s Name')}}</th>
                                     <th>{{__('text.Payment Way')}}</th>
 
@@ -87,61 +86,15 @@
 
                                 <th>{{__('text.Total Amount')}}</th>
                                 <th>{{__('text.Subtotal')}}</th>
+                                <th>{{__('text.Discount')}}</th>
                                 <th>{{__('text.Action')}}</th>
                             </tr>
                             @forelse ($orders as $order)
                                 <tr>
                                     <td>{{$order->id}}</td>
                                     @can('isAdmin')
-                                    <td>
-                                        @if(($order->order_status == 'pending' && $order->payment_way == 'cash on delivery') || ($order->payment_way == 'online payment' && $order->payment_status == 'paid' && $order->order_status == 'pending'))
 
-                                            <div class="dropdown">
-                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" wire:key="{{ $loop->index }}">
-                                                    @if ($order->delivery_service_provider_id)
-                                                        <img src="{{ $order->delivery_service_provider->image }}" class="rounded-circle" style="width: 50px;height: 50px" alt="delivery-image">
-
-                                                        <span>{{ $order->delivery_service_provider->name }}</span>
-                                                    @else
-                                                        @lang('text.Select Delivery Provider')
-                                                    @endif
-                                                </button>
-                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="height: 200px;overflow-y:auto;">
-                                                    @if ($delivery_service_providers->count() > 0)
-                                                        @foreach ($delivery_service_providers as $delivery )
-                                                        <a class="dropdown-item" href="#" wire:click.prevent="assignOrderToDelivery({{ $delivery->id }},{{ $order->id }})">
-                                                            <img src="{{ $delivery->image }}" class="rounded-circle" style="width: 50px;height: 50px" alt="delivery-image">
-                                                            <span>{{ $delivery->name }}</span>
-                                                        </a>
-                                                        @endforeach
-                                                        @if ($order->delivery_service_provider_id)
-                                                            <a class="dropdown-item bg-soft-dark" href="#" wire:click.prevent="cancelOrderToDelivery({{ $order->id }})">
-                                                                <span>@lang('text.Stop Delivery')</span>
-                                                            </a>
-                                                        @endif
-
-
-
-                                                    @else
-                                                    <span class="text-muted">@lang('text.No Data Yet')</span>
-                                                    @endif
-
-                                                </div>
-
-                                            </div>
-
-                                        @elseif ($order->order_status != 'pending')
-                                        <div class="d-flex flex-row  align-items-center">
-                                            @if ($order->delivery_service_provider_id)
-                                            <a href="{{ $order->delivery_service_provider->image }}" target="_blanck">
-                                                <img src="{{ $order->delivery_service_provider->image }}" class="rounded-circle" style="width: 50px;height: 50px" alt="delivery-image">
-                                            </a>
-                                            <span>{{ $order->delivery_service_provider->name }}</span>
-                                            @endif
-                                        </div>
-                                        @endif
-                                    </td>
-                                    <td>{{$order->receiver_first_name ." ". $order->receiver_last_name}}</td>
+                                    <td>{{$order->receiver_name}}</td>
                                     <td>{{__('text.'.ucfirst($order->payment_way))}}</td>
                                     @endcan
                                     <td>{{__('text.'.ucfirst($order->order_status))}}</td>
@@ -158,6 +111,7 @@
                                     @can('isAdmin')
                                     <td> {{ $order->total_amount }}</td>
                                     <td> {{ $order->subtotal }}</td>
+                                    <td> {{ $order->discount }}</td>
                                     @endcan
                                     @cannot('isAdmin')
                                     <td> {{ $order->vendors->find(auth()->user()->id)->pivot->total_amount }}</td>

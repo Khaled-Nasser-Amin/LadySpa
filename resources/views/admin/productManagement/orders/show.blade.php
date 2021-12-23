@@ -76,8 +76,10 @@
                         @can('isAdmin')
                             <p class="text-muted text-overflow"><i class="mdi mdi-map-marker-radius mr-2"></i>{{$order->location}}</p>
                             <h4 class="mt-4 mb-3">@lang('text.Receiver Information')</h4>
-                            <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Name')</span>: {{$order->receiver_first_name . " " .$order->receiver_last_name}}</p>
+                            <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Name')</span>: {{$order->receiver_name }}</p>
                             <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Phone Number')</span>: {{$order->receiver_phone}}</p>
+                            <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Address')</span>: {{$order->address}}</p>
+                            <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Description')</span>: {{$order->description}}</p>
 
                             <h4 class="mt-4 mb-3">@lang('text.Payment Information')</h4>
                             <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Payment Way')</span>: {{__('text.'.ucfirst($order->payment_way))}}</p>
@@ -92,7 +94,7 @@
                                 {{__('text.'.ucfirst($order->payment_status))}}</p>
                             <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Order status')</span>: {{__('text.'.ucfirst($order->order_status))}}</p>
 
-                            <h4 class="mt-4 mb-3">@lang('text.Deliery Service Provider Information')</h4>
+                            {{-- <h4 class="mt-4 mb-3">@lang('text.Deliery Service Provider Information')</h4>
                             @if ($order->delivery_service_provider_id)
                                 <a href="{{ $order->delivery_service_provider->image }}" target="_blanck"><img src="{{ $order->delivery_service_provider->image }}" class="rounded-circle" style="width: 100px;height: 100px" alt="delivery-image"></a>
                                 <br>
@@ -100,7 +102,7 @@
                                 <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Phone Number')</span>: {{$order->delivery_service_provider->phone}}</p>
                                 @else
                                     @lang('text.Does Not Exist')
-                            @endif
+                            @endif --}}
                         @endcan
 
 
@@ -108,8 +110,8 @@
                         {{-- items details --}}
                         <div class="card-box" style="max-height: 1000px;overflow-y:scroll">
                             <div class="table-responsive">
-                                @foreach ( $order->colors()->withTrashed()->when(auth()->user()->role !='admin',function($q){
-                                    return $q->join('products','products.id','colors.product_id')
+                                @foreach ( $order->sizes()->withTrashed()->when(auth()->user()->role !='admin',function($q){
+                                    return $q->join('products','products.id','sizes.product_id')
                                          ->withTrashed()->where('products.user_id',auth()->user()->id);
                                 })->get() as $row)
                                 <table class="table table-bordered table-secondary  mb-4">
@@ -120,11 +122,10 @@
                                         <th > @lang('text.Price')</th>
                                         <th >@lang('text.Quantity') </th>
                                         <th >@lang('text.Taxes') </th>
-                                        <th >@lang('text.Color')</th>
-                                        <th >@lang('text.Sizes')</th>
+                                        <th >@lang('text.Size')</th>
 
                                         @php
-                                            $refunds=sizes_refund($order->id,$row->sizes()->withTrashed()->get()->pluck('id')->toArray());
+                                            $refunds=sizes_refund($order->id,$row->withTrashed()->get()->pluck('id')->toArray());
                                         @endphp
 
                                         @if ($refunds->count() > 0)
@@ -141,15 +142,14 @@
                                                 return $q->pluck('name_en')->first();
                                             }
                                         })}}</td>
-                                        <td>{{$row->pivot->amount}} @lang('text.RSA')</td>
+                                        <td>{{$row->pivot->amount}} @lang('text.SAR')</td>
                                         <td>{{$row->pivot->quantity}}</td>
-                                        <td>{{$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax'))/100)*$row->pivot->quantity)}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'RSA' }}</td>
-                                        <td><span class="label label-danger w-100" style="height:25px;border-radius:10px;background-color: {{ $row->color }};display:inline-block"></span></td>
-                                        <td>{{ $order->sizes()->withTrashed()->where('color_id',$row->id)->get()->pluck('size')->implode(',') }}</td>
+                                        <td>{{$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax'))/100))}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
+                                        <td>{{ $order->sizes()->withTrashed()->where('size_id',$row->id)->get()->pluck('size')->implode(',') }}</td>
                                         @if ($refunds->count() > 0)
                                         <td>
                                             @foreach ($refunds as $refund)
-                                                {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.RSA')
+                                                {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
                                             @endforeach
                                         </td>
                                         @endif
@@ -157,7 +157,53 @@
                                     </tbody>
                                 </table>
                                 @endforeach
+
+
+
+                                <br>
                                 <hr>
+                                @foreach ( $order->group_products()->withTrashed()->when(auth()->user()->role !='admin',function($q){
+                                    return $q->where('user_id',auth()->user()->id);
+                                })->get() as $row)
+                                <table class="table table-bordered table-secondary  mb-4">
+                                    <tbody>
+                                    <tr>
+                                        <th > @lang('text.Store Name')</th>
+                                        <th > @lang('text.Product Name')</th>
+                                        <th > @lang('text.Price')</th>
+                                        <th >@lang('text.Quantity') </th>
+                                        <th >@lang('text.Taxes') </th>
+                                        <th >@lang('text.Consest of')</th>
+
+                                        @php
+                                            $refunds=sizes_refund($order->id,$row->withTrashed()->get()->pluck('id')->toArray());
+                                        @endphp
+
+                                        @if ($refunds->count() > 0)
+                                        <th >@lang('text.Refunds')</th>
+                                        @endif
+                                    </tr>
+                                    <tr>
+                                        <td>{{ $row->user()->withTrashed()->pluck('store_name')->first() }} </td>
+
+                                        <td>{{app()->getLocale() == 'ar' ? $row->name_ar :$row->name_en}}</td>
+                                        <td>{{$row->pivot->price}} @lang('text.SAR')</td>
+                                        <td>{{$row->pivot->quantity}}</td>
+                                        <td>{{$row->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->taxes()->withTrashed()->sum('tax'))/100)*$row->pivot->quantity)}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
+                                        <td>{{ $order->sizes()->withTrashed()->where('size_id',$row->id)->get()->pluck('size')->implode(',') }}</td>
+                                        @if ($refunds->count() > 0)
+                                        <td>
+                                            @foreach ($refunds as $refund)
+                                                {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
+                                            @endforeach
+                                        </td>
+                                        @endif
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                @endforeach
+                                <hr style="">
+                                <br>
                                 <table class="table table-bordered  table-responsive mb-4">
                                     <tbody class="table-secondary">
                                     <tr>
@@ -166,6 +212,7 @@
                                         <th> @lang('text.Total Taxes')</th>
                                         @can('isAdmin')
                                         <th> @lang('text.Shipping')</th>
+                                        <th> @lang('text.Discount')</th>
 
                                         @endcan
                                         <th> @lang('text.Total Pieces')</th>
@@ -175,23 +222,24 @@
                                             {{
                                                 auth()->user()->role =='admin' ?
                                                 $order->total_amount : $order->vendors->find(auth()->user()->id)->pivot->total_amount
-                                            }} @lang('text.RSA')
+                                            }} @lang('text.SAR')
                                         </td>
                                         <td>
                                             {{
                                                 auth()->user()->role =='admin' ?
                                                 $order->subtotal : $order->vendors->find(auth()->user()->id)->pivot->subtotal
-                                            }} @lang('text.RSA')
+                                            }} @lang('text.SAR')
                                         </td>
 
                                         <td>{{ auth()->user()->role =='admin' ?
                                             $order->taxes : $order->vendors->find(auth()->user()->id)->pivot->taxes }}</td>
                                         @can('isAdmin')
                                         <td>{{ $order->shipping }}</td>
+                                        <td>{{ $order->discount }}</td>
                                         @endcan
                                         <td>
                                             {{
-                                                $order->colors()->withTrashed()->when(auth()->user()->role !='admin',function($q){
+                                                $order->sizes()->withTrashed()->when(auth()->user()->role !='admin',function($q){
                                                     return $q->with(['product' => function($q){
                                                             return $q->withTrashed()->where('user_id',auth()->user()->id);
                                                     }]);
@@ -245,6 +293,7 @@
                                             <h5>@lang('text.Phone Number')</h5>
                                             <p>{{ $order->customer()->withTrashed()->first()->phone }}</p>
                                         </li>
+
                                     </ul>
                                 </div>
 

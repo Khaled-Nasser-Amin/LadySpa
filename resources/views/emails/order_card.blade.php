@@ -1,7 +1,7 @@
 @component('mail::message')
 # @lang('text.Hello,'){{ $vendor->name }}
 
-@lang('text.Your order')
+@lang('text.Your Order')
 @component('mail::panel')
 @component('mail::table')
 |@lang('text.Image')|@lang('text.Product Name')|@lang('text.Size')|@lang('text.Quantity')|@lang('text.Price')|
@@ -17,8 +17,8 @@
 @component('mail::table')
 @if($vendor->role == 'admin')
 |@lang('text.Total Amount')|@lang('text.Subtotal')|@lang('text.Total Taxes')|@lang('text.Shipping')|@lang('text.Discount')|
-|:-------------:|:-------------:|:--------:|:------------:|
-|{{$order->total_amount}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'RSA' }}|{{$order->subtotal}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'RSA' }}|{{ $order->taxes }}|{{ $order->shipping }}|
+|:-------------:|:-------------:|:--------:|:------------:|:------------:|
+|{{$order->total_amount}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'RSA' }}|{{$order->subtotal}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'RSA' }}|{{ $order->taxes }}|{{ $order->shipping }}|{{ $order->discount }}|
 @endif
 
 @if($vendor->role != 'admin')

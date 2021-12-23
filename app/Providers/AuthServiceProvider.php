@@ -29,7 +29,17 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+        Gate::define('isAdmin', function (User $user) {
+            return $user->role == "admin";
+        });
 
+        Gate::define('show-order',function(User $user,Order $order){
+            return $user->orders->contains($order) || $user->role == 'admin';
+        });
+
+        Gate::define('delete-activity',function(User $user,Activity $activity){
+            return $activity->vendor_id == $user->id || $user->role == 'admin';
+        });
         Passport::routes();
         Passport::tokensCan([
             'customer' => 'customer',
