@@ -20,6 +20,7 @@ class CreateOrdersGroupProductsSizesTable extends Migration
             $table->unsignedBigInteger('size_id')->nullable();
             $table->foreign('size_id')->references('id')->on('sizes');
             $table->string('size');
+            $table->integer('product_id');
             $table->integer('quantity');
         });
     }

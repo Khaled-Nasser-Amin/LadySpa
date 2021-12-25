@@ -58,14 +58,16 @@ class OrderController extends Controller
 
         //check if size or product  is active or exist
         $empty_sizes=[];
-        $validate=$this->checkIfExist($sizes_id,$empty_sizes);
+        $quantities=[];
+        $validate=$this->checkIfExist($sizes_id,$empty_sizes,$quantities);
         if($validate != 'done'){
             return $validate;
         }
-        $product_group_validate=$this->checkIfGroupExist($request->groups_id);
+        $product_group_validate=$this->checkIfGroupExist($request->groups_id,$quantities);
         if($request->groups_id && $product_group_validate != 'done'){
             return $product_group_validate;
         }
+
 
         $data=$request->except(['sizes_id','lang','groups_id','promocode']);
         $order=Order::create($data);
@@ -120,9 +122,10 @@ class OrderController extends Controller
     }
 
     //validation if exists in  database
-    protected function checkIfExist($sizes_id,&$empty_sizes){
+    protected function checkIfExist($sizes_id,&$empty_sizes,&$quantities){
         foreach($sizes_id as $row){
             $size=Size::find($row['id']);
+            $quantities[]=['size_id' => $size->id,'quantity' => $row['quantity']];
             if(!$size){
                 return $this->error(__('text.Not Found'),404);
             }elseif($size->product->isActive == 0 || !$size->product){
@@ -141,15 +144,22 @@ class OrderController extends Controller
     }
 
     // check if the group of product availabel or not
-    protected function checkIfGroupExist($groups_id)
+    protected function checkIfGroupExist($groups_id,$quantities)
     {
         if(collect($groups_id)->count() > 0){
             foreach($groups_id as $row){
                 $product=Product::where('type','group')->where('id',$row['id'])->first();
+                foreach($product->child_products()->get() as $child){
+                    foreach($child->pivot->sizes()->get() as $row){
+                        $size_quantity=collect($quantities)->where('size_id',$row->id)->toArray() ;
+                        $size_quantity=$size_quantity[0]['quantity'] ??  0;
+                        if(($row->pivot->quantity+$size_quantity) > $row->stock){
+                            return $this->error(__('text.Not Found'),404);
+                        }
+                    }
+                }
                 if(!$product  || checkCollectionActive($product)){
                     return $this->error(__('text.Not Found'),404);
-                }elseif(checkCollectionActive($product)){
-                    return $this->error(__('text.Product group not available'),404);
                 }
             }
             return 'done';
@@ -184,7 +194,7 @@ class OrderController extends Controller
             $product->orders_product_group()->syncWithoutDetaching([$order->id => ['quantity' => $row['quantity'],'price'=> $finalPrice ,'tax'=>$tax,'amount' => $row['quantity']*$finalPrice,'total_amount' => ($row['quantity']*$finalPrice) + $tax]]);
             foreach($product->child_products()->get() as $child){
                 foreach($child->pivot->sizes()->get() as $size){
-                    $size->order_group_products_sizes()->syncWithoutDetaching([$order->id => ['quantity' => $size->pivot->quantity,'size'=>$size->size]]);
+                    $size->order_group_products_sizes()->syncWithoutDetaching([$order->id => ['product_id' => $size->product_id,'quantity' => $size->pivot->quantity,'size'=>$size->size]]);
                     $size->update(['stock' => ($size->stock-$size->pivot->quantity)]);
                 }
             }

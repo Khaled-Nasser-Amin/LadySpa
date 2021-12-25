@@ -15,6 +15,16 @@
 
 @component('mail::panel')
 @component('mail::table')
+|@lang('text.Image')|@lang('text.Product Name')|@lang('text.Quantity')|@lang('text.Price')|
+|:-------------:|:-------------:|:------------:|:------------:|
+@foreach ( $order->group_products()->withTrashed()->when($vendor->role !='admin',function($q) use($vendor){return $q->where('user_id',$vendor->id);})->get() as $row)
+|<a href="{{ $row->image }}" target="_blanck">@lang('Image')</a>|{{app()->getLocale() == 'ar' ? $row->name_ar:$row->name_en}}|{{ $row->pivot->quantity }}|{{$row->pivot->amount}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'RSA' }}|
+@endforeach
+@endcomponent
+@endcomponent
+
+@component('mail::panel')
+@component('mail::table')
 @if($vendor->role == 'admin')
 |@lang('text.Total Amount')|@lang('text.Subtotal')|@lang('text.Total Taxes')|@lang('text.Shipping')|@lang('text.Discount')|
 |:-------------:|:-------------:|:--------:|:------------:|:------------:|

@@ -24,12 +24,12 @@ class Order extends Model
 
     //group products with order
     public function group_products(){
-        return $this->belongsToMany(Product::class,'orders_group_products')->withPivot(['price','tax','amount','total_amount']);
+        return $this->belongsToMany(Product::class,'orders_group_products')->withPivot(['quantity','price','tax','amount','total_amount']);
 
     }
 
     public function group_products_sizes(){
-        return $this->belongsToMany(Size::class,'orders_group_products_sizes','order_id','size_id')->withPivot(['quantity','size']);
+        return $this->belongsToMany(Size::class,'orders_group_products_sizes','order_id','size_id')->withPivot(['product_id','quantity','size']);
     }
 
     public function customer(){

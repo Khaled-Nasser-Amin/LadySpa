@@ -66,7 +66,7 @@
 
                 @endif
 
-                <div class="table-responsive col" style="height: auto!important;max-height:200px;overflow-y:scroll">
+                <div class="table-responsive col" style="height: auto!important;max-height:80px;overflow-y:scroll">
                     <table class="table table-sm table-borderless mb-0">
                         <tbody>
                             @if ($product->type == 'single')

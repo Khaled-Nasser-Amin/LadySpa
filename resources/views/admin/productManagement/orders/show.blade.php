@@ -162,46 +162,77 @@
 
                                 <br>
                                 <hr>
+                                @if ($order->group_products()->withTrashed()->count() > 0)
+                                    <h3>@lang('text.Group of Products')</h3>
+                                @endif
                                 @foreach ( $order->group_products()->withTrashed()->when(auth()->user()->role !='admin',function($q){
                                     return $q->where('user_id',auth()->user()->id);
                                 })->get() as $row)
-                                <table class="table table-bordered table-secondary  mb-4">
-                                    <tbody>
-                                    <tr>
-                                        <th > @lang('text.Store Name')</th>
-                                        <th > @lang('text.Product Name')</th>
-                                        <th > @lang('text.Price')</th>
-                                        <th >@lang('text.Quantity') </th>
-                                        <th >@lang('text.Taxes') </th>
-                                        <th >@lang('text.Consest of')</th>
 
-                                        @php
-                                            $refunds=sizes_refund($order->id,$row->withTrashed()->get()->pluck('id')->toArray());
-                                        @endphp
+                                    <div class="table-responsive col" >
+                                        <table class="table table-sm table-borderless mb-0">
+                                            <tbody>
+                                                    <tr>
+                                                       <th > @lang('text.Store Name')</th>
+                                                        <th > @lang('text.Product Name')</th>
+                                                        <th > @lang('text.Price')</th>
+                                                        <th >@lang('text.Quantity') </th>
+                                                        <th >@lang('text.Taxes') </th>
 
-                                        @if ($refunds->count() > 0)
-                                        <th >@lang('text.Refunds')</th>
-                                        @endif
-                                    </tr>
-                                    <tr>
-                                        <td>{{ $row->user()->withTrashed()->pluck('store_name')->first() }} </td>
+                                                        @php
+                                                            $refunds=sizes_refund($order->id,$row->withTrashed()->get()->pluck('id')->toArray());
+                                                        @endphp
 
-                                        <td>{{app()->getLocale() == 'ar' ? $row->name_ar :$row->name_en}}</td>
-                                        <td>{{$row->pivot->price}} @lang('text.SAR')</td>
-                                        <td>{{$row->pivot->quantity}}</td>
-                                        <td>{{$row->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->taxes()->withTrashed()->sum('tax'))/100)*$row->pivot->quantity)}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
-                                        <td>{{ $order->sizes()->withTrashed()->where('size_id',$row->id)->get()->pluck('size')->implode(',') }}</td>
-                                        @if ($refunds->count() > 0)
-                                        <td>
-                                            @foreach ($refunds as $refund)
-                                                {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
-                                            @endforeach
-                                        </td>
-                                        @endif
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                                        @if ($refunds->count() > 0)
+                                                            <th >@lang('text.Refunds')</th>
+                                                        @endif
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ $row->user()->withTrashed()->pluck('store_name')->first() }} </td>
+
+                                                        <td>{{app()->getLocale() == 'ar' ? $row->name_ar :$row->name_en}}</td>
+                                                        <td>{{$row->pivot->price}} @lang('text.SAR')</td>
+                                                        <td>{{$row->pivot->quantity}}</td>
+                                                        <td>{{$row->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->taxes()->withTrashed()->sum('tax'))/100))}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
+
+                                                        @if ($refunds->count() > 0)
+                                                            <td>
+                                                                @foreach ($refunds as $refund)
+                                                                    {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
+                                                                @endforeach
+                                                            </td>
+                                                        @endif
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr>
+
+
+                                    <div class="table-responsive col" >
+                                        <table class="table table-sm table-borderless mb-0">
+                                                @foreach($order->group_products_sizes()->withTrashed()->get()->groupBy('product_id') as $sizes)
+                                                    @foreach ($sizes as $size)
+                                                        @if ($loop->index == 0)
+                                                        <tr><th>{{app()->getLocale() == 'ar'? $size->product->name_ar : $size->product->name_en }}</th></tr>
+                                                        @endif
+                                                        <tr>
+                                                            <th class="" scope="row"><strong>@lang('text.Size')</strong></th>
+                                                            <td class="text-muted">{{ $size->pivot->size }}</td>
+                                                            <th class="" scope="row"><strong>@lang('text.Quantity')</strong></th>
+                                                            <td class="text-muted">{{ $size->pivot->quantity }}</td>
+                                                        </tr>
+                                                    @endforeach
+
+                                                @endforeach
+
+                                        </table>
+                                    </div>
                                 @endforeach
+
+
+
                                 <hr style="">
                                 <br>
                                 <table class="table table-bordered  table-responsive mb-4">

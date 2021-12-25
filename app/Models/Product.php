@@ -38,7 +38,7 @@ class Product extends Model
 
     // group product with order
     public function orders_product_group(){
-        return $this->belongsToMany(Order::class,'orders_group_products')->withPivot(['price','tax','amount','total_amount']);
+        return $this->belongsToMany(Order::class,'orders_group_products')->withPivot(['quantity','price','tax','amount','total_amount']);
 
     }
     public function taxes(){

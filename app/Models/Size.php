@@ -23,7 +23,7 @@ class Size extends Model
     }
 
     public function order_group_products_sizes(){
-        return $this->belongsToMany(Order::class,'orders_group_products_sizes','size_id','order_id')->withPivot(['quantity','size']);
+        return $this->belongsToMany(Order::class,'orders_group_products_sizes','size_id','order_id')->withPivot(['product_id','quantity','size']);
     }
 
 }
