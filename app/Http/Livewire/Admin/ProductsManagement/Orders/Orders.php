@@ -18,6 +18,7 @@ class Orders extends Component
     public $search,$payment_status,$order_status,$payment_way;
 
 
+
     public function render()
     {
         $orders=$this->search();

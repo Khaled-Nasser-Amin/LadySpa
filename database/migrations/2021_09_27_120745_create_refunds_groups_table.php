@@ -20,7 +20,7 @@ class CreateRefundsGroupsTable extends Migration
             $table->unsignedBigInteger('vendor_id')->nullable();
             $table->foreign('vendor_id')->references('id')->on('users');
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->foreign('product_id')->references('id')->on('prdoucts');
+            $table->foreign('product_id')->references('id')->on('products');
             $table->float('total_refund_amount',11,2);
             $table->integer('quantity');
             $table->string('refund_status')->default('not refunded yet');

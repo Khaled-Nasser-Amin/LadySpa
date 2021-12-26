@@ -71,9 +71,14 @@ class OrderDetails extends Component
     }
     public function cancelOrder(){
         $order=$this->order;
-        if ($order  && ($order->order_status != 'completed' || $order->order_status != 'pending' || $order->order_status != 'canceled' || $order->order_status != 'modified')) {
-            $order->update(['order_status' => 'pending']);
-            $this->dispatchBrowserEvent('error', __('text.Order is pending'));
+        if ($order) {
+            if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
+                $this->returnSizesToStock($order);
+                $order->delete();
+                session()->flash('danger', __('text.Order Deleted Successfully'));
+                $this->redirect(route('admin.orders'));
+            }
+
 
 
         }
@@ -82,20 +87,16 @@ class OrderDetails extends Component
 
 
      //cancel order
-     public function cancel_order(){
-        $order=$this->order;
-        if($order){
-                if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
-                    foreach($order->sizes()->withTrashed()->get() as $size){
-                        $quantity=$order->sizes->where('id',$size->id)->pluck('pivot.quantity')->first();
-                        $size->update(['stock' => $size->stock+$quantity]);
-                    }
-                    $order->delete();
-                }else{
-
-                }
-        }else{
+    public function returnSizesToStock($order){
+        foreach($order->sizes()->withTrashed()->get() as $size){
+            $size->update(['stock' => $size->stock+$size->pivot->quantity]);
         }
+
+
+        foreach($order->group_products_sizes()->withTrashed()->get() as $size){
+            $size->update(['stock' => ($size->stock+$size->pivot->quantity)]);
+        }
+
     }
 
 

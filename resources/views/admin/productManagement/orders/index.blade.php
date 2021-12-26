@@ -22,7 +22,6 @@
                 </x-slot>
             </x-admin.general.page-title>
 
-            @include('admin.partials.success')
 
             <div class="row mt-5">
                 <br>

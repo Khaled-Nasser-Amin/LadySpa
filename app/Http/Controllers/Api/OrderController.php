@@ -98,6 +98,7 @@ class OrderController extends Controller
                 return $this->success(new OrderResource($order),__('text.Order created successfully'),305);
             }
 
+            $order->save();
 
             return $this->success(array_merge(collect($data)->toArray(),collect(new OrderResource($order))->toArray()),__('text.Order created successfully'),200);
         }
@@ -154,10 +155,10 @@ class OrderController extends Controller
                     return $this->error(__('text.Not Found'),404);
                 }
                 foreach($product->child_products()->get() as $child){
-                    foreach($child->pivot->sizes()->get() as $row){
-                        $size_quantity=collect($quantities)->where('size_id',$row->id)->toArray() ;
+                    foreach($child->pivot->sizes()->get() as $size){
+                        $size_quantity=collect($quantities)->where('size_id',$size->id)->toArray() ;
                         $size_quantity=$size_quantity[0]['quantity'] ??  0;
-                        if(($row->pivot->quantity+$size_quantity) > $row->stock){
+                        if(($size->pivot->quantity+$size_quantity)*$row['quantity'] > $size->stock){
                             return $this->error(__('text.Not Found'),404);
                         }
                     }
@@ -196,8 +197,8 @@ class OrderController extends Controller
             $product->orders_product_group()->syncWithoutDetaching([$order->id => ['quantity' => $row['quantity'],'price'=> $finalPrice ,'tax'=>$tax,'amount' => $row['quantity']*$finalPrice,'total_amount' => ($row['quantity']*$finalPrice) + $tax]]);
             foreach($product->child_products()->get() as $child){
                 foreach($child->pivot->sizes()->get() as $size){
-                    $size->order_group_products_sizes()->syncWithoutDetaching([$order->id => ['product_id' => $size->product_id,'quantity' => $size->pivot->quantity,'size'=>$size->size]]);
-                    $size->update(['stock' => ($size->stock-$size->pivot->quantity)]);
+                    $size->order_group_products_sizes()->syncWithoutDetaching([$order->id => ['product_id' => $size->product_id,'quantity' => $size->pivot->quantity*$row['quantity'],'size'=>$size->size]]);
+                    $size->update(['stock' => ($size->stock-($size->pivot->quantity*$row['quantity']))]);
                 }
             }
 
