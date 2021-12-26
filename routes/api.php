@@ -58,7 +58,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::post('/register', [AuthController::class, 'store']);
 
     //login
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/auth_api', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::post('/logout', [AuthController::class, 'logout']);
 
 

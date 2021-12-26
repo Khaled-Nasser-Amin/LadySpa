@@ -97,7 +97,14 @@
                                     <td>{{$order->receiver_name}}</td>
                                     <td>{{__('text.'.ucfirst($order->payment_way))}}</td>
                                     @endcan
-                                    <td>{{__('text.'.ucfirst($order->order_status))}}</td>
+                                    <td>
+                                        @if ($order->hold == 0)
+
+                                        {{__('text.'.ucfirst($order->order_status))}}
+                                        @else
+                                        <i class="text-danger far fa-pause-circle"></i> @lang('text.Hold')
+                                        @endif
+                                    </td>
                                     <td>
                                         @if ($order->payment_status == 'paid')
                                             <i class="text-success mdi mdi-checkbox-marked-circle"></i>

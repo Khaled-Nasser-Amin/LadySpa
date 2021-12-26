@@ -25,12 +25,12 @@ class ProfileController extends Controller
             if ($user->getAttributes()['image']){
                 $old_image=$user->getAttributes()['image'];
             }
-            $file=$this->AddSingleImage($request,storage_path('app\public\users\\'));
+            $file=$this->AddSingleImage($request,storage_path('app/public/users/'));
             $user->update([
                 'image' => $file,
             ]);
             if(isset($old_image)){
-                unlink(storage_path('app\public\users\\').$old_image);
+                unlink(storage_path('app/public/users/').$old_image);
             }
             $user->save();
             return response()->json($user->image,200);

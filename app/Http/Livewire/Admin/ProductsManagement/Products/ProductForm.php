@@ -210,10 +210,10 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
                     $size=Size::onlyTrashed()->findOrFail($row['id']);
                     $size->restore();
                 }
-                $size->update(['stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
+                $size->update(['stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale'] ?? 0]);
 
             }else{
-                $size=Size::create(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale']]);
+                $size=Size::create(['size'=>$row['size'],'stock'=>$row['stock'],'price'=>$row['price'],'sale'=>$row['sale'] ?? 0]);
                 $size->product()->associate($product->id);
                 $size->save();
                 $this->sizes[$key]['id']=$size->id;
@@ -235,6 +235,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     // size and stock modal
     public function addSize($index){
         $this->size=strtolower($this->size);
+        $this->sale = $this->sale ?? 0;
         $this->validate([
             'size' => ['required',Rule::notIn(collect($this->sizes)->pluck('size')),Rule::notIn(collect($this->deletedSizes)->pluck('size'))],
             'stock' => 'required|integer|min:1',
@@ -249,6 +250,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
     public function updateSize($index){
+
         $this->update_size=$this->sizes[$index]['size'];
         $this->update_stock=$this->sizes[$index]['stock'];
         $this->update_price=$this->sizes[$index]['price'];
@@ -265,10 +267,11 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
             'update_price' => 'required|numeric',
             'update_sale' => 'nullable|numeric|lt:update_price'
         ]);
+
         $this->sizes[$this->index_of_size]['size']=$this->update_size;
         $this->sizes[$this->index_of_size]['stock']=$this->update_stock;
         $this->sizes[$this->index_of_size]['price']=$this->update_price;
-        $this->sizes[$this->index_of_size]['sale']=$this->update_sale;
+        $this->sizes[$this->index_of_size]['sale']=$this->update_sale  == '' ? 0 :$this->update_sale;
         $this->emit('updateSize',$index); // emit to hide modal size
 
     }
@@ -377,6 +380,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
     protected function group_validation()
     {
+        $this->group_sale = $this->group_sale == '' ? 0 :$this->group_sale;
         return [
             'group_price' =>'required_if:type,group|numeric',
             'group_sale' =>'nullable|numeric|lt:group_price|',

@@ -68,7 +68,6 @@ class OrderController extends Controller
             return $product_group_validate;
         }
 
-
         $data=$request->except(['sizes_id','lang','groups_id','promocode']);
         $order=Order::create($data);
         $user=$request->user();
@@ -122,10 +121,12 @@ class OrderController extends Controller
     }
 
     //validation if exists in  database
-    protected function checkIfExist($sizes_id,&$empty_sizes,&$quantities){
+    protected function checkIfExist($sizes_id,&$empty_sizes,&$quantities=[]){
         foreach($sizes_id as $row){
             $size=Size::find($row['id']);
-            $quantities[]=['size_id' => $size->id,'quantity' => $row['quantity']];
+            if($size){
+                $quantities[]=['size_id' => $size->id,'quantity' => $row['quantity']];
+            }
             if(!$size){
                 return $this->error(__('text.Not Found'),404);
             }elseif($size->product->isActive == 0 || !$size->product){
@@ -149,6 +150,9 @@ class OrderController extends Controller
         if(collect($groups_id)->count() > 0){
             foreach($groups_id as $row){
                 $product=Product::where('type','group')->where('id',$row['id'])->first();
+                if(!$product  || checkCollectionActive($product)){
+                    return $this->error(__('text.Not Found'),404);
+                }
                 foreach($product->child_products()->get() as $child){
                     foreach($child->pivot->sizes()->get() as $row){
                         $size_quantity=collect($quantities)->where('size_id',$row->id)->toArray() ;
@@ -158,9 +162,7 @@ class OrderController extends Controller
                         }
                     }
                 }
-                if(!$product  || checkCollectionActive($product)){
-                    return $this->error(__('text.Not Found'),404);
-                }
+
             }
             return 'done';
         }

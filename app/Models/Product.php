@@ -34,7 +34,9 @@ class Product extends Model
         return $this->belongsToMany(Order::class,'orders_products')->withPivot(['name_ar','name_en','image']);
 
     }
-
+    public function refund_groups(){
+        return $this->hasMany(RefundGroup::class,'product_id');
+    }
 
     // group product with order
     public function orders_product_group(){

@@ -42,6 +42,11 @@ class Order extends Model
 
     }
 
+    public function refund_groups(){
+        return $this->hasMany(RefundGroup::class);
+
+    }
+
     public function vendors(){
         return $this->belongsToMany(User::class,'order_vendor','order_id','vendor_id');
     }

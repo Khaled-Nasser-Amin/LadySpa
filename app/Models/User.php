@@ -66,6 +66,9 @@ class User extends Authenticatable
     public function refunds(){
         return $this->hasMany(Refund::class,'vendor_id');
     }
+    public function refund_groups(){
+        return $this->hasMany(RefundGroup::class,'vendor_id');
+    }
     public function activitesBelongsToMe(){
         return $this->hasMany(Activity::class,'belongs_to_id');
     }
