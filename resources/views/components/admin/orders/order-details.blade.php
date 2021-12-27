@@ -111,8 +111,18 @@
 
                         @endif
 
-                        @if($order->order_status == 'processing' || $order->order_status == 'shipping'|| $order->order_status == 'pending')
+                        @if($order->order_status == 'pending')
                             <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel" style="height: 60px">@lang('text.Cancel Order') <i class="fas fa-power-off"></i></button>
+
+                        @endif
+
+                        @if($order->order_status == 'processing' || $order->order_status == 'shipping' || ($order->order_status == 'completed' && $order->updated_at->addDays(10) > now()))
+                            @if($order->order_status == 'completed' && $order->updated_at->addDays(10) > now())
+                                <p class="text-danger"><i class="text-danger mdi mdi-close-circle"></i> @lang('text.You can not return order after 10 days')</p>
+
+                            @endif
+                            <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel" style="height: 60px"><i class="fas fa-reply"></i> @lang('text.Refund order')</button>
+
                         @endif
                     </div>
 
@@ -147,11 +157,11 @@
                                 <th >@lang('text.Size')</th>
 
                                 @php
-                                    $refunds=sizes_refund($order->id,$row->withTrashed()->get()->pluck('id')->toArray());
+                                    $refund=sizes_refund($order->id,$row->id);
                                 @endphp
 
-                                @if ($refunds->count() > 0)
-                                <th >@lang('text.Refunds')</th>
+                                @if ($refund)
+                                    <th >@lang('text.Refund')</th>
                                 @endif
                             </tr>
                             <tr>
@@ -168,11 +178,9 @@
                                 <td>{{$row->pivot->quantity}}</td>
                                 <td>{{$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax'))/100))}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
                                 <td>{{ $order->sizes()->withTrashed()->where('size_id',$row->id)->get()->pluck('size')->implode(',') }}</td>
-                                @if ($refunds->count() > 0)
-                                <td>
-                                    @foreach ($refunds as $refund)
-                                        {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
-                                    @endforeach
+                                @if ($refund)
+                                <td class="text-danger">
+                                    <i class="text-danger mdi mdi-close-circle"></i>{{'('.$refund->quantity .') '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
                                 </td>
                                 @endif
                             </tr>
@@ -202,11 +210,11 @@
                                                 <th >@lang('text.Taxes') </th>
 
                                                 @php
-                                                    $refunds=sizes_refund($order->id,$row->withTrashed()->get()->pluck('id')->toArray());
+                                                    $refund=groups_refund($order->id,$row->id);
                                                 @endphp
 
-                                                @if ($refunds->count() > 0)
-                                                    <th >@lang('text.Refunds')</th>
+                                                @if ($refund)
+                                                    <th >@lang('text.Refund')</th>
                                                 @endif
 
                                             </tr>
@@ -218,11 +226,9 @@
                                                 <td>{{$row->pivot->quantity}}</td>
                                                 <td>{{$row->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->taxes()->withTrashed()->sum('tax'))/100))}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
 
-                                                @if ($refunds->count() > 0)
-                                                    <td>
-                                                        @foreach ($refunds as $refund)
-                                                            {{ $refund->quantity .' '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
-                                                        @endforeach
+                                                @if ($refund)
+                                                    <td class="text-danger">
+                                                        <i class="text-danger mdi mdi-close-circle"></i>{{ '('.$refund->quantity .') '. $refund->total_refund_amount}} @lang('text.SAR')
                                                     </td>
                                                 @endif
                                             </tr>

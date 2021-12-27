@@ -4,6 +4,8 @@ namespace App\Http\Livewire\Admin\ProductsManagement\Orders;
 
 use App\Mail\AfterOrderComplete;
 use App\Models\Order;
+use App\Models\Refund;
+use App\Models\RefundGroup;
 use App\Models\Size;
 use App\Models\User;
 use App\Traits\ImageTrait;
@@ -79,7 +81,9 @@ class OrderDetails extends Component
                 $this->redirect(route('admin.orders'));
             }
 
-
+            elseif($order->order_status == 'processing' || $order->order_status == 'shipping' || ($order->order_status == 'completed' && $order->updated_at->addDays(10) > now())){
+                $this->refundOrder($order);
+            }
 
         }
     }
@@ -101,28 +105,44 @@ class OrderDetails extends Component
 
 
 
-    protected function cancel_after_collected($order)
+
+    protected function refundOrder($order)
     {
         foreach ($order->sizes()->withTrashed()->get() as $size) {
-            $order_size=$order->sizes->where('id', $size->id);
-            $quantity = $order_size->pluck('pivot.quantity')->first();
-            $price = $order_size->pluck('pivot.price')->first();
-            $taxes = $order_size->pluck('pivot.tax')->first();
+            $quantity = $size->pivot->quantity;
+            $price =$size->pivot->price;
+            $taxes = $size->pivot->tax;
             Refund::create([
                 'order_id' => $order->id,
-                'vendor_id' => $size->color()->withTrashed()->first()->product()->withTrashed()->first()->user_id,
+                'vendor_id' => $size->product()->withTrashed()->first()->user_id,
                 'total_refund_amount' => ($quantity * $price) + $taxes,
                 'size_id' => $size->id,
                 'quantity' => $quantity,
                 'price' => $price,
                 'taxes' => $taxes,
-                'size' => $order_size->pluck('pivot.size')->first(),
-                'color' => $order->colors->where('id', $size->color()->withTrashed()->first()->id)->pluck('pivot.color')->first(),
+                'size' => $size->size,
                 'subtotal_refund_amount' => $quantity * $price,
             ]);
             $size->update(['stock' => $size->stock + $quantity]);
         }
-
+        foreach ($order->group_products()->withTrashed()->get() as $product) {
+            $quantity = $product->pivot->quantity;
+            $price =$product->pivot->price;
+            $taxes = $product->pivot->tax;
+            RefundGroup::create([
+                'order_id' => $order->id,
+                'vendor_id' => $product->withTrashed()->first()->user_id,
+                'total_refund_amount' => ($quantity * $price) + $taxes,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'price' => $price,
+                'taxes' => $taxes,
+                'subtotal_refund_amount' => $quantity * $price,
+            ]);
+        }
+        foreach($order->group_products_sizes()->withTrashed()->get() as $size){
+            $size->update(['stock' => ($size->stock+$size->pivot->quantity)]);
+        }
         foreach ($order->vendors()->withTrashed()->get() as $vendor) {
             $order->vendors()->updateExistingPivot($vendor->id, [
                 'total_amount' => 0,
@@ -134,7 +154,9 @@ class OrderDetails extends Component
 
         }
 
-        $order->update(['taxes' => 0, 'subtotal' => 0, 'total_amount' => $order->shipping, 'payment_status' => 'failed', 'order_status' => 'canceled']);
+        $order->update(['payment_status' => 'failed', 'order_status' => 'refund']);
+        session()->flash('danger', __('text.Order Refunded Successfully'));
+
     }
 
     protected function modify_after_collected($order, $sizes)

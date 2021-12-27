@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRefundsGroupsTable extends Migration
+class CreateRefundGroupsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateRefundsGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('refunds_groups', function (Blueprint $table) {
+        Schema::create('refund_groups', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
@@ -39,6 +39,6 @@ class CreateRefundsGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('refunds_groups');
+        Schema::dropIfExists('refund_groups');
     }
 }

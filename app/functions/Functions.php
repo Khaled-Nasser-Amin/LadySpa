@@ -4,6 +4,7 @@
 use Aloha\Twilio\Twilio;
 use App\Models\Activity;
 use App\Models\Refund;
+use App\Models\RefundGroup;
 use App\Models\Setting;
 use Carbon\Carbon;
 
@@ -99,9 +100,13 @@ function getOrdersCurrentMonth($q){
 
 
 //return sizes refund
-function sizes_refund($order_id,$sizes){
-    return Refund::where('order_id',$order_id)->whereIn('size_id',$sizes)->get();
+function sizes_refund($order_id,$size){
+    return Refund::where('order_id',$order_id)->where('size_id',$size)->first();
+}
+//return groups refund
 
+function groups_refund($order_id,$group_id){
+    return RefundGroup::where('order_id',$order_id)->where('product_id',$group_id)->first();
 }
 
 

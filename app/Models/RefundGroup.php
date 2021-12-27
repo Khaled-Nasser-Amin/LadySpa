@@ -10,7 +10,7 @@ class RefundGroup extends Model
     use HasFactory;
 
 
-    protected $fillable=['order_id','vendor_id','total_refund_amount','group_id','quantity','price','subtotal_refund_amount','taxes','refund_status'];
+    protected $fillable=['order_id','vendor_id','total_refund_amount','product_id','quantity','price','subtotal_refund_amount','taxes','refund_status'];
 
     public function product()
     {

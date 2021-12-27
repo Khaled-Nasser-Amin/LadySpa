@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\front\LandingPage;
 use App\Http\Controllers\admin\productManagement\orders\OrderController;
 use App\Http\Controllers\admin\productManagement\products\ProductController;
+use App\Http\Controllers\admin\productManagement\refunds\RefundController;
 use App\Http\Controllers\admin\productManagement\sessions\SessionController;
 use App\Http\Controllers\admin\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\admin\Profile\UserProfileController;
@@ -90,7 +91,6 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/taxes', Taxes::class)->name('admin.taxes');
         Route::get('/promocodes', PromoCodes::class)->name('admin.promocodes');
         Route::get('/activities', Activities::class)->name('admin.activities');
-        Route::get('/refunds', Refunds::class)->name('admin.refunds');
         Route::get('/customers', Customers::class)->name('admin.customers');
         Route::get('/banners', Banners::class)->name('admin.banners');
 
@@ -104,6 +104,9 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
         Route::get('/order/show/{order}', [OrderController::class,'show'])->name('order.show');
 
         Route::get('/vendors', Vendors::class)->name('admin.vendors');
+
+
+        Route::get('/refunds', [RefundController::class,'show'])->name('admin.refunds');
 
 
         Route::get('/sessions', Sessions::class)->name('admin.sessions');
