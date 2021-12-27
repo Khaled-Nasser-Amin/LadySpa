@@ -41,26 +41,14 @@
             <!-- end page title -->
 
             <div class="row justify-content-between">
-                <div class="box" style="width: 33%">
-                    <div class="card widget-box-one border border-success bg-soft-success">
-                        <div class="card-body">
-                            <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-account font-30 widget-icon rounded-circle avatar-title text-success"></i>
-                            </div>
-                            <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Users')}}</p>
-                                <h2><span data-plugin="counterup">{{$users}} </span> </h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- end col -->
                 <div class="box" style="width: 33%">
                     <div class="card widget-box-one border border-warning bg-soft-warning">
                         <div class="card-body">
                             <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-tshirt-crew font-30 widget-icon rounded-circle avatar-title text-warning"></i>
+                                <i class="fab fa-product-hunt font-30 widget-icon rounded-circle avatar-title text-warning"></i>
                             </div>
                             <div class="wigdet-one-content">
                                 <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Active Products')}}</p>
@@ -73,7 +61,7 @@
                     <div class="card widget-box-one border border-success bg-soft-success">
                         <div class="card-body">
                             <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-close-circle  font-30 widget-icon rounded-circle avatar-title text-success"></i>
+                                <i class="fa fa-ban text-danger font-30 widget-icon rounded-circle avatar-title text-success"></i>
                             </div>
                             <div class="wigdet-one-content">
                                 <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Inactive Products')}}</p>
@@ -83,26 +71,39 @@
                     </div>
                 </div>
                 <div class="box" style="width: 33%">
-                    <div class="card widget-box-one border border-success bg-soft-success">
+                    <div class="card widget-box-one border border-primary bg-soft-primary">
                         <div class="card-body">
                             <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-close-circle  font-30 widget-icon rounded-circle avatar-title text-success"></i>
+                                <i class="fa fa-ban text-danger font-30 widget-icon rounded-circle avatar-title text-success"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.completed Sessions')}}</p>
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Inactive Sizes')}}</p>
+                                <h2><span data-plugin="counterup">{{ $inactive_sizes_counter }} </span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-secondary bg-soft-secondary">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i class="far fa-edit  font-30 widget-icon rounded-circle avatar-title text-secondary"></i>
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Completed Reservations')}}</p>
                                 <h2><span data-plugin="counterup">{{ $inactive_products }} </span> </h2>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="box" style="width: 33%">
-                    <div class="card widget-box-one border border-success bg-soft-success">
+                    <div class="card widget-box-one border border-primary bg-soft-primary">
                         <div class="card-body">
                             <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-close-circle  font-30 widget-icon rounded-circle avatar-title text-success"></i>
+                                <i class="fas fa-hot-tub  font-30 widget-icon rounded-circle avatar-title text-primary"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.total_sessions')}}</p>
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Active Sessions')}}</p>
                                 <h2><span data-plugin="counterup">{{ $inactive_products }} </span> </h2>
                             </div>
                         </div>
@@ -110,13 +111,13 @@
                 </div>
 
                 <div class="box" style="width: 33%">
-                    <div class="card widget-box-one border border-primary bg-soft-primary">
+                    <div class="card widget-box-one border border-info bg-soft-info">
                         <div class="card-body">
                             <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-invert-colors-off  font-30 widget-icon rounded-circle avatar-title text-primary"></i>
+                                <i class="fa fa-ban text-danger font-30 widget-icon rounded-circle avatar-title text-info"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Inactive Sizes')}}</p>
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Inactive Sessions')}}</p>
                                 <h2><span data-plugin="counterup">{{ $inactive_sizes_counter }} </span> </h2>
                             </div>
                         </div>

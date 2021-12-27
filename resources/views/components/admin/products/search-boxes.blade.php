@@ -1,20 +1,28 @@
 <div class="col-sm-12 mt-2 mb-4">
     <form class="row justify-content-center" method="get">
 
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-3 {{ auth()->user()->role != 'admin' ? 'col-md-4':''}}">
             <div class="form-group">
                 <label for="field-00" class="control-label">{{__('text.Product Name')}}</label>
                 <input type="text" wire:model="productName" class="form-control" id="field-00" placeholder="{{__('text.Product Name')}}...">
             </div>
         </div>
+        @can('isAdmin')
+        <div class="col-sm-6 col-md-3 ">
+            <div class="form-group">
+                <label for="field-20" class="control-label">{{__('text.Store Name')}}</label>
+                <input type="text" wire:model="store_name" class="form-control" id="field-20" placeholder="{{__('text.Store Name')}}...">
+            </div>
+        </div>
+        @endcan
 
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-3 {{ auth()->user()->role != 'admin' ? 'col-md-4':''}}">
             <div class="form-group">
                 <label for="field-4" class="control-label">{{__('text.Size')}}</label>
                 <input type="text" wire:model="size" class="form-control" id="field-4" placeholder="42">
             </div>
         </div>
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-3 {{ auth()->user()->role != 'admin' ? 'col-md-4':''}}">
             <div class="form-group">
                 <label for="field-5" class="control-label">{{__('text.Date')}}</label>
                 <input type="date" wire:model="date" class="form-control" id="field-5">

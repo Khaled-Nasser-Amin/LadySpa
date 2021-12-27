@@ -32,7 +32,11 @@ class Vendors_ProductsController extends Controller
         app()->setlocale($request->lang);
         $vendors=User::where('activation',1)->where('add_product',1)->has('products')->get();
         $offers=Product::where('featured',1)->get();
-        return $this->success(['vendors' => collect(VendorCollection::collection($vendors))->filter(),'banners' => collect($offers->pluck('banner'))->filter()]);
+        $featured=[];
+        foreach($offers as $offer){
+            $featured[]=['image' => $offer->banner,'id' => $offer->id];
+        }
+        return $this->success(['vendors' => collect(VendorCollection::collection($vendors))->filter(),'banners' => collect($featured)->filter()]);
     }
 
 

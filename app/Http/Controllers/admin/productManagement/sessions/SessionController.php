@@ -13,6 +13,8 @@ class SessionController extends Controller
 
     public function store($request)
     {
+        $this->authorize('create',Xsession::class);
+
         $data=collect($request)->except(['image','additions','taxes_selected','banner'])->toArray();
         $data['image']=$this->add_single_image($request['image'],'sessions');
         $data['banner']=$this->add_single_image($request['banner'],'sessions');
@@ -25,6 +27,8 @@ class SessionController extends Controller
     public function update($request,$id)
     {
         $session=Xsession::findOrFail($id);
+        $this->authorize('update',$session);
+
         $data=collect($request)->except(['image','additions','taxes_selected','banner'])->toArray();
         $this->updateImage($request,$session,$data);
         $session->update($data);
@@ -52,6 +56,8 @@ class SessionController extends Controller
     }
     public function destroy($session)
     {
+        $this->authorize('delete',$session);
+
         $vendor_id=$session->user_id;
         $session->delete();
         return $vendor_id;
@@ -70,13 +76,17 @@ class SessionController extends Controller
     }
 
     public function show(Request $request,Xsession $session,$slug){
+        $this->authorize('view',$session);
+
         $images= array_merge([$session->image],$session->images->pluck('name')->toArray());
         return view('admin.productManagement.sessions.show',compact('session','images'));
     }
     public function addNewSession(){
+        $this->authorize('create',Xsession::class);
         return view('admin.productManagement.sessions.create');
     }
     public function updateSession(Xsession $session){
+        $this->authorize('update',$session);
         return view('admin.productManagement.sessions.edit',compact('session'));
     }
 

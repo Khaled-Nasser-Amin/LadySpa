@@ -48,6 +48,8 @@ class Sessions extends Component
 
     //delete product
     public function delete(Xsession $session){
+        $this->authorize('delete',$session);
+
         $instance=new SessionController();
         $vendor_id=$instance->destroy($session);
         session()->flash('success',__('text.Session Deleted Successfully') );
@@ -57,6 +59,8 @@ class Sessions extends Component
 
     //update product's featured
     public function updateFeatured(Xsession $session){
+        Gate::authorize('isAdmin');
+
 
         $numberOfSessions=auth()->user()->sessions->where('featured',1)->count();
         if ($numberOfSessions < 6 || $session->featured == 1){
@@ -104,6 +108,8 @@ class Sessions extends Component
 
     //change product status
     public function updateStatus(Xsession $session){
+        $this->authorize('update',$session);
+
         if($session->isActive == 0 ){
             $status= 1;
             $session->update([

@@ -15,7 +15,7 @@ class Register extends Component
     use WithRateLimiting;
     public $name,$store_name,$email,$whatsapp,$location,$phone,$password,$password_confirmation,$code,$geoLocation='';
 
-
+    public $session_rooms_limitation_indoor,$session_rooms_limitation_outdoor;
     public function updated($fields){
         $this->validateOnly($fields,[
             'store_name' => 'required|string|max:255|unique:users',
@@ -26,16 +26,21 @@ class Register extends Component
             'whatsapp' => 'required|numeric|unique:users',
             'password' => 'required|alpha_num|min:8|max:255',
             'password_confirmation' => 'required|alpha_num|min:8|max:255|',
+            'session_rooms_limitation_indoor' => 'required|numeric|gt:0',
+
         ]);
     }
 
     public function validation(){
+       $this->session_rooms_limitation_outdoor= $this->session_rooms_limitation_outdoor == '' ? 0 : $this->session_rooms_limitation_outdoor;
       return  $this->validate([
         'store_name' => 'required|string|max:255|unique:users',
         'name' => 'required|string|max:255',
         'location' => 'required|string|max:255',
         'email' => 'required|email|max:255|unique:users',
         'phone' => 'required|numeric|unique:users',
+        'session_rooms_limitation_indoor' => 'required|numeric|gt:0',
+        'session_rooms_limitation_outdoor' => 'required|numeric|gte:0',
         'whatsapp' => 'required|numeric|unique:users',
         'password' => 'required|alpha_num|min:8|max:255|confirmed',
         'password_confirmation' => 'required|string|max:255|',

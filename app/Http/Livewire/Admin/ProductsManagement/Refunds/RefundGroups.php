@@ -2,13 +2,13 @@
 
 namespace App\Http\Livewire\Admin\ProductsManagement\Refunds;
 
-use App\Models\Refund;
+use App\Models\RefundGroup;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class Refunds extends Component
+class RefundGroups extends Component
 {
     use WithPagination,ImageTrait;
     public $search,$status;
@@ -17,7 +17,7 @@ class Refunds extends Component
     public function confirmDelete($id){
         $this->emit('confirmDelete', $id);
     }
-    public function delete(Refund $refund){
+    public function delete(RefundGroup $refund){
         Gate::authorize('isAdmin');
         $refund->update(['refund_status' => 'money refunded']);
         $refund->save();
@@ -28,16 +28,15 @@ class Refunds extends Component
     public function render()
     {
         $refunds= $this->search();
-        return view('components.admin.refunds.singel-products',compact('refunds'));
+        return view('components.admin.refunds.group-products',compact('refunds'));
     }
 
     public function search(){
-        return Refund::
-        join('users','users.id','refunds.vendor_id')
-        ->join('sizes','sizes.id','refunds.size_id')
-        ->join('products','products.id','sizes.product_id')->select('refunds.*')
+        return RefundGroup::
+        join('users','users.id','refund_groups.vendor_id')
+        ->join('products','products.id','refund_groups.product_id')->select('refund_groups.*')
         ->when($this->status  == 2 || $this->status  == 1,function($q){
-            $this->status  == 2 ? $q->where('refunds.refund_status','not refunded yet'):$q->where('refund_status','money refunded');
+            $this->status  == 2 ? $q->where('refund_groups.refund_status','not refunded yet'):$q->where('refund_status','money refunded');
         })
          ->where(function($q){
             return $q->when(auth()->user()->role != 'admin',function($q){
@@ -46,12 +45,11 @@ class Refunds extends Component
         })
         ->where(function($q){
            $q->when($this->search,function ($q){
-             $q->where('refunds.order_id',$this->search)
-                ->orWhere('refunds.size','like','%'.$this->search.'%')
-                ->orWhere('refunds.quantity',$this->search)
-                ->orWhere('refunds.taxes',$this->search)
-                ->orWhere('refunds.total_refund_amount',$this->search)
-                ->orWhere('refunds.subtotal_refund_amount',$this->search)
+             $q->where('refund_groups.order_id',$this->search)
+                ->orWhere('refund_groups.quantity',$this->search)
+                ->orWhere('refund_groups.taxes',$this->search)
+                ->orWhere('refund_groups.total_refund_amount',$this->search)
+                ->orWhere('refund_groups.subtotal_refund_amount',$this->search)
                 ->orWhere(function($q){
                     return $q->when(auth()->user()->role == 'admin',function($q){
                         return $q->where('users.store_name','like','%'.$this->search.'%');
@@ -70,7 +68,7 @@ class Refunds extends Component
         })
 
         ->
-        distinct('refunds.id')->latest('refunds.created_at')->paginate(10);
+        distinct('refund_groups.id')->latest('refund_groups.created_at')->paginate(10);
     }
 }
 

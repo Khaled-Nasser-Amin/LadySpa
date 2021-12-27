@@ -42,26 +42,50 @@
             <!-- end page title -->
 
             <div class="row justify-content-between">
-                @can('isAdmin')
-                     <div class="box" style="width: 33%">
-                    <div class="card widget-box-one border border-primary bg-soft-primary">
+
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-success bg-soft-success">
                         <div class="card-body">
                             <div class="float-right avatar-lg rounded-circle mt-3">
-                                <i class="mdi mdi-hanger font-30 widget-icon rounded-circle avatar-title text-primary"></i>
+                                <i class="mdi mdi-account font-30 widget-icon rounded-circle avatar-title text-success"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="Statistics">
-                                    {{__('text.Categories')}}</p>
-                                <h2><span data-plugin="counterup">{{$categories}}</span> </h2>
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Users')}}</p>
+                                <h2><span data-plugin="counterup">{{$users}} </span> </h2>
                             </div>
                         </div>
                     </div>
                 </div>
-                @endcan
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-info bg-soft-info">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i class="mdi mdi-account font-30 widget-icon rounded-circle avatar-title text-info"></i>
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Vendors')}}</p>
+                                <h2><span data-plugin="counterup">{{$vendors}} </span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- end col -->
 
 
+
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-secondary bg-soft-secondary">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i class="far fa-edit  font-30 widget-icon rounded-circle avatar-title text-secondary"></i>
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Completed Reservations')}}</p>
+                                <h2><span data-plugin="counterup"></span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="box" style="width: 33%">
                     <div class="card widget-box-one border border-danger bg-soft-danger">
@@ -76,6 +100,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="box" style="width: 33%">
                     <div class="card widget-box-one border border-secondary bg-soft-secondary">
                         <div class="card-body">
@@ -89,8 +114,19 @@
                         </div>
                     </div>
                 </div>
-                <!-- end col -->
-
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-warning bg-soft-warning">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i class="mdi mdi-cash-refund font-30 widget-icon rounded-circle avatar-title text-warning"></i>
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Refunds')}}</p>
+                                <h2><span data-plugin="counterup"></span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </div>
 

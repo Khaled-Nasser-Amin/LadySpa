@@ -20,13 +20,19 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'geolocation',
+        'store_name',
         'email',
         'password',
+        'add_product',
+        'add_session',
         'image',
         'phone',
         'whatsapp',
         'location',
         'code',
+        'session_rooms_limitation_indoor',
+        'session_rooms_limitation_outdoor',
     ];
 
 

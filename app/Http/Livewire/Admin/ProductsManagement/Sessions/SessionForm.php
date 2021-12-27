@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Admin\ProductsManagement\Sessions;
 use App\Http\Controllers\admin\productManagement\sessions\SessionController;
 use App\Models\Addition;
 use App\Models\Tax;
+use App\Models\Xsession;
 use App\Traits\ImageTrait;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -56,6 +57,8 @@ class SessionForm extends Component
 
     public function store()
     {
+        $this->authorize('create',Xsession::class);
+
         $CreateSession = new SessionController();
         $data = $this->validation($this->imageValidationForStore());
         $data = $this->setSlug($data);
@@ -100,6 +103,8 @@ class SessionForm extends Component
 
     public function update($id)
     {
+        $this->authorize('update',$this->session);
+
         $sessionUpdate = new SessionController();
         $data = $this->validation($this->imageValidationForUpdate());
 

@@ -16,7 +16,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProductForm extends Component
 {
-use WithFileUploads,AuthorizesRequests,ImageTrait;
+    use WithFileUploads,AuthorizesRequests,ImageTrait;
     public
         $name_ar,
         $name_en,
@@ -68,6 +68,8 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
 
 
     public function store(){
+        $this->authorize('create',Product::class);
+
         $productStore=new ProductController();
         if($this->type == 'single'){
             $data=$this->validation(array_merge(['sizes' =>'required|array|min:1'],$this->imageValidationForStore()));
@@ -136,6 +138,8 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     }
 
     public function update($id){
+        $this->authorize('update',$this->product);
+
             $productUpdate=new ProductController();
             if($this->type == 'single'){
                 $data=$this->validation(array_merge(['sizes' =>'required|array|min:1'],$this->imageValidationForUpdate()));
@@ -235,7 +239,7 @@ use WithFileUploads,AuthorizesRequests,ImageTrait;
     // size and stock modal
     public function addSize($index){
         $this->size=strtolower($this->size);
-        $this->sale = $this->sale ?? 0;
+        $this->sale = $this->sale == ''? 0 :$this->sale;
         $this->validate([
             'size' => ['required',Rule::notIn(collect($this->sizes)->pluck('size')),Rule::notIn(collect($this->deletedSizes)->pluck('size'))],
             'stock' => 'required|integer|min:1',

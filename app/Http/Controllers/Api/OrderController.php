@@ -26,10 +26,9 @@ class OrderController extends Controller
     {
         app()->setLocale($request->lang);
         $user=$request->user();
-        $normal_code=Promocode::where('code',$request->promocode)->where('type_of_code','normal')->first();
-        $result=checkPromoCode($user,$user->specialCode,$normal_code,$request->promocode,'products');
-        if($result){
-           return response()->json($result,200);
+        $discount=$this->calculatePromoCode($request->promocode,$user,$request->total_amount);
+        if($discount != 0){
+           return response()->json(['discount'=>$discount],200);
         }else{
             return response()->json("",404);
         }

@@ -84,38 +84,41 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
 
     Route::group(['prefix'=>'admin','middleware' => 'Auth'],function(){
         Route::post('/logout',[AuthController::class,'logout'])->name('logout');
+
+        Route::get('/dashboard_for_app',[AdminController::class,'index_for_app'])->name('admin.index_for_app')->middleware('can:isAdmin');
         Route::get('/dashboard',[AdminController::class,'index'])->name('admin.index');
-        // Route::get('/dashboard',[AdminController::class,'index'])->name('admin.index');
         Route::get('/user/profile', [UserProfileController::class, 'show'])->name('profile.show');
-        Route::get('/shipping', ShippingCosts::class)->name('admin.shipping');
-        Route::get('/taxes', Taxes::class)->name('admin.taxes');
-        Route::get('/promocodes', PromoCodes::class)->name('admin.promocodes');
+        Route::get('/shipping', ShippingCosts::class)->name('admin.shipping')->middleware('can:isAdmin');
+        Route::get('/taxes', Taxes::class)->name('admin.taxes')->middleware('can:isAdmin');
+        Route::get('/promocodes', PromoCodes::class)->name('admin.promocodes')->middleware('can:isAdmin');
         Route::get('/activities', Activities::class)->name('admin.activities');
-        Route::get('/customers', Customers::class)->name('admin.customers');
-        Route::get('/banners', Banners::class)->name('admin.banners');
+        Route::get('/customers', Customers::class)->name('admin.customers')->middleware('can:isAdmin');
+        Route::get('/banners', Banners::class)->name('admin.banners')->middleware('can:isAdmin');
 
         Route::get('/products', Products::class)->name('admin.products');
-        Route::get('/product-add', [ProductController::class,'addNewProduct']);
-        Route::get('/product-update/{product}-{slug}', [ProductController::class,'updateProduct']);
-        Route::get('/product-details/{product}-{slug}', [ProductController::class,'show']);
+        Route::get('/product-add', [ProductController::class,'addNewProduct'])->middleware('can:create,App\Models\Product');
+        Route::get('/product-update/{product}-{slug}', [ProductController::class,'updateProduct'])->middleware('can:update,product');
+        Route::get('/product-details/{product}-{slug}', [ProductController::class,'show'])->middleware('can:view,product');
 
         Route::get('/orders', Orders::class)->name('admin.orders');
-        Route::get('/payment_token',Settings::class)->name('admin.settings');
+        Route::get('/payment_token',Settings::class)->name('admin.settings')->middleware('can:isAdmin');
         Route::get('/order/show/{order}', [OrderController::class,'show'])->name('order.show');
 
-        Route::get('/vendors', Vendors::class)->name('admin.vendors');
+        Route::get('/vendors', Vendors::class)->name('admin.vendors')->middleware('can:isAdmin');
 
 
         Route::get('/refunds', [RefundController::class,'show'])->name('admin.refunds');
 
 
         Route::get('/sessions', Sessions::class)->name('admin.sessions');
-        Route::get('/session-add', [SessionController::class,'addNewSession']);
-        Route::get('/session-update/{session}-{slug}', [SessionController::class,'updateSession']);
-        Route::get('/session-details/{session}-{slug}', [SessionController::class,'show']);
+        Route::get('/session-add', [SessionController::class,'addNewSession'])->middleware('can:create,App\Models\Xsession');
+        Route::get('/session-update/{session}-{slug}', [SessionController::class,'updateSession'])->middleware('can:update,session');
+        Route::get('/session-details/{session}-{slug}', [SessionController::class,'show'])->middleware('can:view,session');
 
 
         Route::get('/recycle_bin', MainController::class)->name('admin.recycleBin');
 
     });
 });
+
+// ->middleware('can:update,product') ->middleware('can:create,App\Models\Product')

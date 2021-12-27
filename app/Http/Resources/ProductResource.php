@@ -18,7 +18,7 @@ class ProductResource extends JsonResource
             return [
                 'name' =>  app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
                 'image' => $this->image,
-                'gallary' => $this->images->pluck('name'),
+                'gallery' => $this->images->pluck('name'),
                 'type' => $this->type,
                 'id' => $this->id,
                 'description' => app()->getLocale() == 'ar' ? ($this->description_ar ?? ''):($this->description_en ?? ''),
@@ -30,7 +30,7 @@ class ProductResource extends JsonResource
             return [
                 'name' =>  app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
                 'image' => $this->image,
-                'gallary' => $this->images->pluck('name'),
+                'gallery' => $this->images->pluck('name'),
                 'type' => $this->type,
                 'id' => $this->id,
                 'description' => app()->getLocale() == 'ar' ? ($this->description_ar ?? ''):($this->description_en ?? ''),

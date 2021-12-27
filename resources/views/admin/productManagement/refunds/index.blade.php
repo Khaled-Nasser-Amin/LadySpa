@@ -24,9 +24,18 @@
                     <h4 class="page-title">{{__('text.Refunds')}}</h4>
                 </x-slot>
             </x-admin.general.page-title>
+            <hr style="border:1px solid rgb(145, 141, 141)">
 
-
+            <h5>@lang('text.Single product')</h5>
           @livewire('admin.products-management.refunds.refunds')
+
+          <hr style="border:1px solid rgb(145, 141, 141)">
+          <h5>@lang('text.Group products')</h5>
+
+          @livewire('admin.products-management.refunds.refund-groups')
+
+          <hr style="border:1px solid rgb(145, 141, 141)">
+          <h5>@lang('text.Sessions')</h5>
 
         </div>
     </div>

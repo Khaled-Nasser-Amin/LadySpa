@@ -38,6 +38,16 @@
                                             <x-general.input-error for="store_name" />
                                         </div>
                                         <div class="form-group col-md-6 col-sm-12">
+                                            <label for="session_rooms_limitation_indoor">{{__('text.Number of Sessions\' rooms indoor')}}*</label>
+                                            <input id="session_rooms_limitation_indoor" type="text"  wire:model="session_rooms_limitation_indoor" class="form-control {{$errors->has('session_rooms_limitation_indoor') ? 'is-invalid' : ''}}">
+                                            <x-general.input-error for="session_rooms_limitation_indoor" />
+                                        </div>
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="session_rooms_limitation_outdoor">{{__('text.Number of Sessions\' rooms outdoor')}}*</label>
+                                            <input id="session_rooms_limitation_outdoor" type="text"  wire:model="session_rooms_limitation_outdoor" class="form-control {{$errors->has('session_rooms_limitation_outdoor') ? 'is-invalid' : ''}}">
+                                            <x-general.input-error for="session_rooms_limitation_outdoor" />
+                                        </div>
+                                        <div class="form-group col-md-6 col-sm-12">
                                             <label for="name">{{__('text.Name')}}*</label>
                                             <input type="text" id="name" wire:model="name" class="form-control {{$errors->has('name') ? 'is-invalid' : ''}}" placeholder="{{__('text.Full Name')}}*">
                                             <x-general.input-error for="name" />

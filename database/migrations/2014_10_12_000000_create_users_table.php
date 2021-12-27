@@ -21,6 +21,9 @@ class CreateUsersTable extends Migration
             $table->string('geoLocation');
             $table->string('store_name')->unique();
             $table->tinyInteger('add_product')->default(0);
+            $table->tinyInteger('add_session')->default(0);
+            $table->tinyInteger('session_rooms_limitation_indoor');
+            $table->tinyInteger('session_rooms_limitation_outdoor');
             $table->string('location');
             $table->string('phone')->unique();
             $table->string('whatsapp')->unique();
