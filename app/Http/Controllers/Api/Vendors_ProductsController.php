@@ -34,13 +34,13 @@ class Vendors_ProductsController extends Controller
         $offers=Product::where('featured',1)->get();
         $featured=[];
         foreach($offers as $offer){
-            if($offers->sizes){
-                foreach($offers->sizes as $size){
-                    $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => $size->id];
+            if($offer->sizes){
+                foreach($offer->sizes as $size){
+                    $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => $size->id,'type' => $offer->type];
 
                 }
             }else{
-                $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => 0];
+                $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => 0,'type' => $offer->type];
 
             }
 
