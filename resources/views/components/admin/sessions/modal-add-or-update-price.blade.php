@@ -14,7 +14,7 @@
 
                     <div class="form-group ">
                         <h4 class="d-flex flex-row justify-content-between">@lang('text.Internal price')
-                             <span class="title" data-title="@lang('text.DescriptionNNNNNNNNNNN')"><i
+                             <span class="title" data-title="@lang('text.Indoor session price')"><i
                                     class="fas fa-info-circle"></i></span></h4>
                         <div class="form-group">
                             <label for="price">{{ __('text.Price') }}</label><br>
@@ -52,7 +52,7 @@
                     <div class="form-group ">
                         <h4 class="d-flex flex-row justify-content-between"><span><input id="ex_price" type="checkbox"
                                     wire:model="external_service"><label for="ex_price" style="font-size: 20px">@lang('text.External Price')</label></span>
-                                    <span class="title" data-title="@lang('text.DescriptionNNNNNNNNNNN')"><i class="fas fa-info-circle"></i></span></h4>
+                                    <span class="title" data-title="@lang('text.Outdoor session price')"><i class="fas fa-info-circle"></i></span></h4>
                         @if ($externalService)
                             <div class="form-group">
                                 <label for="external_price">{{ __('text.Price') }}</label><br>

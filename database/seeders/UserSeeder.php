@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
             'role' => 'admin',
             'activation' => 1,
             'add_product' => 1,
+            'add_session' => 1,
             'store_name' => 'lady_spa',
             'location' => 'riyadh',
             'email' => 'admin@admin.com',

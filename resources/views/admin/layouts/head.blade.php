@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{csrf_token()}}">
     <meta content="@lang('Women\'s clothing online stores')" name="description" />
-    <meta content="" name="author" />
+    <meta name="author" content="tawaklsa tech | Eng.Khaled Amin">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     <link rel="icon" href="{{asset('images/icons/spa.png')}}" type="image/icon type">

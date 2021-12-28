@@ -36,12 +36,12 @@ class Vendors_ProductsController extends Controller
         foreach($offers as $offer){
             if($offer->sizes && $offer->type == 'single'){
                 foreach($offer->sizes as $size){
-                    $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => $size->id,'type' => $offer->type];
+                    $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' =>(int) $size->id,'type' => $offer->type];
 
                 }
             }elseif($offer->type == 'group'){
 
-                $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => 0,'type' => $offer->type];
+                $featured[]=['image' => $offer->banner,'id' =>(int) $offer->id,'size_id' => 0,'type' => $offer->type];
 
             }
 

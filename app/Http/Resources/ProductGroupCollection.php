@@ -22,8 +22,8 @@ class ProductGroupCollection extends JsonResource
                     'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
                     'image' => $this->image,
                     'type' => $this->type,
-                    'id' => $this->id,
-                    'size_id' => $size->id,
+                    'id' =>(int) $this->id,
+                    'size_id' =>(int) $size->id,
                     'size' => $size->size,
                 ];
             }

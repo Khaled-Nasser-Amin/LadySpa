@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="tawaklsa tech | Eng.Khaled Amin">
+
         <meta content="@lang('text.Women\'s clothing online stores')" name="description" />
 
         <title>@lang('text.Lady Spa') | @lang('text.Home')</title>

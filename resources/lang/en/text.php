@@ -660,7 +660,8 @@ return [
     'Configration Information Updated'=>'Configration Information Updated',
     'Update sessions configration.'=>'Update sessions configration.',
     'Update Number of available sessions rooms & number of outdoor service provider & opening and closing time.'=>'Update Number of available sessions rooms & number of outdoor service provider & opening and closing time.',
-    'Limitation'=>'Limitation',
+    'Outdoor session price'=>'Outdoor session price',
+    'Indoor session price'=>'Indoor session price',
     'Limitation'=>'Limitation',
 
 

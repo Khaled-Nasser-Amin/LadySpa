@@ -24,11 +24,11 @@ class ProductResource extends JsonResource
                     'image' => $this->image,
                     'gallery' => $this->images->pluck('name'),
                     'type' => $this->type,
-                    'id' => $this->id,
+                    'id' =>(int) $this->id,
                     'description' => app()->getLocale() == 'ar' ? ($this->description_ar ?? ''):($this->description_en ?? ''),
-                    'price' => $size->price,
-                    'sale' => $size->sale,
-                    'tax' => ($this->taxes->sum('tax')*($size->sale == 0 || $size->sale == ''? $size->price:$size->sale) )/100,
+                    'price' => number_format($size->price,2),
+                    'sale' => number_format($size->sale,2),
+                    'tax' => number_format(($this->taxes->sum('tax')*($size->sale == 0 || $size->sale == ''? $size->price:$size->sale) )/100,2),
                 ];
             }
 
@@ -39,11 +39,11 @@ class ProductResource extends JsonResource
                 'image' => $this->image,
                 'gallery' => $this->images->pluck('name'),
                 'type' => $this->type,
-                'id' => $this->id,
+                'id' => (int) $this->id,
                 'description' => app()->getLocale() == 'ar' ? ($this->description_ar ?? ''):($this->description_en ?? ''),
-                'price' => $this->group_price,
-                'sale' => $this->group_sale,
-                'tax' => ($this->taxes->sum('tax')*($this->group_sale == 0 || $this->group_sale == ''? $this->group_price:$this->group_sale) )/100,
+                'price' => number_format($this->group_price,2),
+                'sale' => number_format($this->group_sale,2),
+                'tax' => number_format(($this->taxes->sum('tax')*($this->group_sale == 0 || $this->group_sale == ''? $this->group_price:$this->group_sale) )/100,2),
                 'products' => collect(ProductGroupCollection::collection($this->child_products()->get()))->collapse()->filter(),
 
              ];
