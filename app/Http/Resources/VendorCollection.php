@@ -16,7 +16,11 @@ class VendorCollection extends JsonResource
                 'image' => $this->image,
                 'phone' => $this->phone."",
                 'email' => $this->email,
+                'geoLocation' => $this->geoLocation,
+                'location' => $this->location,
                 'whatsapp' => $this->whatsapp."",
+                'opening_time' => date('h:i:s a', strtotime($this->opening_time)),
+                'closing_time' =>  date('h:i:s a', strtotime($this->closing_time)),
             ];
         }
     }

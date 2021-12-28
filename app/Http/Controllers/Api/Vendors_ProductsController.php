@@ -45,7 +45,7 @@ class Vendors_ProductsController extends Controller
         app()->setlocale($request->lang);
         $vendor=User::find($request->vendor_id);
         if($vendor){
-            return $this->success(collect(ProductCollection::collection($vendor->products))->filter());
+            return $this->success(collect(ProductCollection::collection($vendor->products))->collapse()->filter());
 
         }else{
             return $this->error("",404);
@@ -57,6 +57,9 @@ class Vendors_ProductsController extends Controller
         app()->setlocale($request->lang);
         $product=Product::find($request->product_id);
         if($product){
+            if($request->size_id){
+                $product->size_id=$request->size_id;
+            }
             return $this->success(new ProductResource($product));
 
         }else{

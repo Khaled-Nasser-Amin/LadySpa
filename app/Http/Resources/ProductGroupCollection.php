@@ -15,13 +15,21 @@ class ProductGroupCollection extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
-            'image' => $this->image,
-            'id' => $this->id,
-            'sizes' =>$this->pivot->sizes()->get()->pluck('size'),
-            'quantities' => $this->pivot->sizes()->get()->pluck('pivot.quantity'),
-        ];
+        $arr=[];
+        foreach($this->sizes as $size){
+            if($size->stock > 0){
+                $arr[]=[
+                    'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
+                    'image' => $this->image,
+                    'type' => $this->type,
+                    'id' => $this->id,
+                    'size_id' => $size->id,
+                    'size' => $size->size,
+                ];
+            }
+
+        }
+        return $arr;
 
     }
 }

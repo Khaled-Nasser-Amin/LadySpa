@@ -15,13 +15,34 @@ class ProductCollection extends JsonResource
      */
     public function toArray($request)
     {
-        if($this->isActive == 1 && $this->sizes->sum('stock') > 0 || $this->isActive == 1 && $this->type == 'group'){
-            return [
-                'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
-                'image' => $this->image,
-                'type' => $this->type,
-                'id' => $this->id,
-            ];
+        if($this->isActive == 1){
+            $arr=[];
+
+            if($this->type == 'single'){
+                foreach($this->sizes as $size){
+                    if($size->stock > 0){
+                        $arr[]=[
+                            'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
+                            'image' => $this->image,
+                            'type' => $this->type,
+                            'id' => $this->id,
+                            'size_id' => $size->id,
+                            'size' => $size->size,
+                        ];
+                    }
+
+                }
+            }elseif($this->type == 'group'){
+               $arr[]= [
+                    'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
+                    'image' => $this->image,
+                    'type' => $this->type,
+                    'id' => $this->id,
+                ];
+            }
+
+
+            return $arr;
         }
 
     }
