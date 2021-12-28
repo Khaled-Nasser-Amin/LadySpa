@@ -14,15 +14,15 @@
         <div class="w-md-75">
                 <!-- Name -->
                 <div class="form-group">
-                    <x-general.label for="name" value="{{ __('text.Number of Sessions\' rooms indoor') }}" />
-                    <x-general.input id="name" type="text" class="{{ $errors->has('name') ? 'is-invalid' : '' }}" wire:model.defer="state.name" autocomplete="name" />
-                    <x-general.input-error for="name" />
+                    <x-general.label for="session_rooms_limitation_indoor" value="{{ __('text.Number of Sessions\' rooms indoor') }}" />
+                    <x-general.input id="session_rooms_limitation_indoor" type="integer" class="{{ $errors->has('name') ? 'is-invalid' : '' }}" wire:model.defer="session_rooms_limitation_indoor" autocomplete="name" />
+                    <x-general.input-error for="session_rooms_limitation_indoor" />
                 </div>
                  <!-- store name -->
                  <div class="form-group">
-                    <x-general.label for="store_name" value="{{ __('text.Store Name') }}" />
-                    <x-general.input id="store_name" type="text" class="{{ $errors->has('store_name') ? 'is-invalid' : '' }}" wire:model.defer="state.store_name" />
-                    <x-general.input-error for="store_name" />
+                    <x-general.label for="session_rooms_limitation_outdoor" value="{{ __('text.Number of Sessions\' rooms outdoor') }}" />
+                    <x-general.input id="session_rooms_limitation_outdoor" type="integer" class="{{ $errors->has('session_rooms_limitation_outdoor') ? 'is-invalid' : '' }}" wire:model.defer="session_rooms_limitation_outdoor" />
+                    <x-general.input-error for="session_rooms_limitation_outdoor" />
                 </div>
                 <div class="form-group">
                     <x-general.label for="opening_time" value="{{ __('text.Opening time') }}" />

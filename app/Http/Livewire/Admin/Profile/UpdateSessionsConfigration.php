@@ -12,8 +12,8 @@ class UpdateSessionsConfigration extends Component
     public function mount(){
         $this->session_rooms_limitation_indoor=$this->getUserProperty()->session_rooms_limitation_indoor;
         $this->session_rooms_limitation_outdoor=$this->getUserProperty()->session_rooms_limitation_outdoor;
-        $this->opening_time=$this->getUserProperty()->opening_time;
-        $this->closing_time=$this->getUserProperty()->closing_time;
+        $this->opening_time=date('h:i', strtotime($this->getUserProperty()->opening_time));
+        $this->closing_time=date('h:i', strtotime($this->getUserProperty()->closing_time));
     }
     public function updateGeoLocation(){
         $this->validate([
