@@ -19,8 +19,8 @@ class VendorCollection extends JsonResource
                 'geoLocation' => $this->geoLocation,
                 'location' => $this->location,
                 'whatsapp' => $this->whatsapp."",
-                'opening_time' => date('h:i:s a', strtotime($this->opening_time)),
-                'closing_time' =>  date('h:i:s a', strtotime($this->closing_time)),
+                'opening_time' => date('h:i a', strtotime($this->opening_time)),
+                'closing_time' =>  date('h:i a', strtotime($this->closing_time)),
             ];
         }
     }

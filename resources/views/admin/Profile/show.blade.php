@@ -15,7 +15,8 @@
         @livewire('admin.profile.update-geo-location')
 
         <x-general.section-border />
-
+        @livewire('admin.profile.update-sessions-configration')
+        <x-general.section-border />
         @livewire('admin.profile.update-password-form')
 
 
@@ -31,6 +32,9 @@
         @cannot('isAdmin')
             @livewire('admin.profile.delete-user-form')
         @endcannot
+
+
+
 
     </div>
 @endsection

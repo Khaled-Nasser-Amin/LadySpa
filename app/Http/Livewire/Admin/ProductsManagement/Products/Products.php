@@ -70,7 +70,8 @@ class Products extends Component
             return ;
         }
         $numberOfProducts=Product::where('featured',1)->count();
-        if ($numberOfProducts < 6 || $product->featured == 1){
+        $allowed_featured_products=Setting::find(1)->no_of_featured_products;
+        if ($numberOfProducts < $allowed_featured_products || $product->featured == 1){
             if($product->featured == 0 ){
                 $featured= 1;
                 create_activity('Added a product as a feature',auth()->user()->id,$product->user_id);
@@ -84,7 +85,7 @@ class Products extends Component
                 'featured'=>$featured
             ]);
         }else{
-            $this->dispatchBrowserEvent('danger',__('text.You have only'). ' 6 ' . __('text.special products'));
+            $this->dispatchBrowserEvent('danger',__('text.You have only'). $allowed_featured_products . __('text.special products'));
         }
 
     }

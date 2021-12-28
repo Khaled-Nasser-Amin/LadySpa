@@ -8,10 +8,19 @@
       </div>
       <div class="flex flex-wrap">
         <div class="flex w-full w-5/6 sm:w-1/2 p-6 justify-center">
-            <img src="{{ asset('images/app_store.png') }}" alt="apple store" style="height: 100px;width:270px">
+            @php
+                $urls=App\Models\Setting::find(1);
+
+            @endphp
+            <a href="{{ $urls->ios_app_url == '' ? '#': $urls->ios_app_url}}">
+                <img src="{{ asset('images/app_store.png') }}" alt="apple store" style="height: 100px;width:270px">
+            </a>
         </div>
         <div class="flex w-full sm:w-1/2 p-6 justify-center	">
-            <img src="{{ asset('images/google_play.png') }}" alt="google play" style="height: 100px;width:270px">
+            <a href="{{ $urls->android_app_url == '' ? '#': $urls->android_app_url}}">
+                <img src="{{ asset('images/google_play.png') }}" alt="google play" style="height: 100px;width:270px">
+            </a>
+
         </div>
       </div>
 

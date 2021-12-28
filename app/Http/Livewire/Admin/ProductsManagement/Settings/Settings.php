@@ -11,7 +11,7 @@ class Settings extends Component
 {
     use WithPagination,ImageTrait;
     public $payment_token,$twillo_token,$twillo_phone,$twillo_sid,$contact_phone,$contact_email,$contact_whatsapp,$contact_land_line;
-
+    public $no_of_featured_sessions,$no_of_featured_products,$android_app_url,$ios_app_url;
     public $setting;
     public function __construct()
     {
@@ -24,6 +24,10 @@ class Settings extends Component
         $this->contact_email=$this->setting->contact_email;
         $this->contact_whatsapp=$this->setting->contact_whatsapp;
         $this->contact_land_line=$this->setting->contact_land_line;
+        $this->no_of_featured_sessions=$this->setting->no_of_featured_sessions;
+        $this->no_of_featured_products=$this->setting->no_of_featured_products;
+        $this->android_app_url=$this->setting->android_app_url;
+        $this->ios_app_url=$this->setting->ios_app_url;
 
     }
 
@@ -83,6 +87,28 @@ class Settings extends Component
         return;
     }
 
+    public  function updateConfigrationInformation(){
+        $this->validate([
+            'no_of_featured_sessions' => 'required|numeric|gt:0',
+            'no_of_featured_products' => 'required|numeric|gt:0',
+            'ios_app_url' => 'nullable|string',
+            'android_app_url' => 'nullable|string',
+        ]);
+
+        $this->setting->update([
+            'no_of_featured_sessions' => $this->no_of_featured_sessions,
+            'no_of_featured_products' => $this->no_of_featured_products,
+            'ios_app_url' => $this->ios_app_url,
+            'android_app_url' => $this->android_app_url,
+        ]);
+        $this->setting->save();
+        if($this->setting->wasChanged('no_of_featured_sessions') || $this->setting->wasChanged('no_of_featured_products') ||$this->setting->wasChanged('ios_app_url')||$this->setting->wasChanged('android_app_url')){
+            $this->dispatchBrowserEvent('success',__('text.Configration Updated Successfully'));
+
+            create_activity('Configration Information Updated',auth()->user()->id,auth()->user()->id);
+        }
+        return;
+    }
     public function render()
     {
         return view('admin.productManagement.settings.index',)->extends('admin.layouts.appLogged')->section('content');

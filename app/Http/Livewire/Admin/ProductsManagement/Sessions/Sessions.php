@@ -69,7 +69,9 @@ class Sessions extends Component
 
 
         $numberOfSessions=Xsession::where('featured',1)->count();
-        if ($numberOfSessions < 6 || $session->featured == 1){
+        $allowed_featured_sessions=Setting::find(1)->allowed_featured_sessions;
+
+        if ($numberOfSessions < $allowed_featured_sessions || $session->featured == 1){
             if($session->featured == 0 ){
                 $featured= 1;
                 create_activity('Added a session as a feature',auth()->user()->id,$session->user_id);
@@ -83,7 +85,7 @@ class Sessions extends Component
                 'featured'=>$featured
             ]);
         }else{
-            $this->dispatchBrowserEvent('danger',__('text.You have only'). ' 6 ' . __('text.special sessions'));
+            $this->dispatchBrowserEvent('danger',__('text.You have only'). $allowed_featured_sessions . __('text.special sessions'));
         }
 
     }

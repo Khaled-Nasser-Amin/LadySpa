@@ -57,7 +57,7 @@ class Vendors_ProductsController extends Controller
         app()->setlocale($request->lang);
         $product=Product::find($request->product_id);
         if($product){
-            if($request->size_id){
+            if($request->size_id && $request->size_id != 0){
                 $product->size_id=$request->size_id;
             }
             return $this->success(new ProductResource($product));

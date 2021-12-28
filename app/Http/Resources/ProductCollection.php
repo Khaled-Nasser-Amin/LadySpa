@@ -38,6 +38,8 @@ class ProductCollection extends JsonResource
                     'image' => $this->image,
                     'type' => $this->type,
                     'id' => $this->id,
+                    'size_id' => 0,
+                    'size' =>"",
                 ];
             }
 

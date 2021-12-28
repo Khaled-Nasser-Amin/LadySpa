@@ -147,7 +147,69 @@
                 </div>
             </div>
 
+            <div class="row mt-5" x-data="{ configration : false }">
+                <h2>@lang('text.Configration')</h2>
+                <div class="col-12" x-show="!configration">
+                    <form wire:submit.prevent class="row">
+                        <div class="form-group col-12">
+                            <label for="no_of_featured_sessions">@lang('text.Number of featured sessions')</label>
+                            <input id="no_of_featured_sessions" class="form-control d-block col-6" disabled value="{{ $no_of_featured_sessions }}">
+                            <x-general.input-error for="no_of_featured_sessions" />
 
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="no_of_featured_products">@lang('text.Number of featured products')</label>
+                            <input id="no_of_featured_products" class="form-control d-block col-6" disabled value="{{ $no_of_featured_products }}">
+                            <x-general.input-error for="no_of_featured_products" />
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="android_app_url">@lang('text.Android app url')</label>
+                            <input id="android_app_url" class="form-control d-block col-6" disabled value="{{ $android_app_url }}">
+                            <x-general.input-error for="android_app_url" />
+
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="ios_app_url">@lang('text.Ios app url')</label>
+                            <input id="ios_app_url" class="form-control d-block col-6" disabled value="{{ $ios_app_url }}">
+                            <x-general.input-error for="ios_app_url" />
+
+                        </div>
+                        <div class="form-group col-12">
+                            <button  x-on:click="configration=true" class="btn btn-secondary col-1">@lang('text.Edit')</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-12" x-show="configration">
+                    <form wire:submit.prevent="updateConfigrationInformation" class="row">
+                        <div class="form-group col-12">
+                            <label for="no_of_featured_sessions">@lang('text.Number of featured sessions')</label>
+                            <input type="integer" id="no_of_featured_sessions" class="form-control d-block col-6" wire:model="no_of_featured_sessions" value="{{ $no_of_featured_sessions }}">
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="no_of_featured_products">@lang('text.Number of featured products')</label>
+                            <input  type="integer" id="no_of_featured_products" class="form-control d-block col-6"  wire:model="no_of_featured_products" value="{{ $no_of_featured_products }}">
+                            <x-general.input-error for="no_of_featured_products" />
+
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="android_app_url">@lang('text.Android app url')</label>
+                            <input type="text" id="android_app_url" class="form-control d-block col-6"  wire:model="android_app_url" value="{{ $android_app_url }}">
+                            <x-general.input-error for="android_app_url" />
+
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="ios_app_url">@lang('text.Ios app url')</label>
+                            <input type="text" id="ios_app_url" class="form-control d-block col-6"  wire:model="ios_app_url" value="{{ $ios_app_url }}">
+                            <x-general.input-error for="contact_land_line" />
+
+                        </div>
+                        <div class="form-group col-12">
+                            <button  x-on:click="configration=false" class="btn btn-primary col-1">@lang('text.Save')</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 @push('script')

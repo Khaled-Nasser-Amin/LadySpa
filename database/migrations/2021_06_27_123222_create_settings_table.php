@@ -26,6 +26,12 @@ class CreateSettingsTable extends Migration
             $table->string('contact_email')->nullable();
             $table->float('shipping_cost_by_kilometer')->default(0.25);
             $table->string('shipping_status')->default('by_kilometer');
+
+            $table->integer('no_of_featured_sessions')->default(6);
+            $table->integer('no_of_featured_products')->default(6);
+            $table->string('android_app_url')->nullable();
+            $table->string('ios_app_url')->nullable();
+
             $table->timestamps();
         });
     }
