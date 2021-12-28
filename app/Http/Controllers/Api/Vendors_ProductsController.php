@@ -34,10 +34,16 @@ class Vendors_ProductsController extends Controller
         $offers=Product::where('featured',1)->get();
         $featured=[];
         foreach($offers as $offer){
-            foreach($offers->sizes as $size){
-                $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => $size->id];
+            if($offers->sizes){
+                foreach($offers->sizes as $size){
+                    $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => $size->id];
+
+                }
+            }else{
+                $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => 0];
 
             }
+
         }
         return $this->success(['vendors' => collect(VendorCollection::collection($vendors))->filter(),'banners' => collect($featured)->collapse()->filter()]);
     }
