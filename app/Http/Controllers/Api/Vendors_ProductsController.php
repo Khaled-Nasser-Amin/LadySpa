@@ -34,18 +34,19 @@ class Vendors_ProductsController extends Controller
         $offers=Product::where('featured',1)->get();
         $featured=[];
         foreach($offers as $offer){
-            if($offer->sizes){
+            if($offer->sizes && $offer->type == 'single'){
                 foreach($offer->sizes as $size){
                     $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => $size->id,'type' => $offer->type];
 
                 }
-            }else{
+            }elseif($offer->type == 'group'){
+
                 $featured[]=['image' => $offer->banner,'id' => $offer->id,'size_id' => 0,'type' => $offer->type];
 
             }
 
         }
-        return $this->success(['vendors' => collect(VendorCollection::collection($vendors))->filter(),'banners' => collect($featured)->collapse()->filter()]);
+        return $this->success(['vendors' => collect(VendorCollection::collection($vendors))->filter(),'banners' => collect($featured)->filter()]);
     }
 
 
