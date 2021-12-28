@@ -191,8 +191,9 @@
 
 
                         <br>
+                        @if ($order->group_products()->withTrashed()->where('user_id',auth()->user()->id)->count() > 0)
                         <hr>
-                        @if ($order->group_products()->withTrashed()->count() > 0)
+
                             <h3>@lang('text.Group of Products')</h3>
                         @endif
                         @foreach ( $order->group_products()->withTrashed()->when(auth()->user()->role !='admin',function($q){
@@ -272,9 +273,9 @@
                                 @can('isAdmin')
                                 <th> @lang('text.Shipping')</th>
                                 <th> @lang('text.Discount')</th>
+                                <th> @lang('text.Total Pieces')</th>
 
                                 @endcan
-                                <th> @lang('text.Total Pieces')</th>
                             </tr>
                             <tr>
                                 <td>
@@ -295,7 +296,6 @@
                                 @can('isAdmin')
                                 <td>{{ $order->shipping }}</td>
                                 <td>{{ $order->discount }}</td>
-                                @endcan
                                 <td>
                                     {{
                                         $order->sizes()->withTrashed()->when(auth()->user()->role !='admin',function($q){
@@ -305,6 +305,8 @@
                                         })->get()->pluck('pivot')->sum('quantity')
                                     }}
                                 </td>
+                                @endcan
+
                             </tr>
 
                             </tbody>

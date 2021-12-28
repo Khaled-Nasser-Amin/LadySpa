@@ -48,7 +48,7 @@ class Order extends Model
     }
 
     public function vendors(){
-        return $this->belongsToMany(User::class,'order_vendor','order_id','vendor_id');
+        return $this->belongsToMany(User::class,'order_vendor','order_id','vendor_id')->withPivot(['subtotal','taxes','total_amount']);
     }
 
     public function scopeGetOrdersThroughMonth($q,$year,$month){

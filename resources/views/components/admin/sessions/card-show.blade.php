@@ -1,5 +1,5 @@
 @forelse($sessions as $session)
-    <div class="col-sm-12 col-lg-4 col-md-6" wire:key="{{ $session->id }}">
+    <div class="col-sm-12 col-lg-4 col-md-6" >
         <div class="news-grid" >
 
             <div class="news-grid-image">
@@ -107,7 +107,10 @@
                 <div class="slimscroll description_scroll mb-0">{{app()->getLocale() == 'ar' ?$session->description_ar:$session->description_en}}</div>
                 @endif
 
-                <button id="changeFeatured" wire:click.prevent="updateFeatured({{$session->id}})" class="btn btn-{{$session->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
+                @can('isAdmin')
+                    <button id="changeFeatured" wire:click.prevent="updateFeatured({{$session->id}})" class="btn btn-{{$session->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
+
+                @endcan
 
 
             </div>

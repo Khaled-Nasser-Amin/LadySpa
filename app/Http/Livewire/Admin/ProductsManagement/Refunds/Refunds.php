@@ -41,7 +41,7 @@ class Refunds extends Component
         })
          ->where(function($q){
             return $q->when(auth()->user()->role != 'admin',function($q){
-                return $q->where('users.vendor_id',auth()->user()->id);
+                return $q->where('refunds.vendor_id',auth()->user()->id);
             });
         })
         ->where(function($q){

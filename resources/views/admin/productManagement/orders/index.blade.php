@@ -85,7 +85,10 @@
 
                                 <th>{{__('text.Total Amount')}}</th>
                                 <th>{{__('text.Subtotal')}}</th>
+                                @can('isAdmin')
                                 <th>{{__('text.Discount')}}</th>
+
+                                @endcan
                                 <th>{{__('text.Action')}}</th>
                             </tr>
                             @forelse ($orders as $order)

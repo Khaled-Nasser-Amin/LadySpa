@@ -13,7 +13,7 @@ use Livewire\Component;
 class Register extends Component
 {
     use WithRateLimiting;
-    public $name,$store_name,$email,$whatsapp,$location,$phone,$password,$password_confirmation,$code,$geoLocation='';
+    public $name,$store_name,$email,$whatsapp,$location,$phone,$password,$password_confirmation,$code,$geoLocation='',$opening_time,$closing_time;
 
     public $session_rooms_limitation_indoor,$session_rooms_limitation_outdoor;
     public function updated($fields){
@@ -27,6 +27,8 @@ class Register extends Component
             'password' => 'required|alpha_num|min:8|max:255',
             'password_confirmation' => 'required|alpha_num|min:8|max:255|',
             'session_rooms_limitation_indoor' => 'required|numeric|gt:0',
+            'opening_time' => 'required|date_format:H:i',
+            'closing_time' => 'required|date_format:H:i|after:opening_time',
 
         ]);
     }
@@ -45,17 +47,20 @@ class Register extends Component
         'password' => 'required|alpha_num|min:8|max:255|confirmed',
         'password_confirmation' => 'required|string|max:255|',
         'geoLocation' => 'required|string',
+        'opening_time' => 'required|date_format:H:i',
+        'closing_time' => 'required|date_format:H:i|after:opening_time',
         ]);
     }
     public function store(){
         try {
-            $this->rateLimit(2);
+            $this->rateLimit(3);
         } catch (TooManyRequestsException $exception) {
             $this->setErrorBag(["error"=> __('text.Slow down! Please wait another'). $exception->secondsUntilAvailable." ". __('text.seconds to send again.')]);
             $this->dispatchBrowserEvent('danger', __('text.Slow down! Please wait another'). $exception->secondsUntilAvailable." ". __('text.seconds to send again.'));
             return ;
         }
         $data=$this->validation();
+
         $data['code']=implode('',array_rand([0,1,2,3,4,5,6,7,8,9],6));
         $data['password']=bcrypt($data['password']);
         $user=User::create($data);

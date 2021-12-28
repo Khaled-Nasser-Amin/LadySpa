@@ -40,7 +40,7 @@ class RefundGroups extends Component
         })
          ->where(function($q){
             return $q->when(auth()->user()->role != 'admin',function($q){
-                return $q->where('users.vendor_id',auth()->user()->id);
+                return $q->where('refund_groups.vendor_id',auth()->user()->id);
             });
         })
         ->where(function($q){

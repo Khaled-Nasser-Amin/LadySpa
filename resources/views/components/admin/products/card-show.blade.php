@@ -1,5 +1,5 @@
 @forelse($products as $product)
-    <div class="col-sm-12 col-lg-4 col-md-6" wire:key="{{ $product->id }}">
+    <div class="col-sm-12 col-lg-4 col-md-6">
         <div class="news-grid" >
 
             <div class="news-grid-image">
@@ -156,7 +156,10 @@
                 @endif
 
                 @if(!checkCollectionActive($product))
-                    <button id="changeFeatured" wire:click.prevent="updateFeatured({{$product->id}})" wire:key="{{$product->id}}" class="btn btn-{{$product->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
+                    @can('isAdmin')
+                        <button id="changeFeatured" wire:click.prevent="updateFeatured({{$product->id}})" wire:key="{{$product->id}}" class="btn btn-{{$product->featured == 0 ? "secondary":"primary"}} mt-3 btn-rounded btn-bordered waves-effect width-md waves-light text-white d-block mx-auto w-75">{{__('text.Featured')}} <i class="far fa-star"></i></button>
+
+                    @endcan
                 @else
                 <div class="alert alert-danger">@lang('text.In active collection becouse there are some data missing')</div>
                 @endif

@@ -53,7 +53,7 @@ class XsessionPolicy
     }
 
 
-    public function UpdateProductVendor(User $user, XSession $xsession)
+    public function UpdateSessionVendor(User $user, XSession $xsession)
     {
         return $user->id == $xsession->user_id;
     }

@@ -20,7 +20,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
-        'geolocation',
+        'geoLocation',
         'store_name',
         'email',
         'password',
@@ -30,6 +30,8 @@ class User extends Authenticatable
         'phone',
         'whatsapp',
         'location',
+        'opening_time',
+        'closing_time',
         'code',
         'session_rooms_limitation_indoor',
         'session_rooms_limitation_outdoor',
@@ -63,7 +65,7 @@ class User extends Authenticatable
     }
 
     public function orders(){
-        return $this->belongsToMany(Order::class,'order_vendor','vendor_id','order_id');
+        return $this->belongsToMany(Order::class,'order_vendor','vendor_id','order_id')->withPivot(['subtotal','taxes','total_amount']);
     }
 
     public function myActivities(){

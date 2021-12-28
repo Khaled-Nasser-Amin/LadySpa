@@ -18,7 +18,10 @@ class RecycleVendors extends Component
 
     protected $listeners=['restore'];
 
-
+    public function mount()
+    {
+        Gate::authorize('isAdmin');
+    }
     public function confirmRestore($id){
         $this->emit('confirmRestore', $id);
     }

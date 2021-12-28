@@ -21,7 +21,10 @@ class UserSeeder extends Seeder
             'password' => bcrypt('admin'),
             'phone' => "0424",
             'geoLocation' => '1,1',
+            'opening_time' => '9:00:00',
+            'closing_time' => '12:00:00',
             'whatsapp' => "21312",
+            'session_rooms_limitation_indoor' => 4,
         ]);
     }
 }

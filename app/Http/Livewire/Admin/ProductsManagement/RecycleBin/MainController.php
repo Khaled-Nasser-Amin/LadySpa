@@ -12,12 +12,7 @@ class MainController extends Component
     public $select;
 
     public function mount(){
-        if(auth()->user()->role == 'admin'){
-            $this->select='Categories';
-        }else{
-            $this->select='Products';
-
-        }
+        $this->select='Products';
     }
     public function render()
     {

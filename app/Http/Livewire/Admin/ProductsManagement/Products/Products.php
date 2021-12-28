@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Admin\ProductsManagement\Products;
 
 use App\Http\Controllers\admin\productManagement\products\ProductController;
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -35,7 +36,9 @@ class Products extends Component
     public function render()
     {
         $products=$this->search();
-        return view('admin.productManagement.products.index',compact('products'))->extends('admin.layouts.appLogged')->section('content');
+        $setting=Setting::find(1);
+
+        return view('admin.productManagement.products.index',compact('products','setting'))->extends('admin.layouts.appLogged')->section('content');
     }
 
 
@@ -48,6 +51,11 @@ class Products extends Component
     //delete product
     public function delete(Product $product){
         $this->authorize('delete',$product);
+        if($product->isActive == 1 ){
+            $product->update([
+                'isActive'=>0
+            ]);
+        }
         $instance=new ProductController();
         $vendor_id=$instance->destroy($product);
         session()->flash('success',__('text.Product Deleted Successfully') );
@@ -61,7 +69,7 @@ class Products extends Component
         if(checkCollectionActive($product)){
             return ;
         }
-        $numberOfProducts=auth()->user()->products->where('featured',1)->count();
+        $numberOfProducts=Product::where('featured',1)->count();
         if ($numberOfProducts < 6 || $product->featured == 1){
             if($product->featured == 0 ){
                 $featured= 1;
@@ -82,28 +90,7 @@ class Products extends Component
     }
 
 
-    //update product's featured by admin  for slider
-        // public function updateAdminFeatured(Product $product){
-        //     Gate::authorize('isAdmin');
-        //     $numberOfProducts=Product::where('featured_slider',1)->count();
-        //     if ($numberOfProducts < 10 || $product->featured_slider == 1){
-        //         if($product->featured_slider == 0 ){
-        //             $featured= 1;
-        //             create_activity('Added a product as a feature',auth()->user()->id,$product->user_id);
 
-        //         }else{
-        //             $featured= 0;
-        //             create_activity('Removed a product as a feature',auth()->user()->id,$product->user_id);
-        //         }
-
-        //         $product->update([
-        //             'featured_slider'=>$featured
-        //         ]);
-        //     }else{
-        //         $this->dispatchBrowserEvent('danger',__('text.You have only 10 special products'));
-        //     }
-
-    // }
 
     //change product status
     public function updateStatus(Product $product){

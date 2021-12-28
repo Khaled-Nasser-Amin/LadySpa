@@ -30,22 +30,26 @@
                 <div class="form-group row mx-0 px-0">
                     <label for="select_bin col-12">@lang('text.Select Category')</label>
                     <select id="select_bin" class="form-control col-12" wire:model="select">
+                        <option value="Products">@lang('text.Products')</option>
+                        <option value="Sessions">@lang('text.Sessions')</option>
                         @can('isAdmin')
-                            <option value="Categories">@lang('text.Categories')</option>
                             <option value="Vendors">@lang('text.Vendors')</option>
                             <option value="Users">@lang('text.Users')</option>
                             <option value="Taxes">@lang('text.Taxes')</option>
-                            <option value="Delivery Service Provider">@lang('text.Delivery Service Provider')</option>
                         @endcan
-                        <option value="Products">@lang('text.Products')</option>
+
 
                     </select>
                 </div>
             </div>
+            @if($select  == 'Products')
+                @livewire('admin.products-management.recycle-bin.recycle-products')
+            @endif
 
-            @if ($select  == 'Categories')
-                @livewire('admin.products-management.recycle-bin.recycle-categories')
-            @elseif($select  == 'Vendors')
+            @if($select  == 'Sessions')
+                @livewire('admin.products-management.recycle-bin.recycle-sessions')
+            @endif
+            @if($select  == 'Vendors')
                 @livewire('admin.products-management.recycle-bin.recycle-vendors')
 
             @elseif($select  == 'Users')
@@ -53,13 +57,6 @@
             @elseif($select  == 'Taxes')
                 @livewire('admin.products-management.recycle-bin.recycle-taxes')
 
-            @elseif($select  == 'Delivery Service Provider')
-                @livewire('admin.products-management.recycle-bin.recycle-delivery-service-provider')
-
-            @endif
-
-            @if($select  == 'Products')
-                @livewire('admin.products-management.recycle-bin.recycle-products')
             @endif
 
 

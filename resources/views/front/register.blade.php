@@ -14,10 +14,10 @@
         }
     </style>
 @endpush
-    <div class="account-pages" style="margin: 220px 0 0 0 ;" >
+    <div class="account-pages" style="margin: 150px 0 0 0 ;" >
         <div class="container ">
             <div class="row justify-content-center ">
-                <div class="col-md-8 col-lg-6 col-xl-5" >
+                <div class="col-md-10 col-lg-8 col-xl-7" >
 
                     @if (!session()->has('activeCodeField'))
                         <div class="card" >
@@ -51,6 +51,16 @@
                                             <label for="name">{{__('text.Name')}}*</label>
                                             <input type="text" id="name" wire:model="name" class="form-control {{$errors->has('name') ? 'is-invalid' : ''}}" placeholder="{{__('text.Full Name')}}*">
                                             <x-general.input-error for="name" />
+                                        </div>
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="opening_time">{{__('text.Opening time')}}*</label>
+                                            <input id="opening_time" type="time"  wire:model="opening_time" class="form-control {{$errors->has('opening_time') ? 'is-invalid' : ''}}">
+                                            <x-general.input-error for="opening_time" />
+                                        </div>
+                                        <div class="form-group col-md-6 col-sm-12">
+                                            <label for="closing_time">{{__('text.Closing time')}}*</label>
+                                            <input id="closing_time" type="time"  wire:model="closing_time" class="form-control {{$errors->has('closing_time') ? 'is-invalid' : ''}}">
+                                            <x-general.input-error for="closing_time" />
                                         </div>
                                         <div class="form-group col-md-6 col-sm-12">
                                             <label for="phone">{{__('text.Phone Number')}}*</label>

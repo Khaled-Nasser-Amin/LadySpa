@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Admin\ProductsManagement\Sessions;
 
-use App\Http\Controllers\admin\productManagement\products\ProductController;
 use App\Http\Controllers\admin\productManagement\sessions\SessionController;
 use App\Models\Setting;
 use App\Models\Xsession;
@@ -10,11 +9,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Gate;
 
 class Sessions extends Component
 {
     use WithPagination,AuthorizesRequests;
-    public $price,$date,$sessionName,$addition_name,$addition_price,$featured_non_featured;
+    public $price,$date,$sessionName,$addition_name,$addition_price,$featured_non_featured,$store_name;
 
 
 
@@ -35,8 +35,10 @@ class Sessions extends Component
 
     public function render()
     {
+        $setting=Setting::find(1);
+
         $sessions=$this->search();
-        return view('admin.productManagement.sessions.index',compact('sessions'))->extends('admin.layouts.appLogged')->section('content');
+        return view('admin.productManagement.sessions.index',compact('sessions','setting'))->extends('admin.layouts.appLogged')->section('content');
     }
 
 
@@ -49,7 +51,11 @@ class Sessions extends Component
     //delete product
     public function delete(Xsession $session){
         $this->authorize('delete',$session);
-
+        if($session->isActive == 1 ){
+            $session->update([
+                'isActive'=>0
+            ]);
+        }
         $instance=new SessionController();
         $vendor_id=$instance->destroy($session);
         session()->flash('success',__('text.Session Deleted Successfully') );
@@ -62,7 +68,7 @@ class Sessions extends Component
         Gate::authorize('isAdmin');
 
 
-        $numberOfSessions=auth()->user()->sessions->where('featured',1)->count();
+        $numberOfSessions=Xsession::where('featured',1)->count();
         if ($numberOfSessions < 6 || $session->featured == 1){
             if($session->featured == 0 ){
                 $featured= 1;
@@ -83,28 +89,7 @@ class Sessions extends Component
     }
 
 
-    //update product's featured by admin  for slider
-        // public function updateAdminFeatured(Product $product){
-        //     Gate::authorize('isAdmin');
-        //     $numberOfProducts=Product::where('featured_slider',1)->count();
-        //     if ($numberOfProducts < 10 || $product->featured_slider == 1){
-        //         if($product->featured_slider == 0 ){
-        //             $featured= 1;
-        //             create_activity('Added a product as a feature',auth()->user()->id,$product->user_id);
 
-        //         }else{
-        //             $featured= 0;
-        //             create_activity('Removed a product as a feature',auth()->user()->id,$product->user_id);
-        //         }
-
-        //         $product->update([
-        //             'featured_slider'=>$featured
-        //         ]);
-        //     }else{
-        //         $this->dispatchBrowserEvent('danger',__('text.You have only 10 special products'));
-        //     }
-
-    // }
 
     //change product status
     public function updateStatus(Xsession $session){
@@ -129,47 +114,61 @@ class Sessions extends Component
     }
 
 
-    //search and return products paginated
+    //search and return xsessions paginated
     protected function search(){
        return Xsession::
-
-        when($this->addition_name,function ($q) {
-            return $q->whereHas('additions', function (Builder $query){
-                return $query->where('name_ar','like','%'.$this->addition_name.'%')
-                ->orWhere('name_en','like','%'.$this->addition_name.'%');
+       join('users','users.id','=','xsessions.user_id')->select('xsessions.*')
+       ->where(function ($q) {
+            $q->when(auth()->user()->role != 'admin' ,function ($q) {
+            return $q->where('user_id',auth()->user()->id);
             });
         })
-        ->when($this->addition_price,function ($q) {
+        ->where(function ($q) {
+            $q->when($this->store_name,function ($q) {
+                return $q
+                ->where('users.store_name','like','%'.$this->store_name.'%')->select('xsessions.*');
+            });
+        })
+        ->where(function ($q) {
+
+            $q->when($this->addition_name,function ($q) {
                 return $q->whereHas('additions', function (Builder $query){
-                    return $query->where('price','like','%'.$this->addition_price.'%');
+                    return $query->where('name_ar','like','%'.$this->addition_name.'%')
+                    ->orWhere('name_en','like','%'.$this->addition_name.'%');
                 });
-        })
+            })
+            ->when($this->addition_price,function ($q) {
+                    return $q->whereHas('additions', function (Builder $query){
+                        return $query->where('price','like','%'.$this->addition_price.'%');
+                    });
+            })
 
-        ->when($this->sessionName,function ($q){
-            $q->where(function($q){
-                return $q->where('xsessions.name_ar','like','%'.$this->sessionName.'%')
-                ->orWhere('xsessions.name_en','like','%'.$this->sessionName.'%');
+            ->when($this->sessionName,function ($q){
+                $q->where(function($q){
+                    return $q->where('xsessions.name_ar','like','%'.$this->sessionName.'%')
+                    ->orWhere('xsessions.name_en','like','%'.$this->sessionName.'%');
+                });
+            })
+
+
+
+            ->when($this->price,function ($q) {
+                $q->where(function($q){
+                    return $q->where('xsessions.price','=',$this->price)
+                    ->orWhere('xsessions.sale','=',$this->price)
+                    ->orWhere('xsessions.external_price','=',$this->price)
+                    ->orWhere('xsessions.external_sale','=',$this->price);
+                });
+
+            })
+
+
+            ->when($this->date,function ($q)  {
+                return $q->whereDate('xsessions.created_at',$this->date);
+            })->when($this->featured_non_featured,function ($q)  {
+                $featured=$this->featured_non_featured == 'Featured' ? 1 : 0;
+                return $q->where('xsessions.featured',$featured);
             });
-        })
-
-
-
-        ->when($this->price,function ($q) {
-            $q->where(function($q){
-                return $q->where('xsessions.price','=',$this->price)
-                ->orWhere('xsessions.sale','=',$this->price)
-                ->orWhere('xsessions.external_price','=',$this->price)
-                ->orWhere('xsessions.external_sale','=',$this->price);
-            });
-
-        })
-
-
-        ->when($this->date,function ($q)  {
-            return $q->whereDate('xsessions.created_at',$this->date);
-        })->when($this->featured_non_featured,function ($q)  {
-            $featured=$this->featured_non_featured == 'Featured' ? 1 : 0;
-            return $q->where('xsessions.featured',$featured);
         })
         ->distinct('xsessions.id')->latest('xsessions.created_at')
         ->paginate(12);

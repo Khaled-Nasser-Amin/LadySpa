@@ -27,6 +27,7 @@ class OrderDetails extends Component
 
     public function updateOrderStatus()
     {
+        Gate::authorize('isAdmin');
         $order=$this->order;
         if($order->hold == 1 ){
             $order->update(['hold' => 0]);
@@ -55,6 +56,8 @@ class OrderDetails extends Component
 
 
     public function holdOrder(){
+        Gate::authorize('isAdmin');
+
         $order=$this->order;
         if ($order && ($order->order_status != 'completed' || $order->order_status != 'pending' || $order->order_status != 'canceled' || $order->order_status != 'modified')) {
             if($order->hold == 0){
@@ -72,6 +75,8 @@ class OrderDetails extends Component
         $this->emit('confirmCancel');
     }
     public function cancelOrder(){
+        Gate::authorize('isAdmin');
+
         $order=$this->order;
         if ($order) {
             if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
@@ -108,6 +113,8 @@ class OrderDetails extends Component
 
     protected function refundOrder($order)
     {
+        Gate::authorize('isAdmin');
+
         foreach ($order->sizes()->withTrashed()->get() as $size) {
             $quantity = $size->pivot->quantity;
             $price =$size->pivot->price;

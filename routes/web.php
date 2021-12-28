@@ -121,4 +121,3 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
     });
 });
 
-// ->middleware('can:update,product') ->middleware('can:create,App\Models\Product')

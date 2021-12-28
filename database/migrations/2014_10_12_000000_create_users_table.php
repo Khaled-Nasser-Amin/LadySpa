@@ -29,6 +29,8 @@ class CreateUsersTable extends Migration
             $table->string('whatsapp')->unique();
             $table->string('code')->nullable();
             $table->string('password');
+            $table->time('opening_time');
+            $table->time('closing_time');
             $table->string('image')->nullable();
             $table->tinyInteger('activation')->default(0);
             $table->text('two_factor_secret')->nullable();

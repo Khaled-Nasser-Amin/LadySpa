@@ -21,6 +21,7 @@
                     <th>{{__('text.Location')}}</th>
                     <th>{{__('text.Phone Number')}}</th>
                     <th>{{__('text.Completed Orders')}}</th>
+                    <th>{{__('text.Completed Reservations')}}</th>
                     <th>{{__('text.Refunds')}}</th>
                     <th>{{__('text.Total Amount')}}</th>
                     <th>{{__('text.Status')}}</th>
@@ -34,6 +35,7 @@
                         <td>{{$vendor->email}}</td>
                         <td>{{$vendor->location}}</td>
                         <td>{{$vendor->phone}}</td>
+                        <td> {{$vendor->orders->where('payment_status','paid')->count()}} </td>
                         <td> {{$vendor->orders->where('payment_status','paid')->count()}} </td>
                         <td>{{$vendor->refunds->where('refund_status','not refunded yet')->sum('total_refund_amount')}}</td>
                         <td> {{$vendor->orders->where('payment_status','paid')->sum('pivot.total_amount')}} </td>

@@ -152,6 +152,24 @@ class Vendors extends Component
         }
     }
 
+    public function sessionStatus(User $user)
+    {
+        if($user->role != "admin"){
+            if($user->add_session == 1){
+                $value= 0;
+                create_activity('Upload session status is deactivated',auth()->user()->id,$user->id);
+
+            }else{
+                $value= 1;
+                create_activity('Upload session status is activated',auth()->user()->id,$user->id);
+
+            }
+
+            $user->update(['add_session' => $value]);
+            $user->save();
+        }
+    }
+
 
     public function resetVariables(){
         $this->password='';

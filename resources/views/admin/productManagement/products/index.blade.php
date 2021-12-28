@@ -30,6 +30,8 @@
             </x-admin.general.page-title>
 
             <!-- button add product -->
+
+            @can('create','App\Models\Product')
             <div class="row">
                 <div class="col-sm-12">
                     <div class="col-3 mb-4 text-left mt-2">
@@ -42,6 +44,42 @@
                     </div>
                 </div>
             </div>
+            @endcan
+            @cannot('create','App\Models\Product')
+            <div>
+                <h3>{{ __('text.Contact us to activate your account') }}</h3>
+                @if ($setting->contact_email)
+                    <p>
+                        <span class="text-pink">@lang('text.Email')</span>
+                        :
+                        <span class="text-muted">{{ $setting->contact_email }}</span>
+                    </p>
+                @endif
+                @if ($setting->contact_phone)
+                    <p>
+                        <span class="text-pink">@lang('text.Phone Number')</span>
+                        :
+                        <span class="text-muted">{{ $setting->contact_phone }}</span>
+                    </p>
+                @endif
+                @if ($setting->contact_whatsapp)
+                    <p>
+                        <span class="text-pink">@lang('text.WhatsApp')</span>
+                        :
+                        <span class="text-muted">{{ $setting->contact_whatsapp }}</span>
+                    </p>
+                @endif
+                @if ($setting->contact_land_line)
+                    <p>
+                        <span class="text-pink">@lang('text.Land Line')</span>
+                        :
+                        <span class="text-muted">{{ $setting->contact_land_line }}</span>
+                    </p>
+                @endif
+            </div>
+            @endcannot
+
+
 
             {{--search boxes--}}
             <div class="row">
