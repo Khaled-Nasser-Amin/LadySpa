@@ -23,7 +23,7 @@ class CreateUsersTable extends Migration
             $table->tinyInteger('add_product')->default(0);
             $table->tinyInteger('add_session')->default(0);
             $table->tinyInteger('session_rooms_limitation_indoor');
-            $table->tinyInteger('session_rooms_limitation_outdoor');
+            $table->tinyInteger('session_rooms_limitation_outdoor')->default(0);
             $table->string('location');
             $table->string('phone')->unique();
             $table->string('whatsapp')->unique();
