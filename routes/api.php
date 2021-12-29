@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\Products\Vendors_ProductsController;
 use App\Http\Controllers\Api\Products\OrderController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Api\Products\VendorController;
 use App\Http\Controllers\Api\Sessions\Vendors_SessionsController;
 use App\Http\Controllers\Api\WishListController;
 use App\Http\Controllers\MyFatoorahController;
@@ -87,7 +86,6 @@ Route::group(['prefix' => 'user'], function () {
 
 
         //orders
-        Route::post('/check_online_payment', [MyFatoorahController::class, 'check_online_payment']);
         Route::post('/check_promocode', [OrderController::class, 'check_promocode']);
         Route::post('/order', [OrderController::class, 'store']);
         Route::post('/cancel_order', [OrderController::class, 'cancel_order']);

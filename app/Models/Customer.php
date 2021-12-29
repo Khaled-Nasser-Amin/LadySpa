@@ -34,7 +34,7 @@ class Customer extends Authenticatable
         return $this->belongsToMany(Product::class,'product_reviews')->withPivot('review','comment')->withTimestamps();
     }
     public function wishList(){
-        return $this->belongsToMany(Product::class,'wish_list');
+        return $this->belongsToMany(Product::class,'wish_list')->withPivot(['size_id']);
     }
     public function orders(){
         return $this->hasMany(Order::class,'user_id','id');

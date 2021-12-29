@@ -70,7 +70,7 @@ class ShippingController extends Controller
                 $city_geoLocation=explode(',',$city->geoLocation);
                 $lat1=$city_geoLocation[0];
                 $long1=$city_geoLocation[1];
-    
+
                 $array[]=[
                     'id' => $city->id,
                     'city_name' => $city->city_name,
@@ -78,21 +78,21 @@ class ShippingController extends Controller
                     'geoLocation' => $city->geoLocation,
                     'distance' => $this->distance($lat1,$long1,$lat,$long),
                 ];
-    
+
             }
-    
+
             $min_city=min(array_column($array,'distance'));
             $city=collect($array)->where('distance',$min_city)->collapse()->toArray();
             return $city;
         }else{
             return false;
         }
-        
+
     }
 
 
     //calculate distance between two points
-    protected function distance($lat1, $lat2, $lon1, $lon2) {
+    public function distance($lat1, $lat2, $lon1, $lon2) {
 
         //if result null use polyline instead
         $dist = $this->GetDrivingDistance($lat1, $lat2, $lon1, $lon2);

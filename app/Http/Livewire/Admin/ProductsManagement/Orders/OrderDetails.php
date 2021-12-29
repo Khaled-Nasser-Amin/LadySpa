@@ -166,52 +166,52 @@ class OrderDetails extends Component
 
     }
 
-    protected function modify_after_collected($order, $sizes)
-    {
-        $sum_taxes = 0;
-        $sum_total_amount = 0;
-        $sum_subtotal = 0;
-        foreach (collect($sizes)->toArray() as $size_id) {
-            $size = Size::withTrashed()->find($size_id);
-            if ($size) {
-                $order_size=$order->sizes->where('id', $size->id);
-                $quantity = $order_size->pluck('pivot.quantity')->first();
-                $price = $order_size->pluck('pivot.price')->first();
-                $taxes = $order_size->pluck('pivot.tax')->first();
-                $total_refund_amount = ($quantity * $price) + $taxes;
-                $vendor_id = $size->color()->withTrashed()->first()->product()->withTrashed()->first()->user_id;
-                $subtotal_refund = $quantity * $price;
-                Refund::create([
-                    'order_id' => $order->id,
-                    'vendor_id' => $vendor_id,
-                    'total_refund_amount' => $total_refund_amount,
-                    'size_id' => $size->id,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                    'taxes' => $taxes,
-                    'size' => $order_size->pluck('pivot.size')->first(),
-                    'color' => $order->colors->where('id', $size->color()->withTrashed()->first()->id)->pluck('pivot.color')->first(),
-                    'subtotal_refund_amount' => $subtotal_refund,
-                ]);
-                $size->update(['stock' => $size->stock + $quantity]);
+    // protected function modify_after_collected($order, $sizes)
+    // {
+    //     $sum_taxes = 0;
+    //     $sum_total_amount = 0;
+    //     $sum_subtotal = 0;
+    //     foreach (collect($sizes)->toArray() as $size_id) {
+    //         $size = Size::withTrashed()->find($size_id);
+    //         if ($size) {
+    //             $order_size=$order->sizes->where('id', $size->id);
+    //             $quantity = $order_size->pluck('pivot.quantity')->first();
+    //             $price = $order_size->pluck('pivot.price')->first();
+    //             $taxes = $order_size->pluck('pivot.tax')->first();
+    //             $total_refund_amount = ($quantity * $price) + $taxes;
+    //             $vendor_id = $size->color()->withTrashed()->first()->product()->withTrashed()->first()->user_id;
+    //             $subtotal_refund = $quantity * $price;
+    //             Refund::create([
+    //                 'order_id' => $order->id,
+    //                 'vendor_id' => $vendor_id,
+    //                 'total_refund_amount' => $total_refund_amount,
+    //                 'size_id' => $size->id,
+    //                 'quantity' => $quantity,
+    //                 'price' => $price,
+    //                 'taxes' => $taxes,
+    //                 'size' => $order_size->pluck('pivot.size')->first(),
+    //                 'color' => $order->colors->where('id', $size->color()->withTrashed()->first()->id)->pluck('pivot.color')->first(),
+    //                 'subtotal_refund_amount' => $subtotal_refund,
+    //             ]);
+    //             $size->update(['stock' => $size->stock + $quantity]);
 
-                $order->vendors()->updateExistingPivot($vendor_id, [
-                    'total_amount' => $order->vendors->find($vendor_id)->pivot->total_amount - $total_refund_amount,
-                    'subtotal' => $order->vendors->find($vendor_id)->pivot->subtotal - $subtotal_refund,
-                    'taxes' => $order->vendors->find($vendor_id)->pivot->taxes - $taxes,
-                ]);
+    //             $order->vendors()->updateExistingPivot($vendor_id, [
+    //                 'total_amount' => $order->vendors->find($vendor_id)->pivot->total_amount - $total_refund_amount,
+    //                 'subtotal' => $order->vendors->find($vendor_id)->pivot->subtotal - $subtotal_refund,
+    //                 'taxes' => $order->vendors->find($vendor_id)->pivot->taxes - $taxes,
+    //             ]);
 
-                $sum_taxes += $taxes;
-                $sum_total_amount += $total_refund_amount;
-                $sum_subtotal += $subtotal_refund;
-                $vendor=User::find($vendor_id);
-                Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get modified'),$vendor->store_name));
+    //             $sum_taxes += $taxes;
+    //             $sum_total_amount += $total_refund_amount;
+    //             $sum_subtotal += $subtotal_refund;
+    //             $vendor=User::find($vendor_id);
+    //             Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get modified'),$vendor->store_name));
 
-            }
-        }
+    //         }
+    //     }
 
-        $order->update(['taxes' => $order->taxes - $sum_taxes, 'subtotal' => $order->subtotal - $sum_subtotal, 'total_amount' => $order->total_amount - $sum_total_amount, 'payment_status' => 'paid', 'order_status' => 'modified']);
-    }
+    //     $order->update(['taxes' => $order->taxes - $sum_taxes, 'subtotal' => $order->subtotal - $sum_subtotal, 'total_amount' => $order->total_amount - $sum_total_amount, 'payment_status' => 'paid', 'order_status' => 'modified']);
+    // }
 
 
 

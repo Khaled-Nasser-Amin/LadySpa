@@ -22,7 +22,7 @@ class Product extends Model
         return $this->belongsToMany(Customer::class,'product_reviews')->withPivot('review','comment')->withTimestamps();
     }
     public function wishList(){
-        return $this->belongsToMany(Customer::class,'wish_list');
+        return $this->belongsToMany(Customer::class,'wish_list')->withPivot(['size_id']);
     }
 
 

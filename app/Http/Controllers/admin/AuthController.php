@@ -42,9 +42,11 @@ class AuthController extends Controller
 
         }
 
-        $this->checkUserActivation($user);
+        $check=$this->checkUserActivation($user);
         $cred=$this->getCredentials($request);
-
+        if($check == 'redirect'){
+            return redirect()->route('front.register');
+        }
         return  $this->loginCheck($request,$user,$cred);
 
     }
@@ -176,7 +178,7 @@ class AuthController extends Controller
             session()->put('data',$user);
             session()->put('time',time());
             session()->put('activeCodeField','');
-            return redirect()->route('front.register');
+            return 'redirect';
         }
     }
 

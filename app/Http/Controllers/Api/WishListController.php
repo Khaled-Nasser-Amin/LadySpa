@@ -13,13 +13,21 @@ class WishListController extends Controller
     public function updateWishListProduct(Request $request){
         app()->setlocale($request->lang);
         $product=Product::find($request->product_id);
-        if($product){
-            if($request->user()->wishList()->find($request->product_id)){
-                $product->wishList()->detach($request->user());
+        if(($product && $product->sizes()->find($request->size_id)) || ($product && $request->size_id == 0)){
+
+            if($request->user()->wishList()->where('product_id',$request->product_id)->where('size_id',$request->size_id)->first()){
+                $product->wishList()->wherePivot('size_id',$request->size_id)->detach($request->user()->id);
                 return $this->success('',__('text.Removed successfully from your favorite list'),200);
             }else {
-                $product->wishList()->syncWithoutDetaching($request->user());
+                if($request->size_id == 0){
+                    $product->wishList()->attach([$request->user()->id => ['size_id' => null]]);
+
+                }else{
+                    $product->wishList()->attach([$request->user()->id => ['size_id' => $request->size_id]]);
+
+                }
                 return $this->success('',__('text.Added successfully to your favorite list'),200);
+
 
             }
         }else{
@@ -27,6 +35,7 @@ class WishListController extends Controller
         }
 
     }
+
 
 
 }

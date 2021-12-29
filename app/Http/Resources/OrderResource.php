@@ -14,6 +14,12 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
+        $can=false;
+
+        if($this->order_status == 'pending' && $this->payment_way == 'cash on delivery'){
+            $can=true;
+
+        }
         return [
             'id' => $this->id,
             'address' => $this->address,
@@ -28,6 +34,7 @@ class OrderResource extends JsonResource
             'shipping' => number_format($this->shipping,2),
             'taxes' => number_format($this->taxes,2),
             'discount' => number_format($this->discount,2),
+            'can'=>$can,
         ];
 
     }

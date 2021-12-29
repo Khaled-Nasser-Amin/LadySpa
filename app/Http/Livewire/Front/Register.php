@@ -112,6 +112,7 @@ class Register extends Component
                 $this->cancel();
                 $user->update(['activation' => 1,'code' => Null]);
                 $user->save();
+
                 Auth::guard('web')->login($user);
                 $this->dispatchBrowserEvent('success',__('text.Your account activated successfully'));
                 $this->redirect('/admin');
