@@ -1,16 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\delivery_service_provider\AuthController as  DeliveryAuthController;
-use App\Http\Controllers\Api\delivery_service_provider\ProfileController as DeliveryProfileController;
-
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Vendors_ProductsController;
-use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\delivery_service_provider\OrderController as DeliveryOrderController;
+use App\Http\Controllers\Api\Products\Vendors_ProductsController;
+use App\Http\Controllers\Api\Products\OrderController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\Products\VendorController;
+use App\Http\Controllers\Api\Sessions\Vendors_SessionsController;
 use App\Http\Controllers\Api\WishListController;
 use App\Http\Controllers\MyFatoorahController;
 use Illuminate\Http\Request;
@@ -33,10 +30,6 @@ Route::middleware(['Auth:customer_api', 'scope:customer'])->post('/user', functi
 
 
 
-
-// Route::middleware(['Auth:delivery_service_provider_api', 'scope:delivery'])->post('/delivery_service_provider', function (Request $request) {
-//     return response()->json($request->user(), 200);
-// });
 
 
 
@@ -79,7 +72,10 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('/product_details', [Vendors_ProductsController::class, 'product_details']);
         Route::post('/vendors_products', [Vendors_ProductsController::class, 'vendors_products']);
 
-
+        //sessions
+        Route::post('/sessions', [Vendors_SessionsController::class, 'vendor_sessions']);
+        Route::post('/session_details', [Vendors_SessionsController::class, 'session_details']);
+        Route::post('/vendors_sessions', [Vendors_SessionsController::class, 'vendors_sessions']);
 
         //reviews
         Route::post('/review', [ReviewController::class, 'review']);
@@ -110,8 +106,8 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('/resend_otp', [ProfileController::class, 'resend'])->middleware('throttle:5,1');
 
         //vendors
-        Route::post('/all_vendors', [VendorController::class, 'all_vendors']);
-        Route::post('/vendor_products', [VendorController::class, 'vendor_products']);
+        // Route::post('/all_vendors', [VendorController::class, 'all_vendors']);
+        // Route::post('/vendor_products', [VendorController::class, 'vendor_products']);
 
 
     });

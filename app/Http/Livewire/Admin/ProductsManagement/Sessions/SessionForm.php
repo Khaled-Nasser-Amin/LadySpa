@@ -291,7 +291,7 @@ class SessionForm extends Component
         $this->reset([
             'name_ar', 'name_en',
             'description_ar', 'description_en', 'image', 'banner', 'price', 'sale',
-            'groupImage', 'slug', 'taxes_selected', 'additions'
+            'groupImage', 'slug', 'taxes_selected', 'additions','time','hour','minutes'
         ]);
     }
 

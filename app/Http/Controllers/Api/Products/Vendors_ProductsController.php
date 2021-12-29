@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Products;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BannerCollection;
@@ -30,8 +30,8 @@ class Vendors_ProductsController extends Controller
     public function vendors_products(Request $request){
 
         app()->setlocale($request->lang);
-        $vendors=User::where('activation',1)->where('add_product',1)->has('products')->get();
-        $offers=Product::where('featured',1)->get();
+        $vendors=User::where('activation',1)->has('products')->get();
+        $offers=Product::where('featured',1)->where('isActive',1)->get();
         $featured=[];
         foreach($offers as $offer){
             if($offer->sizes && $offer->type == 'single'){

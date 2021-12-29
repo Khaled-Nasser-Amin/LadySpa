@@ -63,13 +63,13 @@ class Sessions extends Component
     }
 
 
-    //update product's featured
+    //update session's featured
     public function updateFeatured(Xsession $session){
         Gate::authorize('isAdmin');
 
 
         $numberOfSessions=Xsession::where('featured',1)->count();
-        $allowed_featured_sessions=Setting::find(1)->allowed_featured_sessions;
+        $allowed_featured_sessions=Setting::find(1)->no_of_featured_sessions;
 
         if ($numberOfSessions < $allowed_featured_sessions || $session->featured == 1){
             if($session->featured == 0 ){
@@ -85,7 +85,7 @@ class Sessions extends Component
                 'featured'=>$featured
             ]);
         }else{
-            $this->dispatchBrowserEvent('danger',__('text.You have only'). $allowed_featured_sessions . __('text.special sessions'));
+            $this->dispatchBrowserEvent('danger',__('text.You have only '). $allowed_featured_sessions . __('text.special sessions'));
         }
 
     }
@@ -93,7 +93,7 @@ class Sessions extends Component
 
 
 
-    //change product status
+    //change session status
     public function updateStatus(Xsession $session){
         $this->authorize('update',$session);
 
