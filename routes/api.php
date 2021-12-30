@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Products\Vendors_ProductsController;
 use App\Http\Controllers\Api\Products\OrderController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\sessions\ReservationController;
 use App\Http\Controllers\Api\Sessions\Vendors_SessionsController;
 use App\Http\Controllers\Api\WishListController;
 use App\Http\Controllers\MyFatoorahController;
@@ -83,6 +84,16 @@ Route::group(['prefix' => 'user'], function () {
 
         //favorites
         Route::post('/favorite_product', [WishListController::class, 'updateWishListProduct']);
+
+
+        //reservations
+        Route::post('/available_time', [ReservationController::class, 'availableTime']);
+        Route::post('/order', [OrderController::class, 'store']);
+        Route::post('/cancel_order', [OrderController::class, 'cancel_order']);
+        Route::post('/check_stock', [OrderController::class, 'check_stock']);
+        Route::post('/all_orders', [OrderController::class, 'all_orders']);
+        Route::post('/order_details', [OrderController::class, 'order_details']);
+
 
 
         //orders

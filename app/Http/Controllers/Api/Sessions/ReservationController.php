@@ -11,6 +11,7 @@ use App\Models\Size;
 use App\Models\User;
 use App\Models\Xsession;
 use App\Traits\Responses;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,7 +24,8 @@ class ReservationController extends Controller
     public function availableTime(Request $request)
     {
         $session=Xsession::find($request->session_id);
-        $date=date_format($request->date,'Y-m-d');
+
+        $date=Carbon::createFromFormat('Y-m-d', $request->date)->toDateTimeString();;
         $type=$request->type;
 
         if($session && $session->isActive == 1 && $type && ($type == 'outdoor' || $type == 'indoor')){
@@ -33,20 +35,40 @@ class ReservationController extends Controller
             $closing_time=$session->user->closing_time;
             $session_time=$session->time;
 
+
+
             if($type == 'outdoor' && $session->external_price <= 0){
                 //404
             }else{
+
+                // return [$session_time,$opening_time];
+                return [date('H:i:s',strtotime($opening_time)+strtotime($session_time))];
+                return Carbon::createFromFormat('Y-m-d',$opening_time)->add($session_time);
                 if($date >= now()){
+                    $loop=true;
+                    $times_arranged=[];
+                    do{
+                        if($opening_time+$limit <= $closing_time){
+                            $times_arranged[]=['start' => $opening_time,'end' => $opening_time+$limit];
+                            $opening_time+=$limit;
+                        }else{
+                            $loop=false;
+                        }
+
+                    }while($loop == true);
 
 
+                    return $times_arranged;
+                    for($i=1; $i <= $limit;$i++){
+
+
+                    }
 
 
                 }else{
                     //404
                 }
             }
-
-
 
         }else{
             //404

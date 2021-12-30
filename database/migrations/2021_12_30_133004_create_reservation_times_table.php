@@ -17,7 +17,8 @@ class CreateReservationTimesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('reservation_id')->nullable();
             $table->foreign('reservation_id')->references('id')->on('reservations')->onDelete('cascade');
-            $table->dateTime('time');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->integer('room_number');
             $table->timestamps();
         });
