@@ -58,6 +58,7 @@ class Vendors_SessionsController extends Controller
         }
     }
 
+
     public function session_details(Request $request){ //session_id ,type
 
         app()->setlocale($request->lang);
@@ -76,6 +77,16 @@ class Vendors_SessionsController extends Controller
         }
     }
 
+
+
+    protected function sortByDistance(&$vendors,$user_location)
+    {
+        $user_location=explode(',',$user_location);
+        foreach($vendors as $vendor){
+            $vendor_location=explode(',',$vendor->geoLocation);
+            $vendor->distance=$this->calcDistance($user_location[0],$vendor_location[0],$user_location[1],$vendor_location[1]);
+        }
+    }
     protected function calcDistance($lat1, $lat2, $lon1, $lon2)
     {
         if (($lat1 == $lat2) && ($lon1 == $lon2)) {
