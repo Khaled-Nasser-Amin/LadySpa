@@ -29,6 +29,7 @@ class ProductResource extends JsonResource
                     'price' => number_format($size->price,2),
                     'sale' => number_format($size->sale,2),
                     'tax' => number_format(($this->taxes->sum('tax')*($size->sale == 0 || $size->sale == ''? $size->price:$size->sale) )/100,2),
+                    'stock' => $size->stock,
                 ];
             }
 

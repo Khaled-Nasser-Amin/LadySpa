@@ -28,7 +28,7 @@ class OrderController extends Controller
         $user=$request->user();
         $discount=$this->calculatePromoCode($request->promocode,$user,$request->total_amount);
         if($discount != 0){
-           return response()->json(['discount'=>$discount],200);
+           return response()->json(['discount'=>number_format($discount,2)],200);
         }else{
             return response()->json("",404);
         }

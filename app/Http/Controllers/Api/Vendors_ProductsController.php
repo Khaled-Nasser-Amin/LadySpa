@@ -20,10 +20,10 @@ class Vendors_ProductsController extends Controller
 
 
     public function banners(Request $request){
-
-        app()->setlocale($request->lang);
+  app()->setlocale($request->lang);
         $banners=Banner::whereDate('expire_at','>',now())->get();
-        return $this->success(['banners' => collect(BannerCollection::collection($banners))->filter()]);
+        return $this->success(collect($banners->pluck('image'))->filter());
+    
     }
 
 

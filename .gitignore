@@ -3,7 +3,13 @@
 /public/storage
 /storage/*.key
 /vendor
-.env
+.env  
+.htaccess
+/public/images/banners
+/public/images/categories
+/public/images/products
+/public/images/sessions
+/public/images/users
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml
