@@ -17,12 +17,6 @@ class Xsession extends Model
     }
 
 
-    public function wishList(){
-        return $this->belongsToMany(Customer::class,'wish_list');
-    }
-
-
-
     public function taxes(){
         return $this->belongsToMany(Tax::class,'sessions_taxes','session_id','tax_id');
     }

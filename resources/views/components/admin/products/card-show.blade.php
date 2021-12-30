@@ -36,9 +36,15 @@
                             <div><i class="mdi mdi-dots-horizontal h4 m-0 text-muted"></i></div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/admin/product-update/{{$product->id}}-{{$product->slug}}">{{__('text.Edit')}}</a>
+                            @can('update',$product)
+                                <a class="dropdown-item" href="/admin/product-update/{{$product->id}}-{{$product->slug}}">{{__('text.Edit')}}</a>
+                            @endcan
                             <a class="dropdown-item" href="/admin/product-details/{{$product->id}}-{{$product->slug}}">{{__('text.Show')}}</a>
+                            @can('delete',$product)
+
                             <button class="dropdown-item" type="button" wire:click="confirmDelete({{$product->id}})">{{__('text.Delete')}}</button>
+                            @endcan
+
                         </div>
                     </div>
                 </div>
@@ -54,10 +60,14 @@
                     <h2>{{app()->getLocale() == 'ar' ?$product->name_ar:$product->name_en}}</h2>
                     <span><i class="mdi mdi-calendar" aria-hidden="true"></i> {{date('M d Y',strtotime($product->created_at))}}</span>
                 </div>
+                @can('update',$product)
+
                 <div class="row justify-content-between align-items-center">
                     <h2>{{ $product->isActive == 1 ? __('text.Available For Sale') : __('text.Not Available For Sale')}}</h2>
                     <input wire:click.prevent="updateStatus({{ $product->id }})" type="checkbox" {{ $product->isActive == 1 ? "checked" : '' }}>
                 </div>
+
+                @endcan
 
                 @if ($product->type == 'single')
                 <br><span class="text-pink"> {{__('text.Sizes')}} </span>

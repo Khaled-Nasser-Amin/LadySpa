@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Size;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ProductCollection extends JsonResource
+class FavoriteCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -16,24 +17,21 @@ class ProductCollection extends JsonResource
     public function toArray($request)
     {
         if($this->isActive == 1){
-            $arr=[];
-
             if($this->type == 'single'){
-                foreach($this->sizes as $size){
-                    if($size->stock > 0){
-                        $arr[]=[
-                            'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
-                            'image' => $this->image,
-                            'type' => $this->type,
-                            'id' =>(int) $this->id,
-                            'size_id' =>(int) $size->id,
-                            'size' => $size->size,
-                        ];
-                    }
-
+                $size=Size::find($this->pivot->size_id);
+                if($size && $size->stock > 0){
+                    return[
+                        'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
+                        'image' => $this->image,
+                        'type' => $this->type,
+                        'id' =>(int) $this->id,
+                        'size_id' =>(int) $size->id,
+                        'size' => $size->size,
+                    ];
                 }
+
             }elseif($this->type == 'group' && !checkCollectionActive($this)){
-               $arr[]= [
+               return [
                     'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
                     'image' => $this->image,
                     'type' => $this->type,
@@ -44,7 +42,6 @@ class ProductCollection extends JsonResource
             }
 
 
-            return $arr;
         }
 
     }

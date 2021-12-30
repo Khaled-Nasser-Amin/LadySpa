@@ -28,9 +28,14 @@
                             <div><i class="mdi mdi-dots-horizontal h4 m-0 text-muted"></i></div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="/admin/session-update/{{$session->id}}-{{$session->slug}}">{{__('text.Edit')}}</a>
+                            @can('update',$session)
+                                <a class="dropdown-item" href="/admin/session-update/{{$session->id}}-{{$session->slug}}">{{__('text.Edit')}}</a>
+                            @endcan
                             <a class="dropdown-item" href="/admin/session-details/{{$session->id}}-{{$session->slug}}">{{__('text.Show')}}</a>
+                            @can('delete',$session)
+
                             <button class="dropdown-item" type="button" wire:click="confirmDelete({{$session->id}})">{{__('text.Delete')}}</button>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -46,10 +51,14 @@
                     <h2>{{app()->getLocale() == 'ar' ?$session->name_ar:$session->name_en}}</h2>
                     <span><i class="mdi mdi-calendar" aria-hidden="true"></i> {{date('M d Y',strtotime($session->created_at))}}</span>
                 </div>
+                @can('update',$session)
+
                 <div class="row justify-content-between align-items-center">
+
                     <h2>{{ $session->isActive == 1 ? __('text.Available For Sale') : __('text.Not Available For Sale')}}</h2>
                     <input wire:click.prevent="updateStatus({{ $session->id }})" type="checkbox" {{ $session->isActive == 1 ? "checked" : '' }}>
                 </div>
+                @endcan
 
                 @if ($session->additions()->count() > 0)
 

@@ -1,15 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Products;
 
+use App\Http\Controllers\Api\ShippingController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MyFatoorahController;
 use App\Http\Resources\OrderResource;
+use App\Mail\AfterOrderComplete;
 use App\Mail\EmptyStockSize;
 use App\Mail\OrderCard;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Promocode;
+use App\Models\Refund;
+use App\Models\RefundGroup;
 use App\Models\Size;
 use App\Models\User;
 use App\Traits\Responses;
@@ -27,11 +31,9 @@ class OrderController extends Controller
         app()->setLocale($request->lang);
         $user=$request->user();
         $discount=$this->calculatePromoCode($request->promocode,$user,$request->total_amount);
-        if($discount != 0){
-           return response()->json(['discount'=>number_format($discount,2)],200);
-        }else{
-            return response()->json("",404);
-        }
+        $instance=new MyFatoorahController();
+        return response()->json(['discount'=>number_format($discount,2),'online_payment_status'=>$instance->check_online_payment($request)],200);
+
 
     }
 
@@ -328,39 +330,6 @@ class OrderController extends Controller
 
 
 
-
-
-
-
-
-    //cancel order
-    public function cancel_order(Request $request){
-        app()->setLocale($request->lang);
-        $user=$request->user();
-        $order=Order::find($request->order_id);
-
-        if($order){
-            if($user->id == $order->user_id){
-                if($order->order_status == 'pending'){
-                    foreach($order->sizes()->withTrashed()->get() as $size){
-                        $quantity=$order->sizes->where('id',$size->id)->pluck('pivot.quantity')->first();
-                        $size->update(['stock' => $size->stock+$quantity]);
-                    }
-                    $order->delete();
-                    return $this->success('',__('text.Order cancelled successfully'),200);
-                }else{
-                    return $this->error(__('text.Order already shipped'),404);
-                }
-
-            }else{
-                return $this->error(__('text.Oops, UNAUTHORIZED'),402);
-            }
-        }else{
-            return $this->error(__('text.Not Found'),404);
-        }
-    }
-
-
     //check sizes after failed payment and continue to try
     public function check_stock(Request $request)
     {
@@ -385,9 +354,106 @@ class OrderController extends Controller
     public function all_orders(Request $request)
     {
         $user=$request->user();
-        return $this->success(OrderResource::collection($user->orders()->where('order_status' ,'!=','completed')->where('order_status' ,'!=','canceled')->where('order_status' ,'!=','modified')->get()),'',200);
+        return $this->success(OrderResource::collection($user->orders()->where('order_status' ,'!=','canceled')->where('order_status' ,'!=','refund')->get()),'',200);
 
     }
+
+
+    //cancel order
+    public function cancel_order(Request $request){
+        app()->setLocale($request->lang);
+        $user=$request->user();
+        $order=Order::find($request->order_id);
+
+        if($order){
+            if($user->id == $order->user_id){
+                if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
+                    $this->returnSizesToStock($order);
+                    $order->delete();
+                    return $this->success('',__('text.Order cancelled successfully'),200);
+                }
+                else{
+                    return $this->error(__('text.Order already shipped'),404);
+                }
+
+            }else{
+                return $this->error(__('text.Oops, UNAUTHORIZED'),402);
+            }
+        }else{
+            return $this->error(__('text.Not Found'),404);
+        }
+    }
+     public function returnSizesToStock($order){
+        foreach($order->sizes()->withTrashed()->get() as $size){
+            $size->update(['stock' => $size->stock+$size->pivot->quantity]);
+        }
+
+
+        foreach($order->group_products_sizes()->withTrashed()->get() as $size){
+            $size->update(['stock' => ($size->stock+$size->pivot->quantity)]);
+        }
+
+    }
+
+    protected function refundOrder($order)
+    {
+
+        foreach ($order->sizes()->withTrashed()->get() as $size) {
+            $quantity = $size->pivot->quantity;
+            $price =$size->pivot->price;
+            $taxes = $size->pivot->tax;
+            Refund::create([
+                'order_id' => $order->id,
+                'vendor_id' => $size->product()->withTrashed()->first()->user_id,
+                'total_refund_amount' => ($quantity * $price) + $taxes,
+                'size_id' => $size->id,
+                'quantity' => $quantity,
+                'price' => $price,
+                'taxes' => $taxes,
+                'size' => $size->size,
+                'subtotal_refund_amount' => $quantity * $price,
+            ]);
+            $size->update(['stock' => $size->stock + $quantity]);
+        }
+        foreach ($order->group_products()->withTrashed()->get() as $product) {
+            $quantity = $product->pivot->quantity;
+            $price =$product->pivot->price;
+            $taxes = $product->pivot->tax;
+            RefundGroup::create([
+                'order_id' => $order->id,
+                'vendor_id' => $product->withTrashed()->first()->user_id,
+                'total_refund_amount' => ($quantity * $price) + $taxes,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'price' => $price,
+                'taxes' => $taxes,
+                'subtotal_refund_amount' => $quantity * $price,
+            ]);
+        }
+        foreach($order->group_products_sizes()->withTrashed()->get() as $size){
+            $size->update(['stock' => ($size->stock+$size->pivot->quantity)]);
+        }
+        foreach ($order->vendors()->withTrashed()->get() as $vendor) {
+            $order->vendors()->updateExistingPivot($vendor->id, [
+                'total_amount' => 0,
+                'subtotal' => 0,
+                'taxes' => 0,
+            ]);
+
+            Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get canceled'),$vendor->store_name));
+
+        }
+
+        $order->update(['payment_status' => 'failed', 'order_status' => 'refund']);
+    }
+
+
+
+
+
+
+
+
 
 
     public function order_details(Request $request)
@@ -396,7 +462,7 @@ class OrderController extends Controller
         $user=$request->user();
         $order=Order::find($request->order_id);
 
-        if($order && $order->user_id == $user->id&& ($order->order_status != 'completed' || $order->order_status != 'canceled' || $order->order_status != 'modified')){
+        if($order && $order->user_id == $user->id&& ($order->order_status != 'completed' || $order->order_status != 'canceled' || $order->order_status != 'refund')){
 
 
                 foreach( $order->sizes()->withTrashed()->get() as $size){
@@ -432,6 +498,10 @@ class OrderController extends Controller
             return $this->error(__('text.Not Found'),404);
         }
     }
+
+
+
+
 
 
 }

@@ -27,6 +27,7 @@ class User extends Authenticatable
         'add_product',
         'add_session',
         'image',
+        'activation',
         'phone',
         'whatsapp',
         'location',

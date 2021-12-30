@@ -137,9 +137,11 @@ class MyFatoorahController extends Controller
             $error = (isset($json->Message)) ? $json->Message : (!empty($response) ? $response : 'API key or API URL is not correct');
         }
         if ($error == 'API key or API URL is not correct') {
-            return response()->json(['status' => false],404);
+            // return response()->json(['status' => false],404);
+            return false;
         }
-        return response()->json(['status' => true],200);
+        // return response()->json(['status' => true],200);
+        return true;
     }
 
     /* short cuts*/
