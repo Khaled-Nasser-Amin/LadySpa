@@ -22,10 +22,13 @@ class CreateReservationsTable extends Migration
             $table->float('taxes',11,2)->nullable();
             $table->string('reservation_status')->default('pending');
             $table->string('payment_status')->default('unpaid');
-            $table->string('location');
+            $table->string('address');
             $table->string('receiver_phone');
-            $table->string('receiver_first_name');
-            $table->string('receiver_last_name');
+            $table->string('receiver_name');
+            $table->string('lat_long');
+            $table->string('type');
+
+
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('customers');
 

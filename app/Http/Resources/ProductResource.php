@@ -37,9 +37,7 @@ class ProductResource extends JsonResource
             $stock=[];
             foreach($this->child_products()->get() as $child){
                 foreach($child->pivot->sizes()->get() as $row){
-                    if($row->pivot->quantity > $row->stock){
-                        $stock[]=(int) ($row->stock/$row->pivot->quantity);
-                    }
+                    $stock[]=(int) ($row->stock/$row->pivot->quantity);
                 }
             }
 
