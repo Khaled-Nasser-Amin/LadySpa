@@ -34,6 +34,14 @@ class ProductResource extends JsonResource
             }
 
         }elseif(!checkCollectionActive($this) && $this->type == 'group'){
+            $stock=[];
+            foreach($this->child_products()->get() as $child){
+                foreach($child->pivot->sizes()->get() as $row){
+                    if($row->pivot->quantity > $row->stock){
+                        $stock[]=(int) ($row->stock/$row->pivot->quantity);
+                    }
+                }
+            }
 
             return [
                 'name' =>  app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
@@ -46,7 +54,7 @@ class ProductResource extends JsonResource
                 'sale' => number_format($this->group_sale,2),
                 'tax' => number_format(($this->taxes->sum('tax')*($this->group_sale == 0 || $this->group_sale == ''? $this->group_price:$this->group_sale) )/100,2),
                 'products' => collect(ProductGroupCollection::collection($this->child_products()->get()))->collapse()->filter(),
-
+                'stock' => min($stock)
              ];
 
         }
