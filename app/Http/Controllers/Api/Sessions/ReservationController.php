@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\delivery_service_provider;
+namespace App\Http\Controllers\Api\sessions;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
@@ -9,13 +9,71 @@ use App\Models\Order;
 use App\Models\Refund;
 use App\Models\Size;
 use App\Models\User;
+use App\Models\Xsession;
 use App\Traits\Responses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
-class OrderController extends Controller
+class ReservationController extends Controller
 {
     use Responses;
+
+
+
+    public function availableTime(Request $request)
+    {
+        $session=Xsession::find($request->session_id);
+        $date=date_format($request->date,'Y-m-d');
+        $type=$request->type;
+
+        if($session && $session->isActive == 1 && $type && ($type == 'outdoor' || $type == 'indoor')){
+
+            $limit=$type == 'outdoor'? $session->user->session_rooms_limitation_outdoor : $session->user->session_rooms_limitation_indoor;
+            $opening_time=$session->user->opening_time;
+            $closing_time=$session->user->closing_time;
+            $session_time=$session->time;
+
+            if($type == 'outdoor' && $session->external_price <= 0){
+                //404
+            }else{
+                if($date >= now()){
+
+
+
+
+                }else{
+                    //404
+                }
+            }
+
+
+
+        }else{
+            //404
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function all_orders(Request $request)
     {

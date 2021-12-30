@@ -53,4 +53,8 @@ class Customer extends Authenticatable
     {
         return $this->belongsTo(Promocode::class,'special_code_id')->where('type_of_code','special');
     }
+    public function reservations(){
+        return $this->hasMany(Reservation::class,'user_id','id');
+
+    }
 }

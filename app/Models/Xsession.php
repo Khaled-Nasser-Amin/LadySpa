@@ -25,7 +25,10 @@ class Xsession extends Model
     {
         return $this->hasMany(Addition::class,'session_id');
     }
-
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class,'session_id');
+    }
 
     public function getSlugAttribute($value){
         return Str::slug($value);

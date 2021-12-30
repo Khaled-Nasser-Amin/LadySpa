@@ -17,5 +17,7 @@ class Addition extends Model
         return $this->belongsTo(Xsession::class,'session_id');
     }
 
-
+    public function reservations(){
+        return $this->belongsToMany(Reservation::class,'reservations_additions','addition_id','reservation_id')->withPivot(['price','name_ar','name_en']);
+    }
 }

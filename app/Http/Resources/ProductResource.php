@@ -29,7 +29,7 @@ class ProductResource extends JsonResource
                     'price' => number_format($size->price,2),
                     'sale' => number_format($size->sale,2),
                     'tax' => number_format(($this->taxes->sum('tax')*($size->sale == 0 || $size->sale == ''? $size->price:$size->sale) )/100,2),
-                    'stock' => $size->stock,
+                    'stock' => (int) $size->stock,
                 ];
             }
 
@@ -52,7 +52,7 @@ class ProductResource extends JsonResource
                 'sale' => number_format($this->group_sale,2),
                 'tax' => number_format(($this->taxes->sum('tax')*($this->group_sale == 0 || $this->group_sale == ''? $this->group_price:$this->group_sale) )/100,2),
                 'products' => collect(ProductGroupCollection::collection($this->child_products()->get()))->collapse()->filter(),
-                'stock' => min($stock)
+                'stock' =>(int) min($stock)
              ];
 
         }

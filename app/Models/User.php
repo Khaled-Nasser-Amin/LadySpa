@@ -75,6 +75,9 @@ class User extends Authenticatable
     public function refunds(){
         return $this->hasMany(Refund::class,'vendor_id');
     }
+    public function reservations(){
+        return $this->hasMany(Reservation::class,'vendor_id','id');
+    }
     public function refund_groups(){
         return $this->hasMany(RefundGroup::class,'vendor_id');
     }
