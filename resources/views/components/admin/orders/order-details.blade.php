@@ -111,7 +111,7 @@
 
                         @endif
 
-                        @if($order->order_status == 'pending')
+                        @if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery')
                             <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel" style="height: 60px">@lang('text.Cancel Order') <i class="fas fa-power-off"></i></button>
 
                         @endif

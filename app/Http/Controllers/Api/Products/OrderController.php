@@ -467,15 +467,14 @@ class OrderController extends Controller
 
                 foreach( $order->sizes()->withTrashed()->get() as $size){
 
-                    $amount=$order->colors()->withTrashed()->where('color_id',$size->color->id)->first()->pivot->amount;
-                    $tax=$size->color()->withTrashed()->first()->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax');
+                    $amount=$order->sizes()->withTrashed()->where('size_id',$size->id)->first()->pivot->amount;
+                    $tax=$size->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax');
                     $products[]=[
                         'size' => $size->pivot->size."",
                         'size_id' => (int) $size->id,
                         'quantity' => $size->pivot->quantity."",
-                        'image' => $size->color()->withTrashed()->first()->images()->first()->name,
-                        'color' => $size->color()->withTrashed()->first()->color,
-                        'name' => app()->getLocale()== 'ar' ? $size->color()->withTrashed()->first()->product()->withTrashed()->first()->name_ar:$size->color()->withTrashed()->first()->product()->withTrashed()->first()->name_en,
+                        'image' => $size->product()->withTrashed()->first()->name,
+                        'name' => app()->getLocale()== 'ar' ? $size->product()->withTrashed()->first()->name_ar:$size->product()->withTrashed()->first()->name_en,
                         'price' => $amount + ($amount*($tax/100))."",
                     ];
                 }
