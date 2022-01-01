@@ -66,7 +66,7 @@
                                     <td>{{$vendor->location}}</td>
                                     <td>{{$vendor->phone}}</td>
                                     <td> {{$vendor->orders->where('payment_status','paid')->count()}} </td>
-                                    <td> {{$vendor->orders->where('payment_status','paid')->count()}} </td>
+                                    <td> {{$vendor->reservations->where('payment_status','paid')->count()}} </td>
                                     <td>{{$vendor->refunds->where('refund_status','not refunded yet')->sum('total_refund_amount')}}</td>
                                     <td> {{$vendor->orders->where('payment_status','paid')->sum('pivot.total_amount')}} </td>
                                     <td>{{ $vendor->activation == 0 ? __('text.Non Active'): __('text.Active') }}</td>

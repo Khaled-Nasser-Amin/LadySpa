@@ -19,9 +19,9 @@ class SizesCollection extends JsonResource
                 'id' =>(int) $this->id,
                 'size' => $this->size,
                 'stock' => (int) $this->stock,
-                'price' => number_format($this->price,2),
-                'sale' => number_format($this->sale,2),
-                'tax' => number_format(($this->product->taxes->sum('tax')*($this->sale == 0 || $this->sale == ''? $this->price:$this->sale) )/100,2),
+                'price' => $this->price."",
+                'sale' => $this->sale."",
+                'tax' => ($this->product->taxes->sum('tax')*($this->sale == 0 || $this->sale == ''? $this->price:$this->sale) )/100 ."",
 
             ];
         }

@@ -44,7 +44,12 @@ class Orders extends Component
             return $q->where('orders.payment_way',$this->payment_way);
           })
           ->when($this->order_status,function($q){
-            return $q->where('orders.order_status',$this->order_status);
+              if($this->order_status == 'hold'){
+                return $q->where('orders.hold',1);
+              }else{
+                return $q->where('orders.order_status',$this->order_status);
+
+              }
           })
           ->where(function($q){
 
@@ -60,6 +65,7 @@ class Orders extends Component
                     ->orWhere('orders.address','like','%'.$this->search.'%')
                     ->orWhere('orders.receiver_name','like','%'.$this->search.'%')
                     ->orWhereIn('orders.receiver_name',explode(" ",$this->search));
+
             });
          });
 

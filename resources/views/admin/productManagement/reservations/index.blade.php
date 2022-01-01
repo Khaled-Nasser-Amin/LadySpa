@@ -41,8 +41,8 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-3 col-sm-12">
-                                <label for="order_status">@lang('text.Reservation status')</label>
-                                <select wire:model="order_status" id="order_status" class="form-control">
+                                <label for="reservation_status">@lang('text.Reservation status')</label>
+                                <select wire:model="reservation_status" id="reservation_status" class="form-control">
                                     <option value=""></option>
                                     <option value="pending">@lang('text.Pending')</option>
                                     <option value="processing">@lang('text.Processing')</option>
@@ -64,39 +64,29 @@
                         </div>
 
 
-
-
-
                         <div class="table-responsive">
                              <table class="table table-striped table-secondary col-12 " style="overflow-x:auto!important">
 
                             <tr>
                                 <th>{{__('text.Reservation\'s Number')}}</th>
-                                @can('isAdmin')
-                                    <th>{{__('text.Receiver\'s Name')}}</th>
-                                    <th>{{__('text.Payment Way')}}</th>
+                                <th>{{__('text.Receiver\'s Name')}}</th>
+                                <th>{{__('text.Store Name')}}</th>
+                                <th>{{__('text.Payment Way')}}</th>
 
-
-                                @endcan
                                 <th>{{__('text.Reservation status')}}</th>
                                 <th>{{__('text.Payment Status')}}</th>
 
                                 <th>{{__('text.Total Amount')}}</th>
                                 <th>{{__('text.Subtotal')}}</th>
-                                @can('isAdmin')
                                 <th>{{__('text.Discount')}}</th>
-
-                                @endcan
                                 <th>{{__('text.Action')}}</th>
                             </tr>
                             @forelse ($reservations as $reservation)
                                 <tr>
                                     <td>{{$reservation->id}}</td>
-                                    @can('isAdmin')
-
                                     <td>{{$reservation->receiver_name}}</td>
+                                    <td>{{$reservation->vendor->store_name}}</td>
                                     <td>{{__('text.'.ucfirst($reservation->payment_way))}}</td>
-                                    @endcan
                                     <td>{{__('text.'.ucfirst($reservation->reservation_status))}}</td>
                                     <td>
                                         @if ($reservation->payment_status == 'paid')
@@ -113,7 +103,9 @@
                                     <td> {{ $reservation->discount }}</td>
 
                                     <td>
-                                        <a href="{{ route('order.show',$reservation->id) }}" class="btn btn-info d-flex">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
+                                        @can('show-reservation',$reservation)
+                                            <a href="{{ route('reservation.show',$reservation->id) }}" class="btn btn-info d-flex">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
+                                        @endcan
                                     </td>
                                 </tr>
                             @empty

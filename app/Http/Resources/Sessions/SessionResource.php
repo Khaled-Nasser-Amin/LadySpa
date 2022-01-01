@@ -28,9 +28,9 @@ class SessionResource extends JsonResource
             'gallery' => $this->images->pluck('name'),
             'id' => (int) $this->id,
             'description' => app()->getLocale() == 'ar' ? ($this->description_ar ?? ''):($this->description_en ?? ''),
-            'price' => number_format($price,2),
-            'sale' => number_format( $sale,2),
-            'tax' => number_format(($this->taxes->sum('tax')*($sale == 0 || $sale == ''? $price:$sale) )/100,2),
+            'price' => $price."",
+            'sale' =>  $sale."",
+            'tax' => ($this->taxes->sum('tax')*($sale == 0 || $sale == ''? $price:$sale) )/100 ."",
             'additions' => collect(AdditionsCollection::collection($this->additions()->get()))->filter(),
 
             ];

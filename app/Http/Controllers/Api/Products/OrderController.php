@@ -32,7 +32,7 @@ class OrderController extends Controller
         $user=$request->user();
         $discount=$this->calculatePromoCode($request->promocode,$user,$request->total_amount);
         $instance=new MyFatoorahController();
-        return response()->json(['discount'=>number_format($discount,2),'online_payment_status'=>$instance->check_online_payment($request)],200);
+        return response()->json(['discount'=>$discount."",'online_payment_status'=>$instance->check_online_payment($request)],200);
 
 
     }

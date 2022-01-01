@@ -35,7 +35,7 @@ class ReservationController extends Controller
         $user=$request->user();
         $discount=$this->calculatePromoCode($request->promocode,$user,$request->total_amount);
         $instance=new MyFatoorahController();
-        return response()->json(['discount'=>number_format($discount,2),'online_payment_status'=>$instance->check_online_payment($request)],200);
+        return response()->json(['discount'=>$discount."",'online_payment_status'=>$instance->check_online_payment($request)],200);
     }
 
 
@@ -262,7 +262,7 @@ class ReservationController extends Controller
             if( $query->get()->count()+$group_count > $limit){
                 return 'false';
             }
-
+            $count=0;
             for($i=1; $i <= $limit;$i++){
                 $query2=$this->countReservationByDate($time['date'],$session->user_id,$start_time,$end_time);
                 $count2=$query2->where('room_number',$i)->get()->count();
@@ -270,10 +270,12 @@ class ReservationController extends Controller
                     $reservation_times[] = ['date' => $time['date'],'start_time' => $start_time,'end_time' => $end_time];
                     break;
                 }else{
-                    return 'false';
+                    $count++;
                 }
             }
-
+            if($count == $limit){
+                return 'false';
+            }
         }
     }
 

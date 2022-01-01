@@ -1,28 +1,50 @@
 <?php
 
-namespace App\Http\Livewire\Admin\ProductsManagement\Orders;
+namespace App\Http\Livewire\Admin\ProductsManagement\Reservations;
 
 use App\Mail\AfterOrderComplete;
 use App\Models\Order;
 use App\Models\Refund;
 use App\Models\RefundGroup;
+use App\Models\ReservationTime;
 use App\Models\Size;
 use App\Models\User;
 use App\Traits\ImageTrait;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Symfony\Component\VarDumper\Cloner\Data;
 
-class OrderDetails extends Component
+class ReservationDetails extends Component
 {
     use WithPagination,ImageTrait;
-    public $order;
+    public $reservation,$date,$date_time,$rooms=[],$reservationTime,$time;
 
-    protected $listeners=['cancelOrder'];
+    protected $listeners=['cancelReservation'];
     public function render()
     {
-        return view('components.admin.orders.order-details');
+        return view('components.admin.reservations.reservation-details');
+    }
+
+    public function edit(ReservationTime $reservationTime)
+    {
+        $this->reservationTime=$reservationTime;
+        $this->date=date('Y-m-d',strtotime($reservationTime->date));
+        $this->date_time=$reservationTime->date.' '.date('H:i a',strtotime($reservationTime->start_time)).' - '.date('H:i a',strtotime($reservationTime->end_time));
+
+        $reservation=$reservationTime->reservation()->first();
+        $session=$reservation->session()->withTrashed()->first();
+        $this->availableTime($session,$this->date,$reservation->type,$reservationTime->start_time);
+    }
+
+    public function updatedDate()
+    {
+        $this->validate(['date' => 'required|date|date_format:Y-m-d|after:yesterday']);
+        $reservation=$this->reservationTime->reservation()->first();
+        $session=$reservation->session()->withTrashed()->first();
+        $this->availableTime($session,$this->date,$reservation->type,$this->reservationTime->start_time);
     }
 
     public function updateOrderStatus()
@@ -54,27 +76,109 @@ class OrderDetails extends Component
         }
     }
 
+    // return available times
+    protected function availableTime($session,$date,$type,$start_time)
+    {
+        $date=$date;
+        $type=$type;
+        if($session && $date && $session->isActive == 1 && $type && ($type == 'outdoor' || $type == 'indoor')){
 
-    public function holdOrder(){
-        Gate::authorize('isAdmin');
+            $limit=$type == 'outdoor'? $session->user->session_rooms_limitation_outdoor : $session->user->session_rooms_limitation_indoor;
+            $opening_time=$session->user->opening_time;
+            $closing_time=$session->user->closing_time;
+            $session_time=explode(':',$session->time);
+            if(now() < date('Y-m-d H:i:s',strtotime($date.' '.$start_time))){
+                $times_arranged=[];
 
-        $order=$this->order;
-        if ($order && ($order->order_status != 'completed' || $order->order_status != 'pending' || $order->order_status != 'canceled' || $order->order_status != 'modified')) {
-            if($order->hold == 0){
-                $order->update(['hold' => 1]);
-                $this->dispatchBrowserEvent('error', __('text.Order is pending'));
-            }else{
-                $order->update(['hold' => 0]);
-
+                $this->arrangTimes($times_arranged,$opening_time,$closing_time,$session_time);
+                $this->rooms=[];
+                $this->availableTimesInDate($this->rooms,$session,$times_arranged,$limit,$date);
             }
-
         }
     }
+
+      //available Times In Date
+    protected function availableTimesInDate(&$rooms,$session,$times_arranged,$limit,$date)
+    {
+
+        for($i=1; $i <= $limit;$i++){
+            $arr=[];
+            foreach($times_arranged as $time){
+                $query=$this->countReservationByDate($date,$session->user_id,$time['start'],$time['end']);
+                $count=$query->where('room_number',$i)->get()->count();
+                if($count == 0){
+                    $arr[] = date('h:i a',strtotime($time['start'])).' - '.date('h:i a',strtotime($time['end']));
+                }
+            }
+            $rooms[]=$arr;
+        }
+
+
+    }
+
+    //arrange times
+    protected function arrangTimes(&$times_arranged,$opening_time,$closing_time,$session_time)
+    {
+        $loop=true;
+        $opening_time= new Carbon($opening_time);
+        $hours=$session_time[0];
+        $minutes=$session_time[1];
+        do{
+            $start=$opening_time->format('H:i');
+            if($opening_time->addHours($hours)->addMinutes($minutes)->format('H:i') <= $closing_time){
+                $times_arranged[]=['start' => $start,'end' => $opening_time->format('H:i')];
+
+            }else{
+                $loop=false;
+            }
+
+        }while($loop);
+
+    }
+
+    //return count
+    protected function countReservationByDate($date,$vendor_id,$start_time,$end_time)
+    {
+        return ReservationTime::where('vendor_id',$vendor_id)->where('date',$date)
+        ->where(function($q) use($start_time,$end_time){
+            $q->where(function($q) use($start_time){
+                $q->where('start_time','<=',$start_time)
+                ->where('end_time','>',$start_time);
+            })->orWhere(function($q) use($end_time){
+                $q->where('start_time','<',$end_time)
+                ->where('end_time','>',$end_time);
+            });
+        });
+    }
+
+
+    //select time
+    protected function selectselectTime($code){
+        dd($code,$this->time);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public function cancel(){
         $this->emit('confirmCancel');
     }
-    public function cancelOrder(){
+    public function cancelReservation(){
         Gate::authorize('isAdmin');
 
         $order=$this->order;
@@ -92,127 +196,6 @@ class OrderDetails extends Component
 
         }
     }
-
-
-
-     //cancel order
-    public function returnSizesToStock($order){
-        foreach($order->sizes()->withTrashed()->get() as $size){
-            $size->update(['stock' => $size->stock+$size->pivot->quantity]);
-        }
-
-
-        foreach($order->group_products_sizes()->withTrashed()->get() as $size){
-            $size->update(['stock' => ($size->stock+$size->pivot->quantity)]);
-        }
-
-    }
-
-
-
-
-    protected function refundOrder($order)
-    {
-        Gate::authorize('isAdmin');
-
-        foreach ($order->sizes()->withTrashed()->get() as $size) {
-            $quantity = $size->pivot->quantity;
-            $price =$size->pivot->price;
-            $taxes = $size->pivot->tax;
-            Refund::create([
-                'order_id' => $order->id,
-                'vendor_id' => $size->product()->withTrashed()->first()->user_id,
-                'total_refund_amount' => ($quantity * $price) + $taxes,
-                'size_id' => $size->id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'taxes' => $taxes,
-                'size' => $size->size,
-                'subtotal_refund_amount' => $quantity * $price,
-            ]);
-            $size->update(['stock' => $size->stock + $quantity]);
-        }
-        foreach ($order->group_products()->withTrashed()->get() as $product) {
-            $quantity = $product->pivot->quantity;
-            $price =$product->pivot->price;
-            $taxes = $product->pivot->tax;
-            RefundGroup::create([
-                'order_id' => $order->id,
-                'vendor_id' => $product->withTrashed()->first()->user_id,
-                'total_refund_amount' => ($quantity * $price) + $taxes,
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $price,
-                'taxes' => $taxes,
-                'subtotal_refund_amount' => $quantity * $price,
-            ]);
-        }
-        foreach($order->group_products_sizes()->withTrashed()->get() as $size){
-            $size->update(['stock' => ($size->stock+$size->pivot->quantity)]);
-        }
-        foreach ($order->vendors()->withTrashed()->get() as $vendor) {
-            $order->vendors()->updateExistingPivot($vendor->id, [
-                'total_amount' => 0,
-                'subtotal' => 0,
-                'taxes' => 0,
-            ]);
-
-            Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get canceled'),$vendor->store_name));
-
-        }
-
-        $order->update(['payment_status' => 'failed', 'order_status' => 'refund']);
-        session()->flash('danger', __('text.Order Refunded Successfully'));
-
-    }
-
-    // protected function modify_after_collected($order, $sizes)
-    // {
-    //     $sum_taxes = 0;
-    //     $sum_total_amount = 0;
-    //     $sum_subtotal = 0;
-    //     foreach (collect($sizes)->toArray() as $size_id) {
-    //         $size = Size::withTrashed()->find($size_id);
-    //         if ($size) {
-    //             $order_size=$order->sizes->where('id', $size->id);
-    //             $quantity = $order_size->pluck('pivot.quantity')->first();
-    //             $price = $order_size->pluck('pivot.price')->first();
-    //             $taxes = $order_size->pluck('pivot.tax')->first();
-    //             $total_refund_amount = ($quantity * $price) + $taxes;
-    //             $vendor_id = $size->color()->withTrashed()->first()->product()->withTrashed()->first()->user_id;
-    //             $subtotal_refund = $quantity * $price;
-    //             Refund::create([
-    //                 'order_id' => $order->id,
-    //                 'vendor_id' => $vendor_id,
-    //                 'total_refund_amount' => $total_refund_amount,
-    //                 'size_id' => $size->id,
-    //                 'quantity' => $quantity,
-    //                 'price' => $price,
-    //                 'taxes' => $taxes,
-    //                 'size' => $order_size->pluck('pivot.size')->first(),
-    //                 'color' => $order->colors->where('id', $size->color()->withTrashed()->first()->id)->pluck('pivot.color')->first(),
-    //                 'subtotal_refund_amount' => $subtotal_refund,
-    //             ]);
-    //             $size->update(['stock' => $size->stock + $quantity]);
-
-    //             $order->vendors()->updateExistingPivot($vendor_id, [
-    //                 'total_amount' => $order->vendors->find($vendor_id)->pivot->total_amount - $total_refund_amount,
-    //                 'subtotal' => $order->vendors->find($vendor_id)->pivot->subtotal - $subtotal_refund,
-    //                 'taxes' => $order->vendors->find($vendor_id)->pivot->taxes - $taxes,
-    //             ]);
-
-    //             $sum_taxes += $taxes;
-    //             $sum_total_amount += $total_refund_amount;
-    //             $sum_subtotal += $subtotal_refund;
-    //             $vendor=User::find($vendor_id);
-    //             Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get modified'),$vendor->store_name));
-
-    //         }
-    //     }
-
-    //     $order->update(['taxes' => $order->taxes - $sum_taxes, 'subtotal' => $order->subtotal - $sum_subtotal, 'total_amount' => $order->total_amount - $sum_total_amount, 'payment_status' => 'paid', 'order_status' => 'modified']);
-    // }
-
 
 
 }

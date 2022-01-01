@@ -17,7 +17,7 @@ class AdditionsCollection extends JsonResource
         return [
             'id' =>(int) $this->id,
             'name' => app()->getLocale() == 'ar' ? $this->name_ar:$this->name_en,
-            'price' => number_format($this->price,2),
+            'price' => $this->price."",
         ];
 
     }

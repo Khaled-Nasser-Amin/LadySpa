@@ -3,22 +3,26 @@
         <div class="col-lg-8">
 
 
-            {{-- products images  --}}
+            {{-- session images  --}}
+            @php
+                $session=$reservation->session()->withTrashed()->first();
+            @endphp
             <div class="">
                 <div id="carouselExampleIndicators"  class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
-                        @for ($i = 0; $i < $order->products()->withTrashed()->when(auth()->user()->role != 'admin',function($q){
-                            return $q->where('user_id',auth()->user()->id);
-                        })->count(); $i++)
+                        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+
+                        @for ($i =1; $i < $session->images->count(); $i++)
                         <li data-target="#carouselExampleIndicators" data-slide-to="{{$i}}" class="{{$i == 0 ? 'active' : ''}}"></li>
                         @endfor
                     </ol>
                     <div class="carousel-inner">
-                        @foreach($order->products()->withTrashed()->when(auth()->user()->role != 'admin',function($q){
-                            return $q->where('user_id',auth()->user()->id);
-                        })->get() as $product)
-                        <div class="carousel-item  {{$loop->index == 0 ? 'active' : ''}}">
-                            <img class="d-block w-100" style="height: 500px" src="{{ asset('/images/products//'.$product->pivot->image) }}" alt="Second slide">
+                        <div class="carousel-item  active">
+                            <img class="d-block w-100" style="height: 500px" src="{{ $session->image }}" alt="Second slide">
+                        </div>
+                        @foreach($session->images as $image)
+                        <div class="carousel-item ">
+                            <img class="d-block w-100" style="height: 500px" src="{{$image->name}}" alt="Second slide">
                         </div>
                         @endforeach
                     </div>
@@ -35,23 +39,15 @@
             </div>
             <!-- end slider -->
 
-            {{-- products name --}}
+            {{-- session name --}}
             <div class="mt-4">
                 <h4>
-                    @foreach ($order->products()->withTrashed()->when(auth()->user()->role != 'admin',
-                    function($q){return $q->where('user_id',auth()->user()->id);
-                    })->get() as $product)
-                    @if ($loop->index != 0)
-                         +
-                    @endif
-                    {{app()->getLocale() == 'ar' ? $product->pivot->name_ar: $product->pivot->name_en}}
-                    @endforeach
+                    {{app()->getLocale() == 'ar' ? $session->name_ar: $session->name_en}}
                 </h4>
 
-                {{-- order details --}}
-                @can('isAdmin')
+                {{-- reservation details --}}
 
-                <div class="d-flex flex-row flex-wrap">
+                {{--  <div class="d-flex flex-row flex-wrap">
                     <div class="col-md-6 col col-sm-12">
                         <h4 class="mt-4 mb-3">@lang('text.Payment Information')</h4>
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Payment Way')</span>: {{__('text.'.ucfirst($order->payment_way))}}</p>
@@ -126,63 +122,56 @@
                         @endif
                     </div>
 
-                </div>
-                    <h4 class="mt-4 mb-3">@lang('text.Receiver Information')</h4>
-                    <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Name')</span>: {{$order->receiver_name }}</p>
-                    <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Phone Number')</span>: {{$order->receiver_phone}}</p>
-                    <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Address')</span>: {{$order->address}}</p>
-                    <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Description')</span>: {{$order->description}}</p>
+                </div>  --}}
+                <h4 class="mt-4 mb-3">@lang('text.Receiver Information')</h4>
+                <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Reservation type')</span>: {{$reservation->type }}</p>
+                <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Name')</span>: {{$reservation->receiver_name }}</p>
+                <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Phone Number')</span>: {{$reservation->receiver_phone}}</p>
+                <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Address')</span>: {{$reservation->address}}</p>
+                <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Description')</span>: {{$reservation->description}}</p>
 
 
 
-                @endcan
 
 
 
                 {{-- items details --}}
                 <div class="card-box" style="max-height: 1000px;overflow-y:scroll">
                     <div class="table-responsive">
-                        @foreach ( $order->sizes()->withTrashed()->when(auth()->user()->role !='admin',function($q){
-                            return $q->join('products','products.id','sizes.product_id')
-                                 ->withTrashed()->where('products.user_id',auth()->user()->id);
-                        })->get() as $row)
+                        @foreach ( $reservation->times()->get() as $row)
                         <table class="table table-bordered table-secondary  mb-4">
                             <tbody>
                             <tr>
-                                <th > @lang('text.Store Name')</th>
-                                <th > @lang('text.Product Name')</th>
-                                <th > @lang('text.Price')</th>
-                                <th >@lang('text.Quantity') </th>
-                                <th >@lang('text.Taxes') </th>
-                                <th >@lang('text.Size')</th>
+                                <th > @lang('text.Date')</th>
+                                <th > @lang('text.Start time')</th>
+                                <th >@lang('text.End time') </th>
+                                <th >@lang('text.Action') </th>
 
-                                @php
+                                {{--  @php
                                     $refund=sizes_refund($order->id,$row->id);
-                                @endphp
+                                @endphp  --}}
 
-                                @if ($refund)
+                                {{--  @if ($refund)
                                     <th >@lang('text.Refund')</th>
-                                @endif
+                                @endif  --}}
                             </tr>
                             <tr>
-                                <td>{{ $row->product()->withTrashed()->first()->user()->withTrashed()->pluck('store_name')->first() }} </td>
-
-                                <td>{{$row->product()->withTrashed()->when(true,function($q){
-                                    if(app()->getLocale() == 'ar'){
-                                        return $q->pluck('name_ar')->first();
-                                    }else {
-                                        return $q->pluck('name_en')->first();
-                                    }
-                                })}}</td>
-                                <td>{{$row->pivot->amount}} @lang('text.SAR')</td>
-                                <td>{{$row->pivot->quantity}}</td>
-                                <td>{{$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->product()->withTrashed()->first()->taxes()->withTrashed()->sum('tax'))/100))}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
-                                <td>{{ $order->sizes()->withTrashed()->where('size_id',$row->id)->get()->pluck('size')->implode(',') }}</td>
-                                @if ($refund)
+                                <td>{{ $row->date }} </td>
+                                <td>{{date('h:i a',strtotime($row->start_time))}}</td>
+                                <td>{{date('h:i a',strtotime($row->end_time))}}</td>
+                                <td class="text-center">
+                                    @if (now() < date('Y-m-d H:i:s',strtotime($row->date.' '.$row->start_time)))
+                                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modify_reservation" wire:click.prevent="edit({{ $row->id }})">
+                                        <i class="fas fa-edit text-white"></i>
+                                    </button>
+                                    <x-admin.reservations.modify-reservation  type="{{ $reservation->type }}" :rooms="$rooms" :datetime="$date_time" :date="$date"/>
+                                    @endif
+                                </td>
+                                {{--  @if ($refund)
                                 <td class="text-danger">
                                     <i class="text-danger mdi mdi-close-circle"></i>{{'('.$refund->quantity .') '. $refund->size.'='. $refund->total_refund_amount}} @lang('text.SAR')
                                 </td>
-                                @endif
+                                @endif  --}}
                             </tr>
                             </tbody>
                         </table>
@@ -191,73 +180,41 @@
 
 
                         <br>
-                        @if ($order->group_products()->withTrashed()->where('user_id',auth()->user()->id)->count() > 0)
+                        @if ($reservation->additions()->withTrashed()->get()->count() > 0)
                         <hr>
-
-                            <h3>@lang('text.Group of Products')</h3>
+                            <h3>@lang('text.Additions')</h3>
                         @endif
-                        @foreach ( $order->group_products()->withTrashed()->when(auth()->user()->role !='admin',function($q){
-                            return $q->where('user_id',auth()->user()->id);
-                        })->get() as $row)
+                        @foreach ( $reservation->additions()->withTrashed()->get() as $row)
 
                             <div class="table-responsive col" >
                                 <table class="table table-sm table-borderless mb-0">
                                     <tbody>
                                             <tr>
-                                               <th > @lang('text.Store Name')</th>
-                                                <th > @lang('text.Product Name')</th>
+                                               <th > @lang('text.Addition Name')</th>
                                                 <th > @lang('text.Price')</th>
-                                                <th >@lang('text.Quantity') </th>
-                                                <th >@lang('text.Taxes') </th>
-
-                                                @php
+                                                {{--  @php
                                                     $refund=groups_refund($order->id,$row->id);
                                                 @endphp
 
                                                 @if ($refund)
                                                     <th >@lang('text.Refund')</th>
-                                                @endif
+                                                @endif  --}}
 
                                             </tr>
                                             <tr>
-                                                <td>{{ $row->user()->withTrashed()->pluck('store_name')->first() }} </td>
-
-                                                <td>{{app()->getLocale() == 'ar' ? $row->name_ar :$row->name_en}}</td>
+                                                <td>{{app()->getLocale() == 'ar' ? $row->pivot->name_ar :$row->pivot->name_en}}</td>
                                                 <td>{{$row->pivot->price}} @lang('text.SAR')</td>
-                                                <td>{{$row->pivot->quantity}}</td>
-                                                <td>{{$row->taxes()->withTrashed()->sum('tax')."% = ".((($row->pivot->amount*$row->taxes()->withTrashed()->sum('tax'))/100))}} {{ app()->getLocale() == 'ar' ? 'ريال' : 'SAR' }}</td>
 
-                                                @if ($refund)
+                                                {{--  @if ($refund)
                                                     <td class="text-danger">
                                                         <i class="text-danger mdi mdi-close-circle"></i>{{ '('.$refund->quantity .') '. $refund->total_refund_amount}} @lang('text.SAR')
                                                     </td>
-                                                @endif
+                                                @endif  --}}
                                             </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <hr>
-
-
-                            <div class="table-responsive col" >
-                                <table class="table table-sm table-borderless mb-0">
-                                        @foreach($order->group_products_sizes()->withTrashed()->get()->groupBy('product_id') as $sizes)
-                                            @foreach ($sizes as $size)
-                                                @if ($loop->index == 0)
-                                                <tr><th>{{app()->getLocale() == 'ar'? $size->product->name_ar : $size->product->name_en }}</th></tr>
-                                                @endif
-                                                <tr>
-                                                    <th class="" scope="row"><strong>@lang('text.Size')</strong></th>
-                                                    <td class="text-muted">{{ $size->pivot->size }}</td>
-                                                    <th class="" scope="row"><strong>@lang('text.Quantity')</strong></th>
-                                                    <td class="text-muted">{{ $size->pivot->quantity }}</td>
-                                                </tr>
-                                            @endforeach
-
-                                        @endforeach
-
-                                </table>
-                            </div>
                         @endforeach
 
 
@@ -270,42 +227,25 @@
                                 <th > @lang('text.Total Amount')</th>
                                 <th > @lang('text.Subtotal')</th>
                                 <th> @lang('text.Total Taxes')</th>
-                                @can('isAdmin')
-                                <th> @lang('text.Shipping')</th>
-                                <th> @lang('text.Discount')</th>
-                                <th> @lang('text.Total Pieces')</th>
+                                @if ($reservation->type == 'outdoor')
 
-                                @endcan
+                                <th> @lang('text.Shipping')</th>
+                                @endif
+                                <th> @lang('text.Discount')</th>
                             </tr>
                             <tr>
+                                <td>{{$reservation->total_amount}} @lang('text.SAR')</td>
                                 <td>
-                                    {{
-                                        auth()->user()->role =='admin' ?
-                                        $order->total_amount : $order->vendors->find(auth()->user()->id)->pivot->total_amount
-                                    }} @lang('text.SAR')
-                                </td>
-                                <td>
-                                    {{
-                                        auth()->user()->role =='admin' ?
-                                        $order->subtotal : $order->vendors->find(auth()->user()->id)->pivot->subtotal
-                                    }} @lang('text.SAR')
+                                    {{ $reservation->subtotal }} @lang('text.SAR')
                                 </td>
 
-                                <td>{{ auth()->user()->role =='admin' ?
-                                    $order->taxes : $order->vendors->find(auth()->user()->id)->pivot->taxes }}</td>
-                                @can('isAdmin')
-                                <td>{{ $order->shipping }}</td>
-                                <td>{{ $order->discount }}</td>
-                                <td>
-                                    {{
-                                        $order->sizes()->withTrashed()->when(auth()->user()->role !='admin',function($q){
-                                            return $q->with(['product' => function($q){
-                                                    return $q->withTrashed()->where('user_id',auth()->user()->id);
-                                            }]);
-                                        })->get()->pluck('pivot')->sum('quantity')
-                                    }}
-                                </td>
-                                @endcan
+                                <td>{{ $reservation->taxes }}</td>
+                                @if ($reservation->type == 'outdoor')
+                                <td>{{ $reservation->shipping }}</td>
+
+                                @endif
+
+                                <td>{{ $reservation->discount }}</td>
 
                             </tr>
 
@@ -324,35 +264,34 @@
 
         {{-- customer details  --}}
         <div class="col-lg-4">
-            @can('isAdmin')
                 <div class="text-center card-box">
                     <div class="text-left">
                         <h4 class="header-title mb-4">@lang('text.User')</h4>
                     </div>
                     <div class="member-card">
                         <div class="avatar-xl member-thumb mb-2 mx-auto d-block">
-                            <img src="{{$order->customer()->withTrashed()->first()->image }}" class="rounded-circle img-thumbnail" alt="profile-image">
+                            <img src="{{$reservation->customer()->withTrashed()->first()->image }}" class="rounded-circle img-thumbnail" alt="profile-image">
                             <i class="mdi mdi-star-circle member-star text-success" title="Featured Agent"></i>
                         </div>
 
                         <div class="">
-                            <h5 class="font-18 mb-1">{{$order->customer()->withTrashed()->first()->name}}</h5>
+                            <h5 class="font-18 mb-1">{{$reservation->customer()->withTrashed()->first()->name}}</h5>
                         </div>
 
                         <div class="mt-20">
                             <ul class="list-inline row">
                                 <li class="list-inline-item col-12 mx-0">
                                     <h5>@lang('text.Email')</h5>
-                                    <p>{{ $order->customer()->withTrashed()->first()->email }}</p>
+                                    <p>{{ $reservation->customer()->withTrashed()->first()->email }}</p>
                                 </li>
                                 <li class="list-inline-item col-6 mx-0">
-                                    <h5>@lang('text.Completed Orders')</h5>
-                                    <p>{{$order->customer()->withTrashed()->first()->orders()->where('order_status','completed')->count()}}</p>
+                                    <h5>@lang('text.Completed Reservations')</h5>
+                                    <p>{{$reservation->customer()->withTrashed()->first()->reservations()->where('reservation_status','completed')->count()}}</p>
                                 </li>
 
                                 <li class="list-inline-item col-6 mx-0">
                                     <h5>@lang('text.Phone Number')</h5>
-                                    <p>{{ $order->customer()->withTrashed()->first()->phone }}</p>
+                                    <p>{{ $reservation->customer()->withTrashed()->first()->phone }}</p>
                                 </li>
 
                             </ul>
@@ -361,6 +300,7 @@
                     </div>
                     <!-- end membar card -->
                 </div>
+                @if ($reservation->type == 'outdoor')
                 <div class="text-center row ">
                     <div class="text-left col-12">
                         <h4 class="header-title mb-4">@lang('text.Location')</h4>
@@ -368,7 +308,7 @@
                     </div>
                     <div class="mapouter col-12">
                         <div class="gmap_canvas">
-                            <iframe style="width:100%!important"  height="500" id="gmap_canvas" src="https://maps.google.com/maps?center=45.468889,9.202216&q={{ $order->lat_long }}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                            <iframe style="width:100%!important"  height="500" id="gmap_canvas" src="https://maps.google.com/maps?center=45.468889,9.202216&q={{ $reservation->lat_long }}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
                             <a href="https://kissanime-ws.com"></a>
                             <br>
                             <style>.mapouter{position:relative;text-align:right;height:500px;width:400px;}</style>
@@ -377,7 +317,8 @@
                         </div>
                     </div>
                 </div>
-            @endcan
+                @endif
+
 
             <!-- end card-box -->
 

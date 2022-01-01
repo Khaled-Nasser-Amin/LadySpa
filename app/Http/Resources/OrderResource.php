@@ -29,11 +29,11 @@ class OrderResource extends JsonResource
             'payment_way' => $this->payment_way,
             'description' => $this->description,
             'lat_long' => $this->lat_long,
-            'total' => number_format($this->total_amount,2),
-            'subtotal' => number_format($this->subtotal,2),
-            'shipping' => number_format($this->shipping,2),
-            'taxes' => number_format($this->taxes,2),
-            'discount' => number_format($this->discount,2),
+            'total' => $this->total_amount."",
+            'subtotal' => $this->subtotal."",
+            'shipping' => $this->shipping."",
+            'taxes' => $this->taxes."",
+            'discount' => $this->discount."",
             'can'=>$can,
         ];
 

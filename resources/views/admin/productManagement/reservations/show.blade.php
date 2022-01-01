@@ -1,5 +1,5 @@
 @extends('admin.layouts.appLogged')
-@section('title',__('text.Order Show'))
+@section('title',__('text.Reservation Show'))
 @push('css')
  @livewireStyles
     <link href="{{asset('libs/sweetalert2/sweetalert2.min.css')}}" rel="stylesheet" type="text/css" />
@@ -25,15 +25,15 @@
 
       <!-- start page title -->
       <x-admin.general.page-title>
-        <li class="breadcrumb-item active">{{ __('text.Order Show') }}</li>
-        <li class="breadcrumb-item"><a href="{{route('admin.orders')}}">{{__('text.Orders')}}</a></li>
+        <li class="breadcrumb-item active">{{ __('text.Reservation Show') }}</li>
+        <li class="breadcrumb-item"><a href="{{route('admin.reservations')}}">{{__('text.Reservation')}}</a></li>
         <li class="breadcrumb-item"><a href="{{route('admin.index')}}">{{__('text.Dashboard')}}</a></li>
         <x-slot name="title">
-            <h4 class="page-title">{{__('text.Order Show')}}</h4>
+            <h4 class="page-title">{{__('text.Reservation Show')}}</h4>
         </x-slot>
     </x-admin.general.page-title>
 
-    @livewire('admin.products-management.orders.order-details',['order'=>$order])
+    @livewire('admin.products-management.reservations.reservation-details',['reservation'=>$reservation])
 
     </div>
     <!-- end container-fluid -->

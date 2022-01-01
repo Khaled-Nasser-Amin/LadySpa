@@ -40,8 +40,8 @@
                                 <th>{{__('text.Name')}}</th>
                                 <th>{{__('text.Email')}}</th>
                                 <th>{{__('text.Phone Number')}}</th>
-                                <th>{{__('text.Number of Orders')}}</th>
-                                <th>{{__('text.Number of Sessions')}}</th>
+                                <th>{{__('text.Completed Orders')}}</th>
+                                <th>{{__('text.Completed Reservations')}}</th>
                                 <th>{{__('text.Special Code')}}</th>
                                 <th>{{__('text.Status')}}</th>
                                 <th>{{__('text.Action')}}</th>
@@ -52,8 +52,8 @@
                                     <td>{{$user->name}}</td>
                                     <td>{{$user->email}}</td>
                                     <td>{{$user->phone}}</td>
-                                    <td> {{$user->orders->count()}}</td>
-                                    <td> session_count</td>
+                                    <td> {{$user->orders()->where('order_status','completed')->count()}}</td>
+                                    <td> {{$user->reservations()->where('reservation_status','completed')->count()}}</td>
                                     <td>
                                         @if($user->activation == 1 )
                                         <div class="dropdown">
