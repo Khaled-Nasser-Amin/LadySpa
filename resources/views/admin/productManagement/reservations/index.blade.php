@@ -1,4 +1,4 @@
-@section('title',__('text.Orders'))
+@section('title',__('text.Reservations'))
 @push('css')
     @livewireStyles
 
@@ -15,10 +15,10 @@
 
             <!-- start page title -->
             <x-admin.general.page-title>
-                <li class="breadcrumb-item active">{{__('text.Orders')}}</li>
+                <li class="breadcrumb-item active">{{__('text.Reservations')}}</li>
                 <li class="breadcrumb-item active"><a href="{{route('admin.index')}}">{{__('text.Dashboard')}}</a></li>
                 <x-slot name="title">
-                    <h4 class="page-title">{{__('text.Orders')}}</h4>
+                    <h4 class="page-title">{{__('text.Reservations')}}</h4>
                 </x-slot>
             </x-admin.general.page-title>
 
@@ -41,16 +41,13 @@
                                 </select>
                             </div>
                             <div class="form-group col-md-3 col-sm-12">
-                                <label for="order_status">@lang('text.Order status')</label>
+                                <label for="order_status">@lang('text.Reservation status')</label>
                                 <select wire:model="order_status" id="order_status" class="form-control">
                                     <option value=""></option>
                                     <option value="pending">@lang('text.Pending')</option>
                                     <option value="processing">@lang('text.Processing')</option>
-                                    <option value="shipping">@lang('text.Shipping')</option>
                                     <option value="completed">@lang('text.Completed')</option>
                                     <option value="canceled">@lang('text.Canceled')</option>
-                                    <option value="hold">@lang('text.Hold')</option>
-
                                 </select>
 
                             </div>
@@ -74,14 +71,14 @@
                              <table class="table table-striped table-secondary col-12 " style="overflow-x:auto!important">
 
                             <tr>
-                                <th>{{__('text.Order\'s Number')}}</th>
+                                <th>{{__('text.Reservation\'s Number')}}</th>
                                 @can('isAdmin')
                                     <th>{{__('text.Receiver\'s Name')}}</th>
                                     <th>{{__('text.Payment Way')}}</th>
 
 
                                 @endcan
-                                <th>{{__('text.Order status')}}</th>
+                                <th>{{__('text.Reservation status')}}</th>
                                 <th>{{__('text.Payment Status')}}</th>
 
                                 <th>{{__('text.Total Amount')}}</th>
@@ -92,43 +89,31 @@
                                 @endcan
                                 <th>{{__('text.Action')}}</th>
                             </tr>
-                            @forelse ($orders as $order)
+                            @forelse ($reservations as $reservation)
                                 <tr>
-                                    <td>{{$order->id}}</td>
+                                    <td>{{$reservation->id}}</td>
                                     @can('isAdmin')
 
-                                    <td>{{$order->receiver_name}}</td>
-                                    <td>{{__('text.'.ucfirst($order->payment_way))}}</td>
+                                    <td>{{$reservation->receiver_name}}</td>
+                                    <td>{{__('text.'.ucfirst($reservation->payment_way))}}</td>
                                     @endcan
+                                    <td>{{__('text.'.ucfirst($reservation->reservation_status))}}</td>
                                     <td>
-                                        @if ($order->hold == 0)
-
-                                        {{__('text.'.ucfirst($order->order_status))}}
-                                        @else
-                                        <i class="text-danger far fa-pause-circle"></i> @lang('text.Hold')
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if ($order->payment_status == 'paid')
+                                        @if ($reservation->payment_status == 'paid')
                                             <i class="text-success mdi mdi-checkbox-marked-circle"></i>
-                                        @elseif ($order->payment_status == 'failed')
+                                        @elseif ($reservation->payment_status == 'failed')
                                             <i class="text-danger mdi mdi-close-circle"></i>
-                                        @elseif ($order->payment_status == 'unpaid')
+                                        @elseif ($reservation->payment_status == 'unpaid')
                                             <i class="text-warning mdi mdi-dots-horizontal-circle"></i>
                                         @endif
-                                        {{ __('text.'.ucfirst($order->payment_status))}}
+                                        {{ __('text.'.ucfirst($reservation->payment_status))}}
                                     </td>
-                                    @can('isAdmin')
-                                    <td> {{ $order->total_amount }}</td>
-                                    <td> {{ $order->subtotal }}</td>
-                                    <td> {{ $order->discount }}</td>
-                                    @endcan
-                                    @cannot('isAdmin')
-                                    <td> {{ $order->vendors->find(auth()->user()->id)->pivot->total_amount }}</td>
-                                    <td> {{ $order->vendors->find(auth()->user()->id)->pivot->subtotal }}</td>
-                                    @endcannot
+                                    <td> {{ $reservation->total_amount }}</td>
+                                    <td> {{ $reservation->subtotal }}</td>
+                                    <td> {{ $reservation->discount }}</td>
+
                                     <td>
-                                        <a href="{{ route('order.show',$order->id) }}" class="btn btn-info d-flex">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
+                                        <a href="{{ route('order.show',$reservation->id) }}" class="btn btn-info d-flex">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
                                     </td>
                                 </tr>
                             @empty
@@ -137,7 +122,7 @@
 
                         </table>
                         </div>
-                        {{$orders->links()}}
+                        {{$reservations->links()}}
                     </div>
                 <br>
             </div>
@@ -147,15 +132,7 @@
     </div>
 @push('script')
     @livewireScripts
-    <script>
-        $('.table-responsive').on('show.bs.dropdown', function () {
-            $('.table-responsive').css( "overflow", "inherit" );
-        });
 
-        $('.table-responsive').on('hide.bs.dropdown', function () {
-            $('.table-responsive').css( "overflow", "auto" );
-        })
-    </script>
 
 @endpush
 

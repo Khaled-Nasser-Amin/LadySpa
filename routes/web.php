@@ -6,6 +6,7 @@ use App\Http\Controllers\front\LandingPage;
 use App\Http\Controllers\admin\productManagement\orders\OrderController;
 use App\Http\Controllers\admin\productManagement\products\ProductController;
 use App\Http\Controllers\admin\productManagement\refunds\RefundController;
+use App\Http\Controllers\admin\productManagement\reservations\ReservationController;
 use App\Http\Controllers\admin\productManagement\sessions\SessionController;
 use App\Http\Controllers\admin\TwoFactorAuthenticatedSessionController;
 use App\Http\Controllers\admin\Profile\UserProfileController;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Livewire\Admin\ProductsManagement\Customers\Customers;
 use App\Http\Livewire\Admin\ProductsManagement\Orders\Orders;
+use App\Http\Livewire\Admin\ProductsManagement\Reservations\Reservation;
 use App\Http\Livewire\Admin\ProductsManagement\Settings\Settings;
 use App\Http\Livewire\Admin\ProductsManagement\Products\Products;
 use App\Http\Livewire\Admin\ProductsManagement\RecycleBin\MainController;
@@ -108,6 +110,10 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
 
 
         Route::get('/refunds', [RefundController::class,'show'])->name('admin.refunds');
+
+
+        Route::get('/reservations', Reservation::class)->name('admin.reservations');
+        Route::get('/reservation/show/{reservation}', [ReservationController::class,'show'])->name('reservation.show');
 
 
         Route::get('/sessions', Sessions::class)->name('admin.sessions');

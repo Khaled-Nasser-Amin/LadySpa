@@ -575,6 +575,8 @@ return [
     'Special Code'=>'Special Code',
     'Select special code'=>'Select special code',
     'Start date'=>'Start date',
+    'Start time'=>'Start time',
+    'End time'=>'End time',
     'End date'=>'End date',
     'Number of used times'=>'Number of used times',
     'Limitation'=>'Limitation',
@@ -662,6 +664,13 @@ return [
     'Update Number of available sessions rooms & number of outdoor service provider & opening and closing time.'=>'Update Number of available sessions rooms & number of outdoor service provider & opening and closing time.',
     'Outdoor session price'=>'Outdoor session price',
     'Indoor session price'=>'Indoor session price',
+    'Reservation created successfully'=>'Reservation created successfully',
+    'Your Reservation'=>'Your Reservation',
+    'Reservation\'s Number'=>'Reservation\'s Number',
+    'Reservation status'=>'Reservation status',
+    'Limitation'=>'Limitation',
+    'Limitation'=>'Limitation',
+    'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 
 

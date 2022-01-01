@@ -18,15 +18,17 @@ class CreateReservationsTable extends Migration
             $table->string('payment_way');
             $table->float('subtotal',11,2)->nullable();
             $table->float('total_amount',11,2)->nullable();
-            $table->float('shipping',11,2)->nullable();
+            $table->float('shipping',11,2)->default(0);
             $table->float('taxes',11,2)->nullable();
+            $table->float('discount',11,2)->nullable();
             $table->string('reservation_status')->default('pending');
             $table->string('payment_status')->default('unpaid');
             $table->string('address');
             $table->string('receiver_phone');
             $table->string('receiver_name');
-            $table->string('lat_long');
+            $table->string('lat_long')->nullable();
             $table->string('type');
+            $table->string('description');
 
 
             $table->unsignedBigInteger('user_id')->nullable();

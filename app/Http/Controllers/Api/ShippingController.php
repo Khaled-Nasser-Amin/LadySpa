@@ -31,6 +31,29 @@ class ShippingController extends Controller
     }
 
 
+    public function calc_shipping_single($vendor_lat_long,$lat,$long)
+    {
+        $setting=Setting::find(1);
+        $shipping_status=$setting->shipping_status;
+
+
+        if($shipping_status == 'by_city'){
+            $city=$this->calc_shipping_by_city($lat,$long);
+
+            $cost= $city ? round($city['cost'],2) : false;
+        }
+
+        if($shipping_status == 'by_kilometer' || ($cost == false && $shipping_status == 'by_city')){
+            $latLong=explode(',',$vendor_lat_long);
+            $distance= $this->distance($latLong[0],$latLong[1],$lat,$long);
+            $cost=round($distance*$setting->shipping_cost_by_kilometer,2);
+        }
+
+        return $cost;
+
+    }
+
+
     //calculate shipping by kilometer
     public function calc_shipping_by_kilometer($vendors_lat_long)
     {

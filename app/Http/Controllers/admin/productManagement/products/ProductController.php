@@ -28,7 +28,7 @@ class ProductController extends Controller
         $product=Product::findOrFail($id);
         $this->authorize('update',$product);
 
-        $data=collect($request)->except(['image','productsIndex','taxes_selected','sizes','banner'])->toArray();
+        $data=collect($request)->except(['image','productsIndex','taxes_selected','sizes','banner','groupImage'])->toArray();
         $this->updateImage($request,$product,$data);
         $product->update($data);
         $product->taxes()->detach();
@@ -37,7 +37,7 @@ class ProductController extends Controller
         return $product;
     }
 
-    protected function updateImage($request,$product,$data){
+    protected function updateImage($request,$product,&$data){
         if ($request['image']){
             if(!$product->has('orders')){
                 $this->delete_single_image($product,'image');

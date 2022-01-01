@@ -88,7 +88,8 @@ Route::group(['prefix' => 'user'], function () {
 
         //reservations
         Route::post('/available_time', [ReservationController::class, 'availableTime']);
-        Route::post('/order', [OrderController::class, 'store']);
+        Route::post('/check_session_promocode', [ReservationController::class, 'check_promocode']);
+        Route::post('/reservation', [ReservationController::class, 'store']);
         Route::post('/cancel_order', [OrderController::class, 'cancel_order']);
         Route::post('/check_stock', [OrderController::class, 'check_stock']);
         Route::post('/all_orders', [OrderController::class, 'all_orders']);

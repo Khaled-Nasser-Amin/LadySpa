@@ -33,7 +33,7 @@
                         <option value="1">@lang('text.Active')</option>
                         <option value="2">@lang('text.Non Active')</option>
                     </select>
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="height: 650px;">
                         <table class="table table-striped col-12 table-secondary">
                             <tr>
                                 <th>{{__('text.Image')}}</th>
@@ -112,7 +112,6 @@
 @push('script')
     <script src="{{asset('libs/sweetalert2/sweetalert2.min.js')}}"></script>
     @livewireScripts
-
     <script>
         //event fired to livewire called delete
         window.Livewire.on('confirmDelete',function (e) {

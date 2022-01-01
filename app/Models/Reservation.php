@@ -9,6 +9,8 @@ class Reservation extends Model
 {
     use HasFactory;
 
+    protected $guarded=[];
+
     public function customer(){
         return $this->belongsTo(Customer::class,'user_id','id');
 
@@ -22,7 +24,7 @@ class Reservation extends Model
 
     }
     public function additions(){
-        return $this->belongsToMany(Reservation::class,'reservations_additions','reservation_id','addition_id')->withPivot(['price','name_ar','name_en']);
+        return $this->belongsToMany(Addition::class,'reservations_additions','reservation_id','addition_id')->withPivot(['price','name_ar','name_en']);
     }
 
     public function refunds(){

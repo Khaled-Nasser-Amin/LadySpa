@@ -29,7 +29,7 @@ class SessionController extends Controller
         $session=Xsession::findOrFail($id);
         $this->authorize('update',$session);
 
-        $data=collect($request)->except(['image','additions','taxes_selected','banner'])->toArray();
+        $data=collect($request)->except(['image','additions','taxes_selected','banner','groupImage'])->toArray();
         $this->updateImage($request,$session,$data);
         $session->update($data);
         $session->taxes()->detach();
@@ -38,7 +38,7 @@ class SessionController extends Controller
         return $session;
     }
 
-    protected function updateImage($request,$session,$data){
+    protected function updateImage($request,$session,&$data){
         if ($request['image']){
             if(!$session->has('reservations')){
                 $this->delete_single_image($session,'image');

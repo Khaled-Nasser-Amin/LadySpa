@@ -71,7 +71,6 @@ class OrderController extends Controller
 
         $data=$request->except(['sizes_id','lang','groups_id','promocode']);
         $order=Order::create($data);
-        $user=$request->user();
         $user->orders()->save($order);
         $subtotal=0;
         $taxes=0;
@@ -440,7 +439,7 @@ class OrderController extends Controller
                 'taxes' => 0,
             ]);
 
-            Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get canceled'),$vendor->store_name));
+            Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') .' '. $order->id .' '. __('text.get canceled'),$vendor->store_name));
 
         }
 

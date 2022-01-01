@@ -153,6 +153,11 @@ class ProductForm extends Component
             }else{
                 $this->groupType($product);
             }
+            if($this->groupImage){
+                $this->livewireDeleteGroupOfImages($product->images,'products');
+                $product->images()->delete();
+                $this->associateImagesWithProduct($data,$product);
+            }
 
             if($product->wasChanged()){
                 create_activity('Product Updated',auth()->user()->id,$product->user_id);

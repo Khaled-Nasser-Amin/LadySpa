@@ -110,7 +110,11 @@ class SessionForm extends Component
 
         $session = $sessionUpdate->update($data, $id);
         $this->associateSessionWithAdditions($this->additions, $session);
-
+        if($this->groupImage){
+            $this->livewireDeleteGroupOfImages($session->images,'sessions');
+            $session->images()->delete();
+            $this->associateImagesWithSession($data,$session);
+        }
         if ($session->wasChanged()) {
             create_activity('Session Updated', auth()->user()->id, $session->user_id);
         }

@@ -15,4 +15,9 @@ class ReservationTime extends Model
         return $this->belongsTo(Reservation::class);
 
     }
+
+    public function vendor(){
+        return $this->belongsTo(User::class,'vendor_id');
+
+    }
 }

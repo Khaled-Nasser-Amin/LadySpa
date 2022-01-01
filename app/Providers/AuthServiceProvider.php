@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Activity;
 use App\Models\Order;
+use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Http\Response;
@@ -36,7 +37,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('show-order',function(User $user,Order $order){
             return $user->orders->contains($order) || $user->role == 'admin';
         });
-
+        Gate::define('show-reservation',function(User $user,Reservation $reservation){
+            return $user->reservations->contains($reservation);
+        });
         Gate::define('delete-activity',function(User $user,Activity $activity){
             return $activity->vendor_id == $user->id || $user->role == 'admin';
         });
