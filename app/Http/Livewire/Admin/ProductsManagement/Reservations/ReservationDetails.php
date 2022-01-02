@@ -20,7 +20,7 @@ use Symfony\Component\VarDumper\Cloner\Data;
 class ReservationDetails extends Component
 {
     use WithPagination,ImageTrait;
-    public $reservation,$date,$date_time,$rooms=[],$reservationTime,$time;
+    public $reservation,$date,$date_time,$rooms=[],$reservationTime,$time,$code,$room_number;
 
     protected $listeners=['cancelReservation'];
     public function render()
@@ -30,6 +30,8 @@ class ReservationDetails extends Component
 
     public function edit(ReservationTime $reservationTime)
     {
+        $this->code='';
+        $this->time='';
         $this->reservationTime=$reservationTime;
         $this->date=date('Y-m-d',strtotime($reservationTime->date));
         $this->date_time=$reservationTime->date.' '.date('H:i a',strtotime($reservationTime->start_time)).' - '.date('H:i a',strtotime($reservationTime->end_time));
@@ -42,6 +44,8 @@ class ReservationDetails extends Component
     public function updatedDate()
     {
         $this->validate(['date' => 'required|date|date_format:Y-m-d|after:yesterday']);
+        $this->code='';
+        $this->time='';
         $reservation=$this->reservationTime->reservation()->first();
         $session=$reservation->session()->withTrashed()->first();
         $this->availableTime($session,$this->date,$reservation->type,$this->reservationTime->start_time);
@@ -153,13 +157,77 @@ class ReservationDetails extends Component
 
 
     //select time
-    protected function selectselectTime($code){
-        dd($code,$this->time);
+    public function selectTime($code,$time,$room_number){
+        $this->code=$code;
+        $this->time=$time;
+        $this->room_number=$room_number;
     }
 
 
+    public function modifyReservation()
+    {
+        $limit= $this->reservation->type == 'outdoor'? $this->reservation->vendor->session_rooms_limitation_outdoor : $this->reservation->vendor->session_rooms_limitation_indoor;
+        $check=$this->associateTimesWithReservation($this->time,$this->reservationTime,$limit,$this->room_number);
+        if($check == 'updated'){
+            $this->dispatchBrowserEvent('success',__('text.Time updated successfully'));
+            $this->emit('saveTime');
+        }else{
+            $this->dispatchBrowserEvent('error',__('text.Unknown error please try to select another time'));
+
+        }
+    }
+   //associate times With Reservation
+   protected function associateTimesWithReservation($time,$reservationTime,$limit,$room_number)
+   {
+        if($time){
+            $arr_time=explode('-',$time);
+            $start_time=date('H:i:s',strtotime($arr_time[0]));
+            $end_time=date('H:i:s',strtotime($arr_time[1]));
+            if (now()->format('Y-m-d H:i:s') < date('Y-m-d H:i:s',strtotime($this->date.$arr_time[0]))){
+                $query=$this->countReservationByDate($this->date,auth()->user()->id,$start_time,$end_time);
+                $count=$query->where('room_number',$room_number)->get()->count();
+                if($count == 0){
+                    $reservationTime->update([
+                        'date'=>$this->date,
+                        'start_time'=>$start_time,
+                        'end_time'=>$end_time,
+                        'room_number'=>$room_number,
+                    ]);
+                    $reservationTime->save();
+                    return 'updated';
+                }
+                $count=0;
+                for($i=1; $i <= $limit;$i++){
+                    $query=$this->countReservationByDate($this->date,auth()->user()->id,date('h:i:s',strtotime($arr_time[0])),date('h:i:s',strtotime($arr_time[1])));
+                    $count=$query->where('room_number',$i)->get()
+                    ->count();
+                    if($count == 0){
+                        $reservationTime->update([
+                            'date'=>$this->date,
+                            'start_time'=>$start_time,
+                            'end_time'=>$arr_time[1],
+                            'room_number'=>$i,
+
+                        ]);
+                        $reservationTime->save();
+                        return 'updated';
+                    }else{
+                        $count++;
+                    }
+                }
+
+                if($count == $limit){
+                    return 'not found';
+                }
+            }else{
+                return 'not found';
+            }
+        }else{
+            return 'not found';
+        }
 
 
+    }
 
 
 

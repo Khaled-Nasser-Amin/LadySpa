@@ -1,4 +1,4 @@
-@props(['type','datetime','rooms','date'])
+@props(['type','datetime','rooms','date','code'])
 <div wire:ignore.self class="modal fade" id="modify_reservation" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg bg-primary">
     <div class="modal-content">
@@ -28,7 +28,10 @@
                 <div class="col-sm-12 my-3 d-flex flex-row flex-wrap justify-content-start">
                     @foreach ($room as $time)
                        @if (now()->format('Y-m-d H:i:s') < date('Y-m-d H:i:s',strtotime($date.explode('-',$time)[0])))
-                            <button style="border-radius: 2rem" class="btn btn-info col-md-4 col-sm-6 my-2"  wire:model="time" wire:click="selectTime({{ $loop->parent->index.$loop->index }})">{{ $time }}</button>
+                            @php
+                                $codeSelected=$loop->parent->index."".$loop->index;
+                            @endphp
+                            <button style="border-radius: 2rem" class="btn {{ $code == $codeSelected ? 'btn-secondary':'btn-info'}} col-md-4 col-sm-6 my-2"  wire:click.prevent="selectTime('{{ $codeSelected }}','{{ $time }}','{{ $loop->parent->index+1 }}')">{{ $time }}</button>
                         @endif
                     @endforeach
                 </div>

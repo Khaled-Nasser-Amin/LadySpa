@@ -50,6 +50,7 @@
             position_class: "toast-top-center",
             rtl: {{app()->getLocale()=='ar' ? "true" : 'false'}}
         });
+
     })
 
     window.addEventListener('error',e=>{
@@ -59,10 +60,15 @@
             rtl: {{app()->getLocale()=='ar' ? "true" : 'false'}}
         });
     })
+
+
 </script>
 <script src="{{asset('libs/sweetalert2/sweetalert2.min.js')}}"></script>
 @livewireScripts
 <script>
+    window.Livewire.on('saveTime',()=>{
+        $('#modify_reservation').modal('hide');
+    })
     //event fired to livewire called delete
     window.Livewire.on('confirmCancel',function (e) {
         const swalWithBootstrapButtons = Swal.mixin({

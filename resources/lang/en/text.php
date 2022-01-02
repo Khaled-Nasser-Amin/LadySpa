@@ -675,6 +675,9 @@ return [
     'Reservation time'=>'Reservation time',
     'Service provider'=>'Service provider',
     'Room'=>'Room',
+    'Time updated successfully'=>'Time updated successfully',
+    'Unknown error please try to select another time'=>'Unknown error please try to select another time',
+    'Cancel Reservation'=>'Cancel Reservation',
     'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 
