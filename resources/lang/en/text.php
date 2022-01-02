@@ -678,6 +678,12 @@ return [
     'Time updated successfully'=>'Time updated successfully',
     'Unknown error please try to select another time'=>'Unknown error please try to select another time',
     'Cancel Reservation'=>'Cancel Reservation',
+    'Number of reservations per week'=>'Number of reservations per week',
+    'Comparison between the number of reservations this month and last month'=>'Comparison between the number of reservations this month and last month',
+    'Reservation statistics'=>'Reservation statistics',
+    'Order statistics'=>'Order statistics',
+    'Reservations total amount'=>'Reservations total amount',
+    'Orders total amount'=>'Orders total amount',
     'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 

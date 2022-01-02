@@ -100,6 +100,51 @@
                         </div>
                     </div>
                 </div>
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-warning bg-soft-warning">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i
+                                    class="fab fa-product-hunt font-30 widget-icon rounded-circle avatar-title text-warning"></i>
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                    {{ __('text.Active Products') }}</p>
+                                <h2><span data-plugin="counterup">{{ $products }} </span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-primary bg-soft-primary">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i class="fas fa-hot-tub  font-30 widget-icon rounded-circle avatar-title text-primary"></i>
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                    {{ __('text.Active Sessions') }}</p>
+                                <h2><span data-plugin="counterup">{{ $sessions }} </span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box" style="width: 33%">
+                    <div class="card widget-box-one border border-info bg-soft-info">
+                        <div class="card-body">
+                            <div class="float-right avatar-lg rounded-circle mt-3">
+                                <i class="mdi mdi-cash-multiple  font-30 widget-icon rounded-circle avatar-title text-secondary"></i>
+
+                            </div>
+                            <div class="wigdet-one-content">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                    {{ __('text.Reservations total amount') }}</p>
+                                <h2><span data-plugin="counterup">{{ $reservation_total_amount }} </span> </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="box" style="width: 33%">
                     <div class="card widget-box-one border border-secondary bg-soft-secondary">
@@ -108,7 +153,8 @@
                                 <i class="mdi mdi-cash-multiple  font-30 widget-icon rounded-circle avatar-title text-secondary"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">{{__('text.Total Amount')}}</p>
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                    {{ __('text.Orders total amount') }}</p>
                                 <h2><span data-plugin="counterup">{{ $total_amount }} </span> </h2>
                             </div>
                         </div>
@@ -130,48 +176,78 @@
 
             </div>
 
+
+            <h3>@lang('text.Order statistics')</h3>
+
             <div class="row">
                 <div class="col-sm-12 col-md-6">
-                    <h5 class="my-3">@lang('text.Comparison between the number of orders this month and last month')</h4>
-                    <table class="table table-stripe table-secondary">
-                        <tr>
-                            <th>@lang('text.Week')</th>
-                            <th>@lang('text.Current Month')</th>
-                            <th>@lang('text.Last Month')</th>
-                        </tr>
-                        @php
-                            $weeks=[__('text.First Week'),__('text.Second Week'),__('text.Third Week'),__('text.Fourth Week'),__('text.Fifth Week')];
-                        @endphp
-                        @foreach ($current_month_orders as $week)
-                        <tr>
-                            <td>{{ $weeks[$loop->index] }}</td>
-                            <td>{{ $week->count() }}</td>
-                            <td>{{$last_month_orders->count() > 0 ? collect(array_values($last_month_orders->toArray())[$loop->index])->count() : 0}}</td>
-                        </tr>
-                        @endforeach
-                    </table>
+                    <h5 class="my-3">@lang('text.Comparison between the number of orders this month and last month')</h5>
+                        <table class="table table-stripe table-secondary">
+                            <tr>
+                                <th>@lang('text.Week')</th>
+                                <th>@lang('text.Current Month')</th>
+                                <th>@lang('text.Last Month')</th>
+                            </tr>
+                            @php
+                                $weeks = [__('text.First Week'), __('text.Second Week'), __('text.Third Week'), __('text.Fourth Week'), __('text.Fifth Week')];
+                            @endphp
+                            @if ($current_month_orders->count() >= $last_month_orders->count())
+                                @foreach ($current_month_orders as $week)
+                                    <tr>
+                                        <td>{{ $weeks[$loop->index] }}</td>
+                                        <td>{{ $week->count() }}</td>
+                                        <td>{{ $last_month_orders->count() > $loop->index ? collect(array_values($last_month_orders->toArray())[$loop->index])->count() : 0 }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                @foreach ($last_month_orders as $week)
+                                    <tr>
+                                        <td>{{ $weeks[$loop->index] }}</td>
+                                        <td>{{ $week->count() }}</td>
+                                        <td>{{ $current_month_orders->count() > $loop->index ? collect(array_values($current_month_orders->toArray())[$loop->index])->count() : 0 }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+                        </table>
                 </div>
 
                 <div class="col-sm-12 col-md-6">
-                    <h5 class="my-3">@lang('text.Comparison between the total amount this month and last month')</h4>
-                    <table class="table table-stripe table-secondary">
-                        <tr>
-                            <th>@lang('text.Week')</th>
-                            <th>@lang('text.Current Month')</th>
-                            <th>@lang('text.Last Month')</th>
-                        </tr>
-                        @php
-                            $weeks=[__('text.First Week'),__('text.Second Week'),__('text.Third Week'),__('text.Fourth Week'),__('text.Fifth Week')];
-                        @endphp
-                        @foreach ($current_month_orders as $week)
-                        <tr>
-                            <td>{{ $weeks[$loop->index] }}</td>
-                            <td>{{ $week->sum('total_amount') }}</td>
-                            <td>{{$last_month_orders->count() > 0  ? collect(array_values($last_month_orders->toArray())[$loop->index])->sum('total_amount') : 0 }}</td>
-                        </tr>
-                        @endforeach
+                    <h5 class="my-3">@lang('text.Comparison between the total amount this month and last month')
+                        </h5>
+                        <table class="table table-stripe table-secondary">
+                            <tr>
+                                <th>@lang('text.Week')</th>
+                                <th>@lang('text.Current Month')</th>
+                                <th>@lang('text.Last Month')</th>
+                            </tr>
+                            @php
+                                $weeks = [__('text.First Week'), __('text.Second Week'), __('text.Third Week'), __('text.Fourth Week'), __('text.Fifth Week')];
+                            @endphp
+                            @if ($current_month_orders->count() >= $last_month_orders->count())
 
-                    </table>
+                                @foreach ($current_month_orders as $week)
+                                    <tr>
+                                        <td>{{ $weeks[$loop->index] }}</td>
+                                        <td>{{ $week->sum('total_amount') }}</td>
+                                        <td>{{ $last_month_orders->count() > $loop->index ? collect(array_values($last_month_orders->toArray())[$loop->index])->sum('total_amount') : 0 }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                @foreach ($last_month_orders as $week)
+                                    <tr>
+                                        <td>{{ $weeks[$loop->index] }}</td>
+                                        <td>{{ $week->sum('total_amount') }}</td>
+                                        <td>{{ $current_month_orders->count() > $loop->index ? collect(array_values($current_month_orders->toArray())[$loop->index])->sum('total_amount') : 0 }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+                        </table>
                 </div>
             </div>
 
@@ -198,6 +274,112 @@
 
             </div>
 
+
+            <br>
+            <hr><br>
+
+            <h3>@lang('text.Reservation statistics')</h3>
+
+
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <h5 class="my-3">@lang('text.Comparison between the number of reservations this month and last month')</h4>
+                    <table class="table table-stripe table-secondary">
+                        <tr>
+                            <th>@lang('text.Week')</th>
+                            <th>@lang('text.Current Month')</th>
+                            <th>@lang('text.Last Month')</th>
+                        </tr>
+                        @php
+                            $weeks=[__('text.First Week'),__('text.Second Week'),__('text.Third Week'),__('text.Fourth Week'),__('text.Fifth Week')];
+                        @endphp
+                        @if ($current_month_reservations->count() >= $last_month_reservations->count())
+                            @foreach ($current_month_reservations as $week)
+                            <tr>
+                                <td>{{ $weeks[$loop->index] }}</td>
+                                <td>{{ $week->count() }}</td>
+                                <td>{{$last_month_reservations->count() > $loop->index ? collect(array_values($last_month_reservations->toArray())[$loop->index])->count() : 0}}</td>
+                            </tr>
+                            @endforeach
+                        @else
+                            @foreach ($last_month_reservations as $week)
+                            <tr>
+                                <td>{{ $weeks[$loop->index] }}</td>
+                                <td>{{ $week->count() }}</td>
+                                <td>{{$current_month_reservations->count() > $loop->index ? collect(array_values($last_month_reservations->toArray())[$loop->index])->count() : 0}}</td>
+                            </tr>
+                            @endforeach
+                        @endif
+
+                    </table>
+                </div>
+
+                <div class="col-sm-12 col-md-6">
+                    <h5 class="my-3">@lang('text.Comparison between the total amount this month and last month')</h4>
+                    <table class="table table-stripe table-secondary">
+                        <tr>
+                            <th>@lang('text.Week')</th>
+                            <th>@lang('text.Current Month')</th>
+                            <th>@lang('text.Last Month')</th>
+                        </tr>
+                        @php
+                            $weeks=[__('text.First Week'),__('text.Second Week'),__('text.Third Week'),__('text.Fourth Week'),__('text.Fifth Week')];
+                        @endphp
+                        @if ($current_month_reservations->count() >= $last_month_reservations->count())
+                            @foreach ($current_month_reservations as $week)
+                            <tr>
+                                <td>{{ $weeks[$loop->index] }}</td>
+                                <td>{{ $week->sum('total_amount') }}</td>
+                                <td>{{$last_month_reservations->count() > $loop->index  ? collect(array_values($last_month_reservations->toArray())[$loop->index])->sum('total_amount') : 0 }}</td>
+                            </tr>
+                            @endforeach
+                        @else
+                            @foreach ($last_month_reservations as $week)
+                            <tr>
+                                <td>{{ $weeks[$loop->index] }}</td>
+                                <td>{{ $week->sum('total_amount') }}</td>
+                                <td>{{$current_month_reservations->count() > $loop->index  ? collect(array_values($current_month_reservations->toArray())[$loop->index])->sum('total_amount') : 0 }}</td>
+                            </tr>
+                            @endforeach
+                        @endif
+
+
+                    </table>
+                </div>
+            </div>
+
+            <div class="d-flex flex-row flex-wrap mx-0">
+                <div class="row mt-5 mx-0  col-sm-12 col-md-6">
+                    <div class="card card-success w-100">
+                        <div class="card-header">
+                            <h3 class="card-title">@lang('text.Number of reservations per week')</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="barChart"
+                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+                <div class="row mt-5 mx-0 col-lg-6 col-sm-12 col-md-6">
+                    <div class="card card-success w-100">
+                        <div class="card-header">
+                            <h3 class="card-title">@lang('text.Total amount per week')</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart">
+                                <canvas id="barChart1"
+                                    style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                </div>
+
+            </div>
+
         </div>
         <!-- end container-fluid -->
 
@@ -205,6 +387,8 @@
 @endsection
 @push('script')
     <script src="{{asset('/libs/flot-charts/jquery.flot.js')}}"></script>
+    <script src="{{ asset('/js/Chart.min.js') }}"></script>
+
     <script>
     !function(b){
         "use strict";
@@ -272,5 +456,143 @@
 
     }();
     </script>
+
+
+<script>
+
+    $(function() {
+        let cmonth="@lang('text.Current Month')";
+        let lomonth="@lang('text.Last Month')";
+        let labels=["@lang('text.First Week')","@lang('text.Second Week')", "@lang('text.Third Week')", "@lang('text.Fourth Week')", "@lang('text.Fifth Week')"];
+        let current_data=[];
+        let last_data=[];
+
+        let current_total=[];
+        let last_total=[];
+
+
+        @php
+            $array_last_month=array_values($last_month_reservations->toArray());
+            $array_current_month=array_values($current_month_reservations->toArray());
+        @endphp
+        @if ($current_month_reservations->count() >= $last_month_reservations->count())
+
+            @foreach ($current_month_reservations as $week)
+            current_data.push("{{ $week->count() }}");
+            current_total.push("{{ $week->sum('total_amount') }}");
+            last_data.push("{{ count($array_last_month) > $loop->index ? count($array_last_month[$loop->index]) : 0 }}");
+            last_total.push("{{ count($array_last_month) > $loop->index ? collect($array_last_month[$loop->index])->sum('total_amount') : 0 }}");
+            @endforeach
+        @else
+            @foreach ($last_month_reservations as $week)
+            last_data.push("{{ $week->count() }}");
+            last_total.push("{{ $week->sum('total_amount') }}");
+            current_data.push("{{ count($array_current_month) > $loop->index ? count($array_current_month[$loop->index]) : 0 }}");
+            current_total.push("{{count($array_current_month) > $loop->index ? collect($array_current_month[$loop->index])->sum('total_amount') : 0 }}");
+            @endforeach
+        @endif
+
+
+        var areaChartData2 = {
+            labels: labels,
+            datasets: [{
+                    label: cmonth,
+                    backgroundColor: 'rgba(60, 80, 255, 1)',
+                    borderColor: 'rgba(60,141,188,0.8)',
+                    pointRadius: true,
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgba(60,141,188,1)',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                    data:current_total
+                },
+                {
+                    label: lomonth,
+                    backgroundColor: 'rgb(190 10 255 / 90%)',
+                    borderColor: 'rgba(210, 214, 222, 1)',
+                    pointRadius: true,
+                    pointColor: 'rgba(210, 214, 222, 1)',
+                    pointStrokeColor: '#c1c7d1',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(220,220,220,1)',
+                    data: last_total
+                },
+            ]
+        }
+
+
+        var areaChartData = {
+            labels: labels,
+            datasets: [{
+                    label: cmonth,
+                    backgroundColor: 'rgba(210, 10, 10, 1)',
+                    borderColor: 'rgba(60,141,188,0.8)',
+                    pointRadius: true,
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgba(60,141,188,1)',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                    data:current_data
+                },
+                {
+                    label: lomonth,
+                    backgroundColor: 'rgb(10 10 50 / 90%)',
+                    borderColor: 'rgba(210, 214, 222, 1)',
+                    pointRadius: true,
+                    pointColor: 'rgba(210, 214, 222, 1)',
+                    pointStrokeColor: '#c1c7d1',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(220,220,220,1)',
+                    data: last_data
+                },
+            ]
+        }
+
+        //-------------
+        //- BAR CHART -
+        //-------------
+        var barChartCanvas = $('#barChart').get(0).getContext('2d')
+        var barChartData = $.extend(true, {}, areaChartData)
+        var temp0 = areaChartData.datasets[0]
+        var temp1 = areaChartData.datasets[1]
+        barChartData.datasets[0] = temp1
+        barChartData.datasets[1] = temp0
+
+        var barChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetFill: false
+        }
+
+        new Chart(barChartCanvas, {
+            type: 'bar',
+            data: barChartData,
+            options: barChartOptions
+        })
+
+
+
+        //chart 2
+
+        var barChartCanvas = $('#barChart1').get(0).getContext('2d')
+        var barChartData = $.extend(true, {}, areaChartData2)
+        var temp0 = areaChartData2.datasets[0]
+        var temp1 = areaChartData2.datasets[1]
+        barChartData.datasets[0] = temp1
+        barChartData.datasets[1] = temp0
+
+        var barChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            datasetFill: false
+        }
+
+        new Chart(barChartCanvas, {
+            type: 'bar',
+            data: barChartData,
+            options: barChartOptions
+        })
+    })
+</script>
 @endpush
 
