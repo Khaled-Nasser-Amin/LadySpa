@@ -37,7 +37,20 @@ class ReservationController extends Controller
         $instance=new MyFatoorahController();
         return response()->json(['discount'=>$discount."",'online_payment_status'=>$instance->check_online_payment($request)],200);
     }
+    public function reservation_shipping(Request $request)
+    {
+        $session=Xsession::find($request->session_id);
+        if($session && $request->lat_long && $session->isActive == 1  &&  $session->external_price > 0 ){
+            $customer_lat_long=explode(',',$request->lat_long);
+            $calc_shipping=new ShippingController();
+            $shipping_cost=$calc_shipping->calc_shipping_single($session->user->geoLocation,$customer_lat_long[0],$customer_lat_long[1]);
+            return $this->success($shipping_cost,'',200);
+        }else{
+            return $this->error('',404);
+        }
 
+
+    }
 
     // return available times
     public function availableTime(Request $request)
@@ -138,7 +151,8 @@ class ReservationController extends Controller
         //check if additions or session  is active or exist
         $session=Xsession::find($request->session_id);
         $reservation_times=[];
-        $validate1=$this->checkValidateSession($session,$request->additions,$request->type);
+        $additions=$request->additions;
+        $validate1=$this->checkValidateSession($session,$additions,$request->type);
         $limit= $request->type == 'outdoor'? $session->user->session_rooms_limitation_outdoor : $session->user->session_rooms_limitation_indoor;
         $validate2=$this->checkIfExist($session,$request->times,$limit,$reservation_times);
         if($validate1 == 'false' || $validate2 == 'false'){
@@ -154,7 +168,7 @@ class ReservationController extends Controller
 
 
         // calculate data
-        $this->calcReservation($request->additions,$session,$reservation,$session->user,$reservation_times,$limit,$request->type,$taxes,$subtotal,$request->promocode,$user);
+        $this->calcReservation($additions,$session,$reservation,$session->user,$reservation_times,$limit,$request->type,$taxes,$subtotal,$request->promocode,$user);
 
         //send mail to vendor and customer
         $this->sendEmailToVendorsAndCustomer($user,$reservation);

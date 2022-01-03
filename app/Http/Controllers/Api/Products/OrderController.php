@@ -40,9 +40,10 @@ class OrderController extends Controller
     public function calculate_shipping_api(Request $request)
     {
 
-        if($request->lat_long && $request->sizes_id && $request->groups_id){
+        if($request->lat_long && ($request->sizes_id || $request->groups_id)){
 
             $vendors=[];
+            $sizes_id=[];
             //arrang sizes ids
             $sizes_id=collect($request->sizes_id)->groupBy('id')->map(function($item){
                 return [
@@ -58,12 +59,12 @@ class OrderController extends Controller
             if($validate != 'done'){
                 return $validate;
             }
-
             $product_group_validate=$this->checkIfGroupExist($request->groups_id,$quantities);
             if($request->groups_id && $product_group_validate != 'done'){
                 return $product_group_validate;
             }
-            foreach($request->sizes_id as $row){
+
+            foreach($sizes_id as $row){
                 $size=Size::find($row['id']);
                 $vendor_lat_long=explode(',',$size->product->user->geoLocation);
                 $vendors[]=['lat'=> $vendor_lat_long[0],'long' => $vendor_lat_long[1]];
@@ -76,10 +77,11 @@ class OrderController extends Controller
                 }
             }
 
+
             $order_lat_long=explode(',',$request->lat_long);
             $vendors[]=['lat'=> $order_lat_long[0],'long' => $order_lat_long[1]];
             $calc_shipping=new ShippingController();
-            $shipping_cost=$calc_shipping->calc_shipping($vendors,$order_lat_long[0],$order_lat_long[1]);
+            $shipping_cost=$calc_shipping->calc_shipping(collect($vendors)->unique()->values(),$order_lat_long[0],$order_lat_long[1]);
             return $this->success($shipping_cost,'',200);
 
         }else{
@@ -99,7 +101,7 @@ class OrderController extends Controller
             return response()->json($validation->errors(),404);
         }
 
-
+        $sizes_id=[];
         //arrang sizes ids
         $sizes_id=collect($request->sizes_id)->groupBy('id')->map(function($item){
             return [
@@ -161,7 +163,7 @@ class OrderController extends Controller
     //validation
     protected function rules(){
         return [
-            'sizes_id' => 'required|array|min:1',
+            'sizes_id' => 'nullable|array|min:1',
             'group_id' => 'nullable|array|min:1',
             'address' => 'required|string|max:255',
             'payment_way' => ['required',Rule::in(['cash on delivery','online payment'])],

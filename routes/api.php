@@ -90,6 +90,9 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('/available_time', [ReservationController::class, 'availableTime']);
         Route::post('/check_session_promocode', [ReservationController::class, 'check_promocode']);
         Route::post('/reservation', [ReservationController::class, 'store']);
+        Route::post('/reservation_shipping', [ReservationController::class, 'reservation_shipping']);
+
+
         Route::post('/cancel_order', [OrderController::class, 'cancel_order']);
         Route::post('/check_stock', [OrderController::class, 'check_stock']);
         Route::post('/all_orders', [OrderController::class, 'all_orders']);
