@@ -104,6 +104,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('/check_stock', [OrderController::class, 'check_stock']);
         Route::post('/all_orders', [OrderController::class, 'all_orders']);
         Route::post('/order_details', [OrderController::class, 'order_details']);
+        Route::post('/calculate_shipping', [OrderController::class, 'calculate_shipping_api']);
 
         //profile
         Route::post('/change_image', [ProfileController::class, 'changeImage']);

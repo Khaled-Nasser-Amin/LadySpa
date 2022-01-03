@@ -37,6 +37,57 @@ class OrderController extends Controller
 
     }
 
+    public function calculate_shipping_api(Request $request)
+    {
+
+        if($request->lat_long && $request->sizes_id && $request->groups_id){
+
+            $vendors=[];
+            //arrang sizes ids
+            $sizes_id=collect($request->sizes_id)->groupBy('id')->map(function($item){
+                return [
+                    'id' =>$item->first()['id'],
+                    'quantity' => $item->sum('quantity')
+                ];
+            });
+
+            //check if size or product  is active or exist
+            $empty_sizes=[];
+            $quantities=[];
+            $validate=$this->checkIfExist($sizes_id,$empty_sizes,$quantities);
+            if($validate != 'done'){
+                return $validate;
+            }
+
+            $product_group_validate=$this->checkIfGroupExist($request->groups_id,$quantities);
+            if($request->groups_id && $product_group_validate != 'done'){
+                return $product_group_validate;
+            }
+            foreach($request->sizes_id as $row){
+                $size=Size::find($row['id']);
+                $vendor_lat_long=explode(',',$size->product->user->geoLocation);
+                $vendors[]=['lat'=> $vendor_lat_long[0],'long' => $vendor_lat_long[1]];
+            }
+            if(collect($request->groups_id)->count() > 0){
+                foreach($request->groups_id as $row){
+                    $product=Product::where('type','group')->where('id',$row['id'])->first();
+                    $vendor_lat_long=explode(',',$product->user->geoLocation);
+                    $vendors[]=['lat'=> $vendor_lat_long[0],'long' => $vendor_lat_long[1]];
+                }
+            }
+
+            $order_lat_long=explode(',',$request->lat_long);
+            $vendors[]=['lat'=> $order_lat_long[0],'long' => $order_lat_long[1]];
+            $calc_shipping=new ShippingController();
+            $shipping_cost=$calc_shipping->calc_shipping($vendors,$order_lat_long[0],$order_lat_long[1]);
+            return $this->success($shipping_cost,'',200);
+
+        }else{
+            return $this->error('',404);
+        }
+
+    }
+
     public function store(Request $request){
         app()->setLocale($request->lang);
         $user=$request->user();
