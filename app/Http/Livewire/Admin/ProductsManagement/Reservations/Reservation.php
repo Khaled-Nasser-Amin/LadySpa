@@ -12,7 +12,7 @@ use Livewire\WithPagination;
 class Reservation extends Component
 {
     use WithPagination,ImageTrait;
-    public $search,$payment_status,$reservation_status,$payment_way;
+    public $search,$payment_status,$reservation_status,$payment_way,$date;
 
 
 
@@ -25,14 +25,16 @@ class Reservation extends Component
 
     //search and reservation pagination
     protected function search(){
-        return  ModelsReservation::join('users','users.id','=','reservations.vendor_id')->select('reservations.*')
+        return  ModelsReservation::join('users','users.id','=','reservations.vendor_id')
+        ->join('reservation_times','reservation_times.reservation_id','reservations.id')
+        ->select('reservations.*')
         ->where(function($q){
             $q->when(auth()->user()->role != 'admin',function($q){
-                return $q->where('vendor_id',auth()->user()->id);
+                return $q->where('reservations.vendor_id',auth()->user()->id);
             })
             ->when(auth()->user()->role == 'admin',function($q){
                 return $q->where('reservations.payment_way','online payment')
-                ->orWhere('vendor_id',auth()->user()->id);
+                ->orWhere('reservations.vendor_id',auth()->user()->id);
             });
         })
         ->where(function($q){
@@ -45,6 +47,9 @@ class Reservation extends Component
           })
           ->when($this->reservation_status,function($q){
             return $q->where('reservations.reservation_status',$this->reservation_status);
+          })
+          ->when($this->date,function($q){
+            return $q->where('reservation_times.date',$this->date);
           })
           ->where(function($q){
 

@@ -57,7 +57,7 @@
                                     class="fab fa-product-hunt font-30 widget-icon rounded-circle avatar-title text-warning"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Active Products') }}</p>
                                 <h2><span data-plugin="counterup">{{ $products }} </span> </h2>
                             </div>
@@ -72,7 +72,7 @@
                                     class="fa fa-ban text-danger font-30 widget-icon rounded-circle avatar-title text-success"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Inactive Products') }}</p>
                                 <h2><span data-plugin="counterup">{{ $inactive_products }} </span> </h2>
                             </div>
@@ -87,7 +87,7 @@
                                     class="fa fa-ban text-danger font-30 widget-icon rounded-circle avatar-title text-success"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Inactive Sizes') }}</p>
                                 <h2><span data-plugin="counterup">{{ $inactive_sizes_counter }} </span> </h2>
                             </div>
@@ -101,7 +101,7 @@
                                 <i class="far fa-edit  font-30 widget-icon rounded-circle avatar-title text-secondary"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Completed Reservations') }}</p>
                                 <h2><span data-plugin="counterup">{{ $reservations }} </span> </h2>
                             </div>
@@ -115,7 +115,7 @@
                                 <i class="fas fa-hot-tub  font-30 widget-icon rounded-circle avatar-title text-primary"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Active Sessions') }}</p>
                                 <h2><span data-plugin="counterup">{{ $sessions }} </span> </h2>
                             </div>
@@ -131,7 +131,7 @@
 
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Reservations total amount') }}</p>
                                 <h2><span data-plugin="counterup">{{ $reservation_total_amount }} </span> </h2>
                             </div>
@@ -146,7 +146,7 @@
                                 <i class="mdi mdi-truck font-30 widget-icon rounded-circle avatar-title text-danger"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Completed Orders') }}</p>
                                 <h2><span data-plugin="counterup">{{ $orders }}</span> </h2>
                             </div>
@@ -161,7 +161,7 @@
                                     class="mdi mdi-cash-refund font-30 widget-icon rounded-circle avatar-title text-dark"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Refunds') }}</p>
                                 <h2><span data-plugin="counterup">{{ $total_refunds }}</span> </h2>
                             </div>
@@ -175,7 +175,7 @@
                                 <i class="mdi mdi-cash-multiple  font-30 widget-icon rounded-circle avatar-title text-secondary"></i>
                             </div>
                             <div class="wigdet-one-content">
-                                <p class="m-0 text-uppercase font-weight-bold text-muted" title="User This Month">
+                                <p class="m-0 text-uppercase font-weight-bold text-muted" >
                                     {{ __('text.Orders total amount') }}</p>
                                 <h2><span data-plugin="counterup">{{ $total_amount }} </span> </h2>
                             </div>

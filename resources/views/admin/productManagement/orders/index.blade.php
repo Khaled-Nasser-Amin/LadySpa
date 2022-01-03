@@ -49,6 +49,7 @@
                                     <option value="shipping">@lang('text.Shipping')</option>
                                     <option value="completed">@lang('text.Completed')</option>
                                     <option value="canceled">@lang('text.Canceled')</option>
+                                    <option value="refund">@lang('text.Refund')</option>
                                     <option value="hold">@lang('text.Hold')</option>
 
                                 </select>
@@ -128,7 +129,7 @@
                                     <td> {{ $order->vendors->find(auth()->user()->id)->pivot->subtotal }}</td>
                                     @endcannot
                                     <td>
-                                        <a href="{{ route('order.show',$order->id) }}" class="btn btn-info d-flex">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
+                                        <a href="{{ route('order.show',$order->id) }}" class="btn btn-info text-center">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
                                     </td>
                                 </tr>
                             @empty

@@ -26,12 +26,12 @@
             <div class="row mt-5">
                 <br>
                     <div class="col-sm-12">
-                        <div class="row">
-                            <div class="form-group col-md-3 col-sm-12">
+                        <div class="d-flex flex-row flex-wrap justify-content-center">
+                            <div class="form-group col-md-4 col-sm-12">
                                 <label for="payment_status">@lang('text.Search')</label>
                                 <input type="text" class="form-control " placeholder="@lang('text.Search')" wire:model="search">
                             </div>
-                            <div class="form-group col-md-3 col-sm-12">
+                            <div class="form-group col-md-4 col-sm-12">
                                 <label for="payment_status">@lang('text.Payment Status')</label>
                                 <select wire:model="payment_status" id="payment_status" class="form-control">
                                     <option value=""></option>
@@ -40,7 +40,7 @@
                                     <option value="failed">@lang('text.Failed')</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-3 col-sm-12">
+                            <div class="form-group col-md-4 col-sm-12">
                                 <label for="reservation_status">@lang('text.Reservation status')</label>
                                 <select wire:model="reservation_status" id="reservation_status" class="form-control">
                                     <option value=""></option>
@@ -51,15 +51,17 @@
                                 </select>
 
                             </div>
-                            <div class="form-group col-md-3 col-sm-12">
+                            <div class="form-group col-md-4 col-sm-12">
                                 <label for="payment_way">@lang('text.Payment Way')</label>
                                 <select wire:model="payment_way"  id="payment_way" class="form-control">
                                     <option value=""></option>
                                     <option value="cash on delivery">@lang('text.Cash on delivery')</option>
                                     <option value="online payment">@lang('text.Online Payment')</option>
                                 </select>
-
-
+                            </div>
+                            <div class="form-group col-md-4 col-sm-12">
+                                <label for="date">@lang('text.Date')</label>
+                                <input type="date" class="form-control " placeholder="@lang('text.Date')" wire:model="date">
                             </div>
                         </div>
 
@@ -104,7 +106,7 @@
 
                                     <td>
                                         @can('show-reservation',$reservation)
-                                            <a href="{{ route('reservation.show',$reservation->id) }}" class="btn btn-info d-flex">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
+                                            <a href="{{ route('reservation.show',$reservation->id) }}" class="btn btn-info text-center">@lang('text.Show' ) <i class="mdi px-1 mdi-eye text-dark" ></i></a>
                                         @endcan
                                     </td>
                                 </tr>
