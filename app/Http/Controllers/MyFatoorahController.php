@@ -212,6 +212,11 @@ class MyFatoorahController extends Controller
                         $size->update(['stock' => $size->stock+$quantity]);
                     }
 
+                    foreach($order->group_products_sizes()->get() as $size){
+                        $quantity=$order->group_products_sizes->where('id',$size->id)->pluck('pivot.quantity')->first();
+                        $size->update(['stock' => $size->stock+$quantity]);
+                    }
+
                     Transaction::create(['payment_id' => $request['paymentId'],'order_id' => $data->Data->CustomerReference]);
                     $order->update(['payment_status' => 'failed']);
                     $order->save();
@@ -238,6 +243,11 @@ class MyFatoorahController extends Controller
                 }elseif($order->transaction && $order->payment_status == 'failed'){
                     foreach($order->sizes()->get() as $size){
                         $quantity=$order->sizes->where('id',$size->id)->pluck('pivot.quantity')->first();
+                        $size->update(['stock' => $size->stock-$quantity]);
+                    }
+
+                    foreach($order->group_products_sizes()->get() as $size){
+                        $quantity=$order->group_products_sizes->where('id',$size->id)->pluck('pivot.quantity')->first();
                         $size->update(['stock' => $size->stock-$quantity]);
                     }
                     $order->update(['payment_status' => 'paid']);

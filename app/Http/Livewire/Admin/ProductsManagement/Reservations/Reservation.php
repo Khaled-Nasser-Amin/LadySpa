@@ -25,8 +25,8 @@ class Reservation extends Component
 
     //search and reservation pagination
     protected function search(){
-        return  ModelsReservation::join('users','users.id','=','reservations.vendor_id')
-        ->join('reservation_times','reservation_times.reservation_id','reservations.id')
+        return ModelsReservation::join('users','users.id','=','reservations.vendor_id')
+        ->leftJoin('reservation_times','reservation_times.reservation_id','reservations.id')
         ->select('reservations.*')
         ->where(function($q){
             $q->when(auth()->user()->role != 'admin',function($q){
@@ -69,7 +69,7 @@ class Reservation extends Component
             });
          });
 
-        })->
+        })->distinct('reservations.id')->
         orderByDesc('reservations.id')->latest()->paginate(10);
     }
 }

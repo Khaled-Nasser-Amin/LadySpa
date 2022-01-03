@@ -37,6 +37,8 @@ class ReservationController extends Controller
         $instance=new MyFatoorahController();
         return response()->json(['discount'=>$discount."",'online_payment_status'=>$instance->check_online_payment($request)],200);
     }
+
+
     public function reservation_shipping(Request $request)
     {
         $session=Xsession::find($request->session_id);

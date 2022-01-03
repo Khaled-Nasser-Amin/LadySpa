@@ -74,6 +74,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
    Route::get('/payment/callback', [MyFatoorahController::class, 'callback'])->name('payment_callback');
    Route::get('/payment/error', [MyFatoorahController::class, 'error'])->name('payment_error');
 
+//    Route::get('/payment/reservation_callback', [MyFatoorahController::class, 'callback'])->name('payment_callback');
+//    Route::get('/payment/reservation_error', [MyFatoorahController::class, 'error'])->name('payment_error');
 
     //forget password
     Route::get('/admin/ForgetPassword',[AuthController::class,'viewForget'])->name('viewForget');
@@ -113,7 +115,7 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
 
 
         Route::get('/reservations', Reservation::class)->name('admin.reservations');
-        Route::get('/reservation/show/{reservation}', [ReservationController::class,'show'])->name('reservation.show');
+        Route::get('/reservation/show/{reservation}', [ReservationController::class,'show'])->name('reservation.show')->middleware('can:show-reservation,reservation');
 
 
         Route::get('/sessions', Sessions::class)->name('admin.sessions');

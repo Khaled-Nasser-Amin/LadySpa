@@ -3,26 +3,28 @@
 namespace App\Http\Livewire\Admin\ProductsManagement\Reservations;
 
 use App\Mail\AfterOrderComplete;
-use App\Models\Order;
-use App\Models\Refund;
-use App\Models\RefundGroup;
+
 use App\Models\ReservationTime;
-use App\Models\Size;
-use App\Models\User;
+
 use App\Traits\ImageTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Symfony\Component\VarDumper\Cloner\Data;
 
 class ReservationDetails extends Component
 {
     use WithPagination,ImageTrait;
-    public $reservation,$date,$date_time,$rooms=[],$reservationTime,$time,$code,$room_number;
+    public $reservation,$cancel_type,$date,$date_time,$rooms=[],$reservationTime,$time,$code,$room_number,$first_reservation;
 
     protected $listeners=['cancelReservation'];
+    public function mount()
+    {
+        $times=$this->reservation->times()->get();
+        $min_date=$times->min('date');
+        $this->first_reservation=$times->where('date',$min_date)->sortBy('start_time')->first();
+    }
     public function render()
     {
         return view('components.admin.reservations.reservation-details');
@@ -49,35 +51,6 @@ class ReservationDetails extends Component
         $reservation=$this->reservationTime->reservation()->first();
         $session=$reservation->session()->withTrashed()->first();
         $this->availableTime($session,$this->date,$reservation->type,$this->reservationTime->start_time);
-    }
-
-    public function updateOrderStatus()
-    {
-        Gate::authorize('isAdmin');
-        $order=$this->order;
-        if($order->hold == 1 ){
-            $order->update(['hold' => 0]);
-        }
-        if ($order && ($order->order_status != 'completed' && $order->order_status != 'canceled' && $order->order_status != 'modified')) {
-            if ($order->order_status == 'pending') {
-                $order->update(['order_status' => 'processing']);
-            } elseif ($order->order_status == 'processing') {
-                $order->update(['order_status' => 'shipping']);
-            } elseif ($order->order_status == 'shipping') {
-
-                $order->update(['order_status' => 'completed']);
-                if ($order->payment_way == 'cash on delivery') {
-                    $order->update(['payment_status' => 'paid']);
-                }
-                foreach ($order->vendors()->withTrashed()->get() as $vendor) {
-                    Mail::to($vendor->email)->send(new AfterOrderComplete(__('text.Your order') . $order->id . __('text.get completed'),$vendor->store_name));
-                }
-
-            }
-
-            $order->save();
-            $this->dispatchBrowserEvent('success', __('text.Order Updated Successfully'));
-        }
     }
 
     // return available times
@@ -166,9 +139,15 @@ class ReservationDetails extends Component
 
     public function modifyReservation()
     {
+        Gate::authorize('show-reservation',$this->reservation);
+
         $limit= $this->reservation->type == 'outdoor'? $this->reservation->vendor->session_rooms_limitation_outdoor : $this->reservation->vendor->session_rooms_limitation_indoor;
         $check=$this->associateTimesWithReservation($this->time,$this->reservationTime,$limit,$this->room_number);
         if($check == 'updated'){
+            $times=$this->reservation->times()->get();
+            $min_date=$times->min('date');
+            $this->first_reservation=$times->where('date',$min_date)->sortBy('start_time')->first();
+
             $this->dispatchBrowserEvent('success',__('text.Time updated successfully'));
             $this->emit('saveTime');
         }else{
@@ -176,9 +155,9 @@ class ReservationDetails extends Component
 
         }
     }
-   //associate times With Reservation
-   protected function associateTimesWithReservation($time,$reservationTime,$limit,$room_number)
-   {
+    //associate times With Reservation
+    protected function associateTimesWithReservation($time,$reservationTime,$limit,$room_number)
+    {
         if($time){
             $arr_time=explode('-',$time);
             $start_time=date('H:i:s',strtotime($arr_time[0]));
@@ -231,39 +210,44 @@ class ReservationDetails extends Component
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    public function cancel(){
+    public function cancel($cancel_type){
+        $this->cancel_type=$cancel_type;
         $this->emit('confirmCancel');
     }
+
     public function cancelReservation(){
-        Gate::authorize('isAdmin');
-
-        $order=$this->order;
-        if ($order) {
-            if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
-                $this->returnSizesToStock($order);
-                $order->delete();
-                session()->flash('danger', __('text.Order Deleted Successfully'));
-                $this->redirect(route('admin.orders'));
+        Gate::authorize('show-reservation',$this->reservation);
+        $reservation=$this->reservation;
+        if ($reservation && $reservation->reservation_status == 'pending') {
+            if($reservation->payment_way == 'cash on delivery'){
+                $reservation->update(['reservation_status' => 'canceled','payment_status' => 'failed']);
+                $reservation->save();
+                $reservation->times()->delete();
+            }else{
+                // $this->refundReservation($reservation);
             }
-
-            elseif($order->order_status == 'processing' || $order->order_status == 'shipping' || ($order->order_status == 'completed' && $order->updated_at->addDays(10) > now())){
-                $this->refundOrder($order);
-            }
-
+            $this->dispatchBrowserEvent('success', __('text.Reservation Updated Successfully'));
         }
     }
 
+    public function updateReservationStatus()
+    {
+        Gate::authorize('show-reservation',$this->reservation);
+        $reservation=$this->reservation;
+        if ($reservation && $reservation->reservation_status == 'pending') {
+            if (now() >= date('Y-m-d H:i:s',strtotime($this->first_reservation->date.' '.$this->first_reservation->end_time))) {
+                $reservation->update(['reservation_status' => 'completed','payment_status' => 'paid']);
+                $reservation->save();
+                // $vendor=$reservation->vendor()->withTrashed()->first();
+                // Mail::to($vendor->email)->send(new AfterReservationComplete(__('text.Your reservation') . $reservation->id . __('text.get completed'),$vendor->store_name));
+                $this->dispatchBrowserEvent('success', __('text.Reservation Updated Successfully'));
+            }else{
+                $this->dispatchBrowserEvent('error', __('text.Unknown error'));
+            }
+
+        }else{
+            $this->dispatchBrowserEvent('error', __('text.Unknown error'));
+        }
+    }
 
 }

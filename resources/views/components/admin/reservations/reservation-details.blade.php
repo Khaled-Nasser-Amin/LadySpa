@@ -53,76 +53,50 @@
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Payment Way')</span>: {{__('text.'.ucfirst($reservation->payment_way))}}</p>
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Payment Status')</span>:
                             @if ($reservation->payment_status == 'paid')
-                                        <i class="text-success mdi mdi-checkbox-marked-circle"></i>
-                                    @elseif ($reservation->payment_status == 'failed')
-                                        <i class="text-danger mdi mdi-close-circle"></i>
-                                    @elseif ($reservation->payment_status == 'unpaid')
-                                        <i class="text-warning mdi mdi-dots-horizontal-circle"></i>
-                                    @endif
-                            {{__('text.'.ucfirst($reservation->payment_status))}}</p>
-                        <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Reservation status')</span>:
-                            @if ($reservation->hold == 0)
-                                @if ($reservation->reservation_status == 'pending')
-                                    <i class="far fa-pause-circle"></i>
-                                @elseif ($reservation->reservation_status == 'processing')
-                                    <i class="text-primary fas fa-cogs"></i>
-                                @elseif ($reservation->reservation_status == 'shipping')
-                                    <i class=" text-info fas fa-truck"></i>
-                                @elseif ($reservation->reservation_status == 'completed')
-                                    <i class="text-success fas fa-check-circle"></i>
-                                @elseif ($reservation->reservation_status == 'canceled')
+                                <i class="text-success mdi mdi-checkbox-marked-circle"></i>
+                            @elseif ($reservation->payment_status == 'failed')
                                 <i class="text-danger mdi mdi-close-circle"></i>
-                                @endif
-                                {{__('text.'.ucfirst($reservation->reservation_status))}}
-
-                            @else
-                                <i class="text-dark far fa-pause-circle"></i> @lang('text.Hold')
+                            @elseif ($reservation->payment_status == 'unpaid')
+                                <i class="text-warning mdi mdi-dots-horizontal-circle"></i>
                             @endif
+                            {{__('text.'.ucfirst($reservation->payment_status))}}
+                        </p>
+
+                        <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Reservation status')</span>:
+                            @if ($reservation->reservation_status == 'pending')
+                                <i class="far fa-pause-circle"></i>
+                            @elseif ($reservation->reservation_status == 'completed')
+                                <i class="text-success fas fa-check-circle"></i>
+                            @elseif ($reservation->reservation_status == 'canceled')
+                            <i class="text-danger mdi mdi-close-circle"></i>
+                            @elseif ($reservation->reservation_status == 'refund')
+                            <i class="fas fa-reply text-danger"></i>
+                            @endif
+                            {{__('text.'.ucfirst($reservation->reservation_status))}}
+
                         </p>
                     </div>
                     <div class="col-md-6 col-sm-12 py-4 d-flex flex-row justify-content-center">
-                        @if ($reservation->reservation_status != 'completed' && $reservation->reservation_status != 'canceled' && $reservation->reservation_status != 'modified')
-                            @if ($reservation->reservation_status != 'pending'   && ($reservation->reservation_status == 'processing' || $reservation->reservation_status == 'shipping') )
-                                @if ($reservation->hold == 0)
-                                <button class="btn btn-warning btn-sm mx-1 text-dark" wire:click.prevent="holdReservation" style="height: 60px">@lang('text.Hold') <i class="text-dark far fa-pause-circle"></i></button>
-
-                                    @else
-                                    <button class="btn btn-primary btn-sm mx-1" wire:click.prevent="holdReservation" style="height: 60px">@lang('text.Continue') <i class="far fa-play-circle"></i></button>
-
-                                @endif
-                            @endif
-                            @if ($reservation->hold == 0)
-                                 @if ($reservation->reservation_status == 'pending')
-                                <button class="btn btn-primary btn-sm mx-1" wire:click.prevent="updateReservationStatus" style="height: 60px">@lang('text.Processing') <i class="fas fa-cogs"></i></button>
-
-                                @endif
-                                @if ($reservation->reservation_status == 'processing')
-                                    <button class="btn btn-info btn-sm mx-1" wire:click.prevent="updateReservationStatus" style="height: 60px">@lang('text.Shipping') <i class="fas fa-truck"></i></button>
-                                @endif
-
-                                @if ($reservation->reservation_status == 'shipping')
+                        @if ($reservation->reservation_status == 'pending')
+                            @if (now() >= date('Y-m-d H:i:s',strtotime($first_reservation->date.' '.$first_reservation->end_time)) )
                                 <button class="btn btn-success btn-sm mx-1" wire:click.prevent="updateReservationStatus" style="height: 60px">@lang('text.Completed') <i class="fas fa-check-circle"></i></button>
-                                @endif
                             @endif
-
-                        @endif
-
-                        @if($reservation->reservation_status == 'pending' && $reservation->payment_way == 'cash on delivery')
-                            <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel" style="height: 60px">@lang('text.Cancel Reservation') <i class="fas fa-power-off"></i></button>
-
-                        @endif
-
-                        @if($reservation->reservation_status == 'processing' || $reservation->reservation_status == 'shipping' || ($reservation->reservation_status == 'completed' && $reservation->updated_at->addDays(10) > now()))
-                            @if($reservation->reservation_status == 'completed' && $reservation->updated_at->addDays(10) > now())
-                                <p class="text-danger"><i class="text-danger mdi mdi-close-circle"></i> @lang('text.You can not return order after 10 days')</p>
-
+                            @if ($reservation->payment_way == 'cash on delivery')
+                                <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel(1)" style="height: 60px">@lang('text.Cancel Reservation') <i class="fas fa-power-off"></i></button>
                             @endif
-                            <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel" style="height: 60px"><i class="fas fa-reply"></i> @lang('text.Refund reservation')</button>
+                            @if ($reservation->payment_way == 'online payment')
+                                <button class="btn btn-danger btn-sm mx-1" wire:click.prevent="cancel(2)" style="height: 60px"><i class="fas fa-reply"></i> @lang('text.Refund')</button>
+                            @endif
 
                         @endif
                     </div>
-
                 </div>
+
+
+
+
+
+
 
 
                 <h4 class="mt-4 mb-3">@lang('text.Receiver Information')</h4>
@@ -162,7 +136,7 @@
                                 <td>{{date('h:i a',strtotime($row->start_time))}}</td>
                                 <td>{{date('h:i a',strtotime($row->end_time))}}</td>
                                 <td class="text-center">
-                                    @if (now() < date('Y-m-d H:i:s',strtotime($row->date.' '.$row->start_time)))
+                                    @if (now() < date('Y-m-d H:i:s',strtotime($row->date.' '.$row->start_time)) && $reservation->reservation_status == 'pending')
                                     <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modify_reservation" wire:click.prevent="edit({{ $row->id }})">
                                         <i class="fas fa-edit text-white"></i>
                                     </button>

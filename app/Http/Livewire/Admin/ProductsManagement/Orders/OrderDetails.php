@@ -81,9 +81,9 @@ class OrderDetails extends Component
         if ($order) {
             if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
                 $this->returnSizesToStock($order);
-                $order->delete();
-                session()->flash('danger', __('text.Order Deleted Successfully'));
-                $this->redirect(route('admin.orders'));
+                $order->update(['payment_status' => 'failed', 'order_status' => 'canceled']);
+                $this->dispatchBrowserEvent('success', __('text..Order Canceled Successfully'));
+
             }
 
             elseif($order->order_status == 'processing' || $order->order_status == 'shipping' || ($order->order_status == 'completed' && $order->updated_at->addDays(10) > now())){

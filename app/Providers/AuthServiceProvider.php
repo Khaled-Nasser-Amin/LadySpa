@@ -38,7 +38,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->orders->contains($order) || $user->role == 'admin';
         });
         Gate::define('show-reservation',function(User $user,Reservation $reservation){
-            return $user->reservations->contains($reservation);
+            return $user->id == $reservation->vendor_id;
         });
         Gate::define('delete-activity',function(User $user,Activity $activity){
             return $activity->vendor_id == $user->id || $user->role == 'admin';

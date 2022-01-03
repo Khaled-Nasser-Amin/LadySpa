@@ -88,7 +88,7 @@
             reverseButtons: true
         }).then((result) => {
             if (result.value == true) {
-                window.Livewire.emit('cancelOrder',e)
+                window.Livewire.emit('cancelReservation',e)
             } else if (
                 /* Read more about handling dismissals below */
                 result.dismiss === Swal.DismissReason.cancel

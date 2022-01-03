@@ -421,7 +421,7 @@ class OrderController extends Controller
             if($user->id == $order->user_id){
                 if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
                     $this->returnSizesToStock($order);
-                    $order->delete();
+                    $order->update(['payment_status' => 'failed', 'order_status' => 'canceled']);
                     return $this->success('',__('text.Order cancelled successfully'),200);
                 }
                 else{

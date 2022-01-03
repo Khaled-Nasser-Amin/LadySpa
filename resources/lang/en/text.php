@@ -684,6 +684,10 @@ return [
     'Order statistics'=>'Order statistics',
     'Reservations total amount'=>'Reservations total amount',
     'Orders total amount'=>'Orders total amount',
+    'Reservation Updated Successfully'=>'Reservation Updated Successfully',
+    'Unknown error'=>'Unknown error',
+    'Reservation Canceled Successfully'=>'Reservation Canceled Successfully',
+    'Order Canceled Successfully'=>'Order Canceled Successfully',
     'Limitation'=>'Limitation',
     'Limitation'=>'Limitation',
 

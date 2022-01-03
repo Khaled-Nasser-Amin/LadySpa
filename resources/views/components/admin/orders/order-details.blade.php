@@ -76,6 +76,8 @@
                                     <i class="text-success fas fa-check-circle"></i>
                                 @elseif ($order->order_status == 'canceled')
                                 <i class="text-danger mdi mdi-close-circle"></i>
+                                @elseif ($order->order_status == 'refund')
+                                <i class="fas fa-reply text-danger"></i>
                                 @endif
                                 {{__('text.'.ucfirst($order->order_status))}}
 
