@@ -62,7 +62,6 @@ class ReservationController extends Controller
         $date=$request->date;
         $type=$request->type;
         if($session && $date && $session->isActive == 1 && $type && ($type == 'outdoor' || $type == 'indoor')){
-
             $limit=$type == 'outdoor'? $session->user->session_rooms_limitation_outdoor : $session->user->session_rooms_limitation_indoor;
             $opening_time=$session->user->opening_time;
             $closing_time=$session->user->closing_time;
@@ -72,13 +71,32 @@ class ReservationController extends Controller
                 return $this->error(__('text.Not Found'), 404);
             }else{
 
-                if($date >= now()){
+                if($date >= now()->format('Y-m-d')){
                     $times_arranged=[];
 
                     $this->arrangTimes($times_arranged,$opening_time,$closing_time,$session_time);
                     $rooms=[];
 
                    $this->availableTimesInDate($rooms,$session,$times_arranged,$limit,$date);
+                   if(collect($request->times)->count() > 0){
+                       $times=collect($request->times)->where('date',$date)->pluck('time');
+                        foreach($times as $time){
+                            foreach($rooms as $key => $room){
+                                foreach($room as $index => $room_time){
+                                    if($room_time == $time){
+                                        unset($rooms[$key][$index]);
+                                        break 2;
+                                    }
+                                }
+                            }
+
+                        }
+                        $new_map=collect($rooms)->map(function ($room) {
+                            return collect($room)->values();
+                        });
+                        return $this->success($new_map);
+
+                   }
                     return $this->success($rooms);
 
 

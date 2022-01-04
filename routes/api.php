@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\Products\Vendors_ProductsController;
 use App\Http\Controllers\Api\Products\OrderController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Api\sessions\ReservationController;
+use App\Http\Controllers\Api\Sessions\ReservationController;
 use App\Http\Controllers\Api\Sessions\Vendors_SessionsController;
 use App\Http\Controllers\Api\WishListController;
 use App\Http\Controllers\MyFatoorahController;
