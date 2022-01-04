@@ -14,15 +14,19 @@ class RefundGroups extends Component
     public $search,$status;
 
     protected $listeners=['delete'];
-    public function confirmDelete($id){
-        $this->emit('confirmDelete', $id);
+    public function confirmDelete($id,$type){
+        $this->emit('confirmDelete', [$id,$type]);
     }
-    public function delete(RefundGroup $refund){
+    public function delete($data){
         Gate::authorize('isAdmin');
-        $refund->update(['refund_status' => 'money refunded']);
-        $refund->save();
-        session()->flash('success',__('text.Item Returned Successfully'));
-        create_activity('Money Refunded',auth()->user()->id,auth()->user()->id);
+        if($data[1] == 'group'){
+            $refund=RefundGroup::findOrFail($data[0]);
+            $refund->update(['refund_status' => 'money refunded']);
+            $refund->save();
+            session()->flash('success',__('text.Item Returned Successfully'));
+            create_activity('Money Refunded',auth()->user()->id,auth()->user()->id);
+        }
+
 
     }
     public function render()

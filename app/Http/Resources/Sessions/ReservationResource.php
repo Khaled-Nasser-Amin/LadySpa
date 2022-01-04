@@ -14,16 +14,10 @@ class ReservationResource extends JsonResource
      */
     public function toArray($request)
     {
-        $can=false;
-
-        if($this->order_status == 'pending' && $this->payment_way == 'cash on delivery'){
-            $can=true;
-
-        }
         return [
             'id' => $this->id,
             'address' => $this->address,
-            'order_status' => $this->order_status,
+            'reservation_status' => $this->reservation_status,
             'receiver_phone' => $this->receiver_phone,
             'receiver_name' => $this->receiver_name,
             'payment_way' => $this->payment_way,
@@ -33,7 +27,6 @@ class ReservationResource extends JsonResource
             'shipping' => $this->shipping."",
             'taxes' => $this->taxes."",
             'discount' => $this->discount."",
-            'can'=>$can,
         ];
 
     }

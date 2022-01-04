@@ -45,9 +45,9 @@
                                 <select wire:model="reservation_status" id="reservation_status" class="form-control">
                                     <option value=""></option>
                                     <option value="pending">@lang('text.Pending')</option>
-                                    <option value="processing">@lang('text.Processing')</option>
                                     <option value="completed">@lang('text.Completed')</option>
                                     <option value="canceled">@lang('text.Canceled')</option>
+                                    <option value="refund">@lang('text.Refund')</option>
                                 </select>
 
                             </div>

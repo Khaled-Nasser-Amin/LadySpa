@@ -35,7 +35,8 @@
           @livewire('admin.products-management.refunds.refund-groups')
 
           <hr style="border:1px solid rgb(145, 141, 141)">
-          <h5>@lang('text.Sessions')</h5>
+          <h5>@lang('text.Reservations')</h5>
+          @livewire('admin.products-management.refunds.refunds-reservations')
 
         </div>
     </div>
@@ -47,6 +48,7 @@
     <script>
         //event fired to livewire called delete
         window.Livewire.on('confirmDelete',function (e) {
+            console.log(e)
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
                     confirmButton: 'btn btn-success mx-2',

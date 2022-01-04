@@ -51,6 +51,7 @@
                     <div class="col-md-6 col col-sm-12">
                         <h4 class="mt-4 mb-3">@lang('text.Payment Information')</h4>
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Payment Way')</span>: {{__('text.'.ucfirst($reservation->payment_way))}}</p>
+
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Payment Status')</span>:
                             @if ($reservation->payment_status == 'paid')
                                 <i class="text-success mdi mdi-checkbox-marked-circle"></i>
@@ -75,6 +76,11 @@
                             {{__('text.'.ucfirst($reservation->reservation_status))}}
 
                         </p>
+                        @can('isAdmin')
+                        @if ($reservation->payment_way == 'online payment')
+                        <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Transaction id')</span>: {{$reservation->transaction->payment_id}}</p>
+                        @endif
+                        @endcan
                     </div>
                     <div class="col-md-6 col-sm-12 py-4 d-flex flex-row justify-content-center">
                         @if ($reservation->reservation_status == 'pending')

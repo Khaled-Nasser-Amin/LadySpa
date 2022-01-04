@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\PaymentToken;
+use App\Models\Reservation;
+use App\Models\ReservationTransaction;
 use App\Models\Setting;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -23,10 +25,18 @@ class MyFatoorahController extends Controller
 
 
 
-    public function index($invoice_value,$user_name,$user_phone,$user_email,$order_number){
+    public function index($invoice_value,$user_name,$user_phone,$user_email,$order_number,$type){
+
+        if($type == 'order'){
+            $callback_url= route('payment_callback');
+            $error_url= route('payment_error');
+        }else{
+            $callback_url= route('payment_reservation_callback');
+            $error_url= route('payment_reservation_error');
+        }
 
         //Fill POST fields array
-        $postFields = $this->postFields($invoice_value,$user_name,$user_phone,$user_email,$order_number);
+        $postFields = $this->postFields($invoice_value,$user_name,$user_phone,$user_email,$order_number,$callback_url,$error_url);
 
         //Call endpoint
         $data = $this-> sendPayment($this->apiURL, $this->apiKey, $postFields);
@@ -171,7 +181,7 @@ class MyFatoorahController extends Controller
     }
 
 
-    private function postFields($invoice_value,$user_name,$user_phone,$user_email,$order_number){
+    private function postFields($invoice_value,$user_name,$user_phone,$user_email,$order_number,$callback_url,$error_url){
         return [
             //Fill required data
             'NotificationOption' => 'Lnk', //'SMS', 'EML', or 'ALL'
@@ -182,8 +192,8 @@ class MyFatoorahController extends Controller
                 // 'MobileCountryCode'  => '+965',
                 // 'CustomerMobile'     => $user_phone,
                 // 'CustomerEmail'      => $user_email,
-                'CallBackUrl'        => route('payment_callback'),
-                'ErrorUrl'           => route('payment_error'), //or 'https://example.com/error.php'
+                'CallBackUrl'        => $callback_url,
+                'ErrorUrl'           => $error_url, //or 'https://example.com/error.php'
                 'Language'           => app()->getLocale(), //or 'ar'
                 'CustomerReference'  => $order_number,
                 //'CustomerCivilId'    => 'CivilId',
@@ -218,7 +228,7 @@ class MyFatoorahController extends Controller
                     }
 
                     Transaction::create(['payment_id' => $request['paymentId'],'order_id' => $data->Data->CustomerReference]);
-                    $order->update(['payment_status' => 'failed']);
+                    $order->update(['payment_status' => 'failed','order_status' => 'canceled']);
                     $order->save();
                 }
 
@@ -238,7 +248,7 @@ class MyFatoorahController extends Controller
                 $order=Order::findOrFail($data->Data->CustomerReference);
                 if(!$order->transaction){
                     Transaction::create(['payment_id' => $request['paymentId'],'order_id' => $data->Data->CustomerReference]);
-                    $order->update(['payment_status' => 'paid']);
+                    $order->update(['payment_status' => 'paid','order_status' => 'pending']);
                     $order->save();
                 }elseif($order->transaction && $order->payment_status == 'failed'){
                     foreach($order->sizes()->get() as $size){
@@ -250,10 +260,54 @@ class MyFatoorahController extends Controller
                         $quantity=$order->group_products_sizes->where('id',$size->id)->pluck('pivot.quantity')->first();
                         $size->update(['stock' => $size->stock-$quantity]);
                     }
-                    $order->update(['payment_status' => 'paid']);
+                    $order->update(['payment_status' => 'paid','order_status' => 'pending']);
                     $order->save();
                 }
                 return view('front.payment_success');
+            }
+        }
+    }
+
+
+    public function error_reservation(Request $request){
+        if(isset($request['paymentId'])){
+            $postFields=[
+                'Key' => $request['paymentId'],
+                'KeyType' => 'PaymentId',
+            ];
+            $data = $this->callAPI("$this->apiURL/v2/GetPaymentStatus", $this->apiKey,$postFields );
+            if(isset($data->Data->CustomerReference) && collect($data->Data->InvoiceTransactions)->last()->TransactionStatus == "Failed"){
+                $reservation=Reservation::findOrFail($data->Data->CustomerReference);
+                if($reservation->transaction && $reservation->payment_status == 'failed'){
+                    $reservation->transaction()->update(['payment_id' => $request['paymentId']]);
+                }else{
+                    ReservationTransaction::create(['payment_id' => $request['paymentId'],'reservation_id' => $data->Data->CustomerReference]);
+                    $reservation->update(['payment_status' => 'failed','reservation_status' => 'canceled']);
+                    $reservation->times()->delete();
+                    $reservation->save();
+                }
+
+                return view('front.payment_failed');
+            }
+        }
+
+    }
+    public function callback_reservation(Request $request){
+        if(isset($request['paymentId'])){
+            $postFields=[
+                'Key' => $request['paymentId'],
+                'KeyType' => 'PaymentId',
+            ];
+            $data = $this->callAPI("$this->apiURL/v2/GetPaymentStatus", $this->apiKey,$postFields );
+            if(isset($data->Data->CustomerReference) && collect($data->Data->InvoiceTransactions)->last()->TransactionStatus == "Succss"){
+                $reservation=Reservation::findOrFail($data->Data->CustomerReference);
+                if(!$reservation->transaction){
+                    ReservationTransaction::create(['payment_id' => $request['paymentId'],'reservation_id' => $data->Data->CustomerReference]);
+                    $reservation->update(['payment_status' => 'paid']);
+                    $reservation->save();
+                }
+                return view('front.payment_success');
+
             }
         }
     }

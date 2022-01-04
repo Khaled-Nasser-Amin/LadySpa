@@ -70,9 +70,11 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
 
 
    //payment
-//    Route::get('/payment', [MyFatoorahController::class, 'index']);
-   Route::get('/payment/callback', [MyFatoorahController::class, 'callback'])->name('payment_callback');
-   Route::get('/payment/error', [MyFatoorahController::class, 'error'])->name('payment_error');
+//  Route::get('/payment', [MyFatoorahController::class, 'index']);
+    Route::get('/payment/callback', [MyFatoorahController::class, 'callback'])->name('payment_callback');
+    Route::get('/payment/error', [MyFatoorahController::class, 'error'])->name('payment_error');
+    Route::get('/payment/reservation/callback', [MyFatoorahController::class, 'callback_reservation'])->name('payment_reservation_callback');
+    Route::get('/payment/reservation/error', [MyFatoorahController::class, 'error_reservation'])->name('payment_reservation_error');
 
 //    Route::get('/payment/reservation_callback', [MyFatoorahController::class, 'callback'])->name('payment_callback');
 //    Route::get('/payment/reservation_error', [MyFatoorahController::class, 'error'])->name('payment_error');

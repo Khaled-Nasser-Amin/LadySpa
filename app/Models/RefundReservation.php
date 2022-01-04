@@ -9,7 +9,7 @@ class RefundReservation extends Model
 {
     use HasFactory;
 
-    protected $fillable=['reservation_id','vendor_id','total_refund_amount','session_id','number_of_additions','price','subtotal_refund_amount','taxes','refund_status'];
+    protected $fillable=['reservation_id','vendor_id','number_of_persons','customer_id','total_refund_amount','session_id','number_of_additions','subtotal_refund_amount','taxes','refund_status'];
 
     public function session()
     {
@@ -18,6 +18,11 @@ class RefundReservation extends Model
     public function vendor()
     {
         return $this->belongsTo(User::class,'vendor_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class,'customer_id');
     }
     public function reservation()
     {

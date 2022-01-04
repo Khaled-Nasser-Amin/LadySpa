@@ -44,7 +44,7 @@
                         @can('isAdmin')
                         <td>
                         @if ($refund->refund_status == 'not refunded yet')
-                            <button class="btn btn-info" wire:click.prevent="confirmDelete({{$refund->id}})">{{__('text.Restore')}}</button>
+                            <button class="btn btn-info" wire:click.prevent="confirmDelete({{$refund->id}},'group')">{{__('text.Restore')}}</button>
                         @endif
                         </td>
                         @endcan

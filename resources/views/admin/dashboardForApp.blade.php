@@ -168,7 +168,7 @@
                             </div>
                             <div class="wigdet-one-content">
                                 <p class="m-0 text-uppercase font-weight-bold text-muted" >{{__('text.Refunds')}}</p>
-                                <h2><span data-plugin="counterup"></span> </h2>
+                                <h2><span data-plugin="counterup">{{ $total_refunds }}</span></h2>
                             </div>
                         </div>
                     </div>

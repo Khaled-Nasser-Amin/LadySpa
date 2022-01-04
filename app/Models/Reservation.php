@@ -28,8 +28,8 @@ class Reservation extends Model
         return $this->belongsToMany(Addition::class,'reservations_additions','reservation_id','addition_id')->withPivot(['price','name_ar','name_en']);
     }
 
-    public function refunds(){
-        return $this->hasMany(Refund::class);
+    public function refund(){
+        return $this->hasMany(RefundReservation::class);
 
     }
 
@@ -37,6 +37,8 @@ class Reservation extends Model
         return $this->hasMany(ReservationTime::class);
 
     }
-
+    public function transaction(){
+        return $this->hasOne(ReservationTransaction::class);
+    }
 
 }

@@ -144,7 +144,7 @@ class OrderController extends Controller
 
         if($request['payment_way'] == 'online payment'){
             $payment=new MyFatoorahController();
-            $data=$payment->index($order->total_amount,$user->name,$user->phone,$user->email,$order->id);
+            $data=$payment->index($order->total_amount,$user->name,$user->phone,$user->email,$order->id,'order');
             if($data == 'error'){
                 $order->update(['payment_way' => 'cash on delivery']);
                 $order->save();

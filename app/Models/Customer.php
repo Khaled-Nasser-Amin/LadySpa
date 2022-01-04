@@ -57,4 +57,7 @@ class Customer extends Authenticatable
         return $this->hasMany(Reservation::class,'user_id','id');
 
     }
+    public function reservations_refunds(){
+        return $this->hasMany(RefundReservation::class,'customer_id');
+    }
 }

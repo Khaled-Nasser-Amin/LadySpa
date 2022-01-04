@@ -85,7 +85,13 @@
                                 <i class="text-dark far fa-pause-circle"></i> @lang('text.Hold')
                             @endif
                         </p>
+                        @can('isAdmin')
+                        @if ($order->payment_way == 'online payment')
+                        <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Transaction id')</span>: {{$order->transaction->payment_id}}</p>
+                        @endif
+                        @endcan
                     </div>
+                    @if ($order->payment_status != 'failed')
                     <div class="col-md-6 col-sm-12 py-4 d-flex flex-row justify-content-center">
                         @if ($order->order_status != 'completed' && $order->order_status != 'canceled' && $order->order_status != 'modified')
                             @if ($order->order_status != 'pending'   && ($order->order_status == 'processing' || $order->order_status == 'shipping') )
@@ -127,6 +133,8 @@
 
                         @endif
                     </div>
+                    @endif
+
 
                 </div>
                     <h4 class="mt-4 mb-3">@lang('text.Receiver Information')</h4>

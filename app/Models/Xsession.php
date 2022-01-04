@@ -44,4 +44,7 @@ class Xsession extends Model
     public function images(){
         return $this->morphMany(Images::class,'images');
     }
+    public function refunds(){
+        return $this->hasMany(RefundReservation::class,'session_id');
+    }
 }

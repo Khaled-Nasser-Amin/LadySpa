@@ -32,7 +32,7 @@ class OrderDetails extends Component
         if($order->hold == 1 ){
             $order->update(['hold' => 0]);
         }
-        if ($order && ($order->order_status != 'completed' && $order->order_status != 'canceled' && $order->order_status != 'modified')) {
+        if ($order && $order->payment_status != 'failed' && ($order->order_status != 'completed' && $order->order_status != 'canceled' && $order->order_status != 'modified')) {
             if ($order->order_status == 'pending') {
                 $order->update(['order_status' => 'processing']);
             } elseif ($order->order_status == 'processing') {
@@ -59,7 +59,7 @@ class OrderDetails extends Component
         Gate::authorize('isAdmin');
 
         $order=$this->order;
-        if ($order && ($order->order_status != 'completed' || $order->order_status != 'pending' || $order->order_status != 'canceled' || $order->order_status != 'modified')) {
+        if ($order && $order->payment_status != 'failed' && ($order->order_status != 'completed' || $order->order_status != 'pending' || $order->order_status != 'canceled' || $order->order_status != 'modified')) {
             if($order->hold == 0){
                 $order->update(['hold' => 1]);
                 $this->dispatchBrowserEvent('error', __('text.Order is pending'));
@@ -78,7 +78,7 @@ class OrderDetails extends Component
         Gate::authorize('isAdmin');
 
         $order=$this->order;
-        if ($order) {
+        if ($order && $order->payment_status != 'failed') {
             if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
                 $this->returnSizesToStock($order);
                 $order->update(['payment_status' => 'failed', 'order_status' => 'canceled']);

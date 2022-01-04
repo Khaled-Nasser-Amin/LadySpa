@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\Admin\ProductsManagement\Reservations;
 
 use App\Mail\AfterOrderComplete;
-
+use App\Models\RefundReservation;
 use App\Models\ReservationTime;
 
 use App\Traits\ImageTrait;
@@ -45,6 +45,7 @@ class ReservationDetails extends Component
 
     public function updatedDate()
     {
+        Gate::authorize('show-reservation',$this->reservation);
         $this->validate(['date' => 'required|date|date_format:Y-m-d|after:yesterday']);
         $this->code='';
         $this->time='';
@@ -224,7 +225,7 @@ class ReservationDetails extends Component
                 $reservation->save();
                 $reservation->times()->delete();
             }else{
-                // $this->refundReservation($reservation);
+                $this->refundReservation($reservation);
             }
             $this->dispatchBrowserEvent('success', __('text.Reservation Updated Successfully'));
         }
@@ -249,5 +250,22 @@ class ReservationDetails extends Component
             $this->dispatchBrowserEvent('error', __('text.Unknown error'));
         }
     }
+
+    protected function refundReservation($reservation){
+
+        RefundReservation::create([
+            'reservation_id' => $reservation->id,
+            'vendor_id' => $reservation->vendor_id,
+            'number_of_persons' => $reservation->times->count(),
+            'number_of_additions' => $reservation->additions->count() ?? 0,
+            'customer_id' => $reservation->user_id,
+            'session_id' =>  $reservation->session_id,
+            'taxes' => $reservation->taxes,
+            'subtotal_refund_amount' => $reservation->subtotal,
+            'total_refund_amount' => $reservation ->total_amount,
+        ]);
+        $reservation->update(['reservation_status' => 'refund','payment_status' => 'failed']);
+        $reservation->save();
+        $reservation->times()->delete();    }
 
 }

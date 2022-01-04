@@ -7,6 +7,9 @@ use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Refund;
+use App\Models\RefundGroup;
+use App\Models\RefundReservation;
 use App\Models\Reservation;
 use App\Models\User;
 use App\Models\Xsession;
@@ -17,12 +20,12 @@ use Illuminate\Support\Facades\Gate;
 class AdminController extends Controller
 {
     public function index(){
-       $date=$this->getDate();
+        $date=$this->getDate();
         $order=auth()->user()->orders()->where('payment_status','paid');
         $reservation=auth()->user()->reservations()->where('payment_status','paid')->where('reservation_status','completed')->get();
         $reservations=$reservation->count();
         $orders=$order->get()->count();
-        $total_refunds=auth()->user()->refunds->where('refund_status','not refunded yet')->sum('total_refund_amount');
+        $total_refunds=auth()->user()->refunds->where('refund_status','not refunded yet')->sum('total_refund_amount')+auth()->user()->refund_groups->where('refund_status','not refunded yet')->sum('total_refund_amount')+auth()->user()->reservations_refunds->where('refund_status','not refunded yet')->sum('total_refund_amount');
         $products=auth()->user()->products()->where('isActive',1)->count();
         $sessions=auth()->user()->sessions()->where('isActive',1)->count();
         $inactive_products=auth()->user()->products()->where('isActive',0)->count();
@@ -47,6 +50,7 @@ class AdminController extends Controller
     public function index_for_app(){
         $products=Product::where('isActive',1)->count();
         $sessions=Xsession::where('isActive',1)->count();
+        $total_refunds=Refund::where('refund_status','not refunded yet')->sum('total_refund_amount')+RefundGroup::where('refund_status','not refunded yet')->sum('total_refund_amount')+RefundReservation::where('refund_status','not refunded yet')->sum('total_refund_amount');
         $users=Customer::count();
         $vendors=User::where('role' ,'!=' ,'admin')->count();
         $orders=Order::where('payment_status','paid')->count();
@@ -58,7 +62,7 @@ class AdminController extends Controller
         $current_month_reservations=$this->reservationThroughMonthForAdmin($date['year'],$date['month']);
         $last_month_reservations=$this->reservationThroughMonthForAdmin($date['last_year'],$date['last_month']);
 
-        return view('admin.dashboardForApp',compact('products','sessions','reservation_total_amount','current_month_reservations','last_month_reservations','vendors','users','orders','total_amount','current_month_orders','last_month_orders'));
+        return view('admin.dashboardForApp',compact('products','total_refunds','sessions','reservation_total_amount','current_month_reservations','last_month_reservations','vendors','users','orders','total_amount','current_month_orders','last_month_orders'));
     }
 
     protected function getDate(){
