@@ -78,7 +78,7 @@ class OrderDetails extends Component
         Gate::authorize('isAdmin');
 
         $order=$this->order;
-        if ($order && $order->payment_status != 'failed' && ($order->payment_way == 'cash on delivery' || ($order->payment_way == 'online payment' && $order->order_status == 'paid'))) {
+        if ($order && $order->payment_status != 'failed' && ($order->payment_way == 'cash on delivery' || ($order->payment_way == 'online payment' && $order->payment_status == 'paid'))) {
             if($order->order_status == 'pending' && $order->payment_way == 'cash on delivery'){
                 $this->returnSizesToStock($order);
                 $order->update(['payment_status' => 'failed', 'order_status' => 'canceled']);
@@ -114,7 +114,7 @@ class OrderDetails extends Component
     protected function refundOrder($order)
     {
         Gate::authorize('isAdmin');
-        if(($order->payment_way == 'online payment' && $order->order_status == 'paid')){
+        if(($order->payment_way == 'online payment' && $order->payment_status == 'paid')){
             foreach ($order->sizes()->withTrashed()->get() as $size) {
                 $quantity = $size->pivot->quantity;
                 $price =$size->pivot->price;
