@@ -83,7 +83,7 @@
                         @endcan
                     </div>
                     <div class="col-md-6 col-sm-12 py-4 d-flex flex-row justify-content-center">
-                        @if ($reservation->reservation_status == 'pending')
+                        @if ($reservation->reservation_status == 'pending' && ($reservation->payment_way == 'cash on delivery'  || ($reservation->payment_way == 'online payment' && $reservation->payment_status == 'paid')))
                             @if (now() >= date('Y-m-d H:i:s',strtotime($first_reservation->date.' '.$first_reservation->end_time)) )
                                 <button class="btn btn-success btn-sm mx-1" wire:click.prevent="updateReservationStatus" style="height: 60px">@lang('text.Completed') <i class="fas fa-check-circle"></i></button>
                             @endif

@@ -235,7 +235,7 @@ class ReservationDetails extends Component
     {
         Gate::authorize('show-reservation',$this->reservation);
         $reservation=$this->reservation;
-        if ($reservation && $reservation->reservation_status == 'pending') {
+        if ($reservation && $reservation->reservation_status == 'pending' && ($reservation->payment_way == 'cash on delivery'  || ($reservation->payment_way == 'online payment' && $reservation->payment_status == 'paid'))) {
             if (now() >= date('Y-m-d H:i:s',strtotime($this->first_reservation->date.' '.$this->first_reservation->end_time))) {
                 $reservation->update(['reservation_status' => 'completed','payment_status' => 'paid']);
                 $reservation->save();
@@ -253,19 +253,22 @@ class ReservationDetails extends Component
 
     protected function refundReservation($reservation){
 
-        RefundReservation::create([
-            'reservation_id' => $reservation->id,
-            'vendor_id' => $reservation->vendor_id,
-            'number_of_persons' => $reservation->times->count(),
-            'number_of_additions' => $reservation->additions->count() ?? 0,
-            'customer_id' => $reservation->user_id,
-            'session_id' =>  $reservation->session_id,
-            'taxes' => $reservation->taxes,
-            'subtotal_refund_amount' => $reservation->subtotal,
-            'total_refund_amount' => $reservation ->total_amount,
-        ]);
-        $reservation->update(['reservation_status' => 'refund','payment_status' => 'failed']);
-        $reservation->save();
-        $reservation->times()->delete();    }
+        if($reservation->payment_status == 'paid' && $reservation->payment_way == 'online payment'){
+            RefundReservation::create([
+                'reservation_id' => $reservation->id,
+                'vendor_id' => $reservation->vendor_id,
+                'number_of_persons' => $reservation->times->count(),
+                'number_of_additions' => $reservation->additions->count() ?? 0,
+                'customer_id' => $reservation->user_id,
+                'session_id' =>  $reservation->session_id,
+                'taxes' => $reservation->taxes,
+                'subtotal_refund_amount' => $reservation->subtotal,
+                'total_refund_amount' => $reservation ->total_amount,
+            ]);
+            $reservation->update(['reservation_status' => 'refund','payment_status' => 'failed']);
+            $reservation->save();
+            $reservation->times()->delete();    }
+        }
+
 
 }

@@ -91,7 +91,7 @@
                         @endif
                         @endcan
                     </div>
-                    @if ($order->payment_status != 'failed')
+                    @if ($order->payment_status != 'failed' && ($order->payment_way == 'cash on delivery' || ($order->payment_way == 'online payment' && $order->order_status == 'paid') ))
                     <div class="col-md-6 col-sm-12 py-4 d-flex flex-row justify-content-center">
                         @if ($order->order_status != 'completed' && $order->order_status != 'canceled' && $order->order_status != 'modified')
                             @if ($order->order_status != 'pending'   && ($order->order_status == 'processing' || $order->order_status == 'shipping') )
