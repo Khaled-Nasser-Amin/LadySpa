@@ -691,4 +691,10 @@ return [
     'Refund status'=>'حالة الارجاع',
     'Reservation created successfully'=>'تم انشاء الحجز بنجاح',
     'Transaction id'=>'رقم عملية التحويل',
+    'Go to your profile'=>'اذهب الي ملفك الشخصي',
+    'Scroll down to (Update sessions configuration).'=>'قم بالتمرير لأسفل إلى (اعدادات تحديث الجلسات).',
+    'Update your number of outdoor service provider.'=>'قم بتحديث عدد مزودي الخدمة بالخارج.',
+    'If you want to active outdoor sessions,you must have at least one service provider.'=>'إذا كنت ترغب في تنشيط الجلسات الخارجية ، يجب أن يكون لديك مزود خدمة واحد على الأقل.',
+    'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.'=>'يجب أن تكون قيود غرف الجلسات الخارجية أكبر من 0 أو يجب إلغاء تنشيط جميع الأسعار الخارجية للجلسات.',
+
 ];

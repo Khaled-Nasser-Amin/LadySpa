@@ -14,7 +14,7 @@ class ProductController extends Controller
     public function store($request)
     {
         $this->authorize('create',Product::class);
-        $data=collect($request)->except(['image','sizes','productsIndex','taxes_selected','banner'])->toArray();
+        $data=collect($request)->except(['image','sizes','productsIndex','taxes_selected','banner','groupImage'])->toArray();
         $data['image']=$this->add_single_image($request['image'],'products');
         $data['banner']=$this->add_single_image($request['banner'],'products');
         $product=Product::create($data);

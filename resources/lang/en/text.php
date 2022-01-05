@@ -693,9 +693,11 @@ return [
     'Refund status'=>'Refund status',
     'Reservation created successfully'=>'Reservation created successfully',
     'Transaction id'=>'Transaction id',
-    'Limitation'=>'Limitation',
-    'Limitation'=>'Limitation',
-    'Limitation'=>'Limitation',
+    'Go to your profile'=>'Go to your profile',
+    'Scroll down to (Update sessions configuration).'=>'Scroll down to (Update sessions configuration).',
+    'Update your number of outdoor service provider.'=>'Update your number of outdoor service providers.',
+    'If you want to active outdoor sessions,you must have at least one service provider.'=>'If you want to active outdoor sessions,you must have at least one service provider.',
+    'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.'=>'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.',
 
 
 

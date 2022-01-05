@@ -42,33 +42,42 @@
                                 padding: 10px;
                                 border: 1px solid rgb(221, 218, 218);
                                 position: absolute;
+                                right: 1em; top: -0.5em;
                                 border-radius: 2rem;
                                 background: #e9b0bb;
                                 color: white;
+                                white-space: pre-line;
+                                width: 10em;
                             }
 
                         </style>
                     @endpush
                     <div class="form-group ">
-                        <h4 class="d-flex flex-row justify-content-between"><span><input id="ex_price" type="checkbox"
-                                    wire:model="external_service"><label for="ex_price" style="font-size: 20px">@lang('text.External Price')</label></span>
-                                    <span class="title" data-title="@lang('text.Outdoor session price')"><i class="fas fa-info-circle"></i></span></h4>
-                        @if ($externalService)
-                            <div class="form-group">
-                                <label for="external_price">{{ __('text.Price') }}</label><br>
-                                <input type="number" wire:model='external_price' class="form-control"
-                                    id="external_price" autocomplete="none"><br>
-                                <x-general.input-error for="external_price" />
+                        @if (auth()->user()->session_rooms_limitation_outdoor > 0)
+                            <h4 class="d-flex flex-row justify-content-between"><span><input id="ex_price" type="checkbox"
+                            wire:model="external_service"><label for="ex_price" style="font-size: 20px">@lang('text.External Price')</label></span>
+                            <span class="title" data-title="@lang('text.Outdoor session price')"><i class="fas fa-info-circle"></i></span></h4>
+                            @if ($externalService)
+                                <div class="form-group">
+                                    <label for="external_price">{{ __('text.Price') }}</label><br>
+                                    <input type="number" wire:model='external_price' class="form-control"
+                                        id="external_price" autocomplete="none"><br>
+                                    <x-general.input-error for="external_price" />
 
-                            </div>
-                            <div class="form-group">
-                                <label for="external_sale">{{ __('text.Price after sale') }}</label><br>
-                                <input type="number" wire:model='external_sale' class="form-control"
-                                    id="external_sale" autocomplete="none"><br>
-                                <x-general.input-error for="external_sale" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="external_sale">{{ __('text.Price after sale') }}</label><br>
+                                    <input type="number" wire:model='external_sale' class="form-control"
+                                        id="external_sale" autocomplete="none"><br>
+                                    <x-general.input-error for="external_sale" />
 
-                            </div>
+                                </div>
+                            @endif
+                            @else
+                            <p class=" d-flex flex-row justify-content-between">@lang('text.If you want to active outdoor sessions,you must have at least one service provider.')<span class="title" style="white-space: pre-line" data-title="1- @lang('text.Go to your profile') &#013; &#010; 2- @lang('text.Scroll down to (Update sessions configuration).') &#013; &#010;3- @lang('text.Update your number of outdoor service provider.')"><i class="fas fa-info-circle text-info"></i></span></p>
+
                         @endif
+
 
 
                     </div>

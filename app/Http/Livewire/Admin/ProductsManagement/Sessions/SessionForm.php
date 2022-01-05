@@ -121,6 +121,10 @@ class SessionForm extends Component
         $this->dispatchBrowserEvent('success', __('text.Session Updated Successfully'));
     }
 
+    public function updatingExternalService(){
+
+    }
+
     public function render()
     {
         return view('components.admin.sessions.session-form');

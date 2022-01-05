@@ -77,8 +77,11 @@ class ProductForm extends Component
             $data=$this->validation(array_merge($this->imageValidationForStore(),$this->group_validation()));
         }
 
+
         $data=$this->setSlug($data);
+
         $product=$productStore->store($data);
+
         $this->associateImagesWithProduct($data,$product);
 
 

@@ -15,7 +15,7 @@ class SessionController extends Controller
     {
         $this->authorize('create',Xsession::class);
 
-        $data=collect($request)->except(['image','additions','taxes_selected','banner'])->toArray();
+        $data=collect($request)->except(['image','additions','taxes_selected','banner','groupImage'])->toArray();
         $data['image']=$this->add_single_image($request['image'],'sessions');
         $data['banner']=$this->add_single_image($request['banner'],'sessions');
         $session=Xsession::create($data);
