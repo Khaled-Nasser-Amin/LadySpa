@@ -156,10 +156,13 @@ class ReservationController extends Controller
         $user=$request->user();
         $request['payment_way']= strtolower($request['payment_way']) == 'online payment' ? 'online payment' : 'cash on delivery';
 
-        $additions=Str::remove('{[', $request->additions);
-        $additions=Str::remove(']}', $additions);
-        $additions=explode(',',trim($additions));
-        $request->merge(['additions' => $additions]);
+        if($request->additions && !is_array($request->additions)){
+            $additions=Str::remove('{[', $request->additions);
+            $additions=Str::remove(']}', $additions);
+            $additions=explode(',',trim($additions));
+            $request->merge(['additions' => $additions]);
+        }
+
         //validation
         $validation=Validator::make($request->all(),$this->rules());
         if($validation->fails()){
