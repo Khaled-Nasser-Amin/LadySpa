@@ -162,7 +162,7 @@ class ReservationController extends Controller
             $additions=explode(',',trim($additions));
             $request->merge(['additions' => $additions]);
         }
-
+        $additions=$request->additions;
         //validation
         $validation=Validator::make($request->all(),$this->rules());
         if($validation->fails()){
