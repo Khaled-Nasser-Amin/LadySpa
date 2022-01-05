@@ -5,18 +5,13 @@ namespace App\Http\Controllers\Api\sessions;
 use App\Http\Controllers\Api\ShippingController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\MyFatoorahController;
-use App\Http\Resources\OrderResource;
 use App\Http\Resources\Sessions\ReservationResource;
-use App\Mail\AfterOrderComplete;
 use App\Mail\ReservationCard;
 use App\Models\Addition;
-use App\Models\Order;
 use App\Models\Promocode;
-use App\Models\Refund;
 use App\Models\Reservation;
 use App\Models\ReservationTime;
-use App\Models\Size;
-use App\Models\User;
+use Illuminate\Support\Str;
 use App\Models\Xsession;
 use App\Traits\Responses;
 use Carbon\Carbon;
@@ -161,7 +156,10 @@ class ReservationController extends Controller
         $user=$request->user();
         $request['payment_way']= strtolower($request['payment_way']) == 'online payment' ? 'online payment' : 'cash on delivery';
 
-
+        $additions=Str::remove('{[', $request->additions);
+        $additions=Str::remove(']}', $additions);
+        $additions=explode(',',trim($additions));
+        $request->merge(['additions' => $additions]);
         //validation
         $validation=Validator::make($request->all(),$this->rules());
         if($validation->fails()){
@@ -171,7 +169,6 @@ class ReservationController extends Controller
         //check if additions or session  is active or exist
         $session=Xsession::find($request->session_id);
         $reservation_times=[];
-        $additions=$request->additions;
         $validate1=$this->checkValidateSession($session,$additions,$request->type);
         $limit= $request->type == 'outdoor'? $session->user->session_rooms_limitation_outdoor : $session->user->session_rooms_limitation_indoor;
         $validate2=$this->checkIfExist($session,$request->times,$limit,$reservation_times);
