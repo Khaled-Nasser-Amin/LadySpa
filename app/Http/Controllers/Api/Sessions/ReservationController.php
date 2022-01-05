@@ -120,7 +120,7 @@ class ReservationController extends Controller
             foreach($times_arranged as $time){
                 $query=$this->countReservationByDate($date,$session->user_id,$time['start'],$time['end']);
                 $count=$query->where('room_number',$i)->get()->count();
-                if($count == 0){
+                if($count == 0 && now() < date('Y-m-d H:i:s',strtotime($date.' '.$time['start']))){
                     $arr[] = date('h:i a',strtotime($time['start'])).' - '.date('h:i a',strtotime($time['end']));
                 }
             }
@@ -286,7 +286,8 @@ class ReservationController extends Controller
 
             $opening_time=$session->user->opening_time;
             $closing_time=$session->user->closing_time;
-            if(date('H:i',strtotime($session->time)) != gmdate('H:i',$totalDuration) || (date('H:i:s',strtotime($arr[0])) < $opening_time) || (date('H:i:s',strtotime($arr[1])) > $closing_time)){
+
+            if(date('H:i',strtotime($session->time)) != gmdate('H:i',$totalDuration) || (date('H:i:s',strtotime($arr[0])) < $opening_time) || (date('H:i:s',strtotime($arr[1])) > $closing_time) || now() > date('Y-m-d H:i:s',strtotime($time['date'].' '.$arr[0]))){
                 return 'false';
             }
 
