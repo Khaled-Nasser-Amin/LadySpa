@@ -86,7 +86,7 @@
                             @endif
                         </p>
                         @can('isAdmin')
-                        @if ($order->payment_way == 'online payment')
+                        @if ($order->payment_way == 'online payment' && $order->transaction)
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Transaction id')</span>: {{$order->transaction->payment_id}}</p>
                         @endif
                         @endcan

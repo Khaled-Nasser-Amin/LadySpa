@@ -77,7 +77,7 @@
 
                         </p>
                         @can('isAdmin')
-                        @if ($reservation->payment_way == 'online payment')
+                        @if ($reservation->payment_way == 'online payment' && $reservation->transaction)
                         <p class="text-muted text-overflow"><span class="text-danger">@lang('text.Transaction id')</span>: {{$reservation->transaction->payment_id}}</p>
                         @endif
                         @endcan
