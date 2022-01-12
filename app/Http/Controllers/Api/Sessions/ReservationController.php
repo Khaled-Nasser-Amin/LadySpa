@@ -160,7 +160,7 @@ class ReservationController extends Controller
             $additions=Str::remove('{[', $request->additions);
             $additions=Str::remove(']}', $additions);
             $additions=explode(',',trim($additions));
-            $request->merge(['additions' => $additions]);
+            $request->merge(['additions' => collect($additions)->filter()->toArray()]);
         }
         $additions=$request->additions;
         //validation
@@ -168,7 +168,6 @@ class ReservationController extends Controller
         if($validation->fails()){
             return response()->json($validation->errors(),404);
         }
-
         //check if additions or session  is active or exist
         $session=Xsession::find($request->session_id);
         $reservation_times=[];
@@ -215,7 +214,7 @@ class ReservationController extends Controller
     protected function rules(){
         return [
             'times' => 'required|array|min:1',
-            'additions' => 'nullable|array|min:1',
+            'additions' => 'nullable|array',
             'additions.*' => 'exists:additions,id',
             'address' => 'required|string|max:255',
             'session_id' => 'required|exists:xsessions,id',
@@ -324,7 +323,9 @@ class ReservationController extends Controller
             $subtotal=$session->sale ?? $session->price;
         }
         $taxes=(($taxes/100)*$subtotal)*count($times);
-        $this->associateAdditionsWithReservation($additions,$reservation,$subtotal);
+        if($additions){
+            $this->associateAdditionsWithReservation($additions,$reservation,$subtotal);
+        }
 
         $discount=$this->calculatePromoCode($promocode,$user,$subtotal);
 

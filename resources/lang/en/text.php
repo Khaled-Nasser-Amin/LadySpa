@@ -699,6 +699,7 @@ return [
     'If you want to active outdoor sessions,you must have at least one service provider.'=>'If you want to active outdoor sessions,you must have at least one service provider.',
     'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.'=>'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.',
 
-
+    'Added a session as a feature'  => 'Added a session as a feature',
+    'Removed a session as a feature'  => 'Removed a session as a feature',
 
 ];

@@ -696,5 +696,6 @@ return [
     'Update your number of outdoor service provider.'=>'قم بتحديث عدد مزودي الخدمة بالخارج.',
     'If you want to active outdoor sessions,you must have at least one service provider.'=>'إذا كنت ترغب في تنشيط الجلسات الخارجية ، يجب أن يكون لديك مزود خدمة واحد على الأقل.',
     'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.'=>'يجب أن تكون قيود غرف الجلسات الخارجية أكبر من 0 أو يجب إلغاء تنشيط جميع الأسعار الخارجية للجلسات.',
-
+    'Added a session as a feature'  => 'أضاف جلسة كميزة',
+    'Removed a session as a feature'  => 'إزالة جلسة كميزة',
 ];
