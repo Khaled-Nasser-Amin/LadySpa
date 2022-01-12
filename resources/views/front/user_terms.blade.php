@@ -40,7 +40,7 @@
     <nav class="navbar">
         <div class="container">
             <a class="toggleColour text-white" style="font-size: 25px;font-weight:bold"
-                href="https://ladystore-ksa.com/en">
+                href="https://lady-spa.com/">
                 <img src="{{ asset('images/logo.png') }}" style="width:60px;height:77px;display:inline;" alt="">
                 @lang('text.Lady Spa') </a>
         </div>
