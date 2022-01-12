@@ -698,4 +698,6 @@ return [
     'The session rooms limitation outdoor must be greater than 0 or you have to inactive all external prices of sessions.'=>'يجب أن تكون قيود غرف الجلسات الخارجية أكبر من 0 أو يجب إلغاء تنشيط جميع الأسعار الخارجية للجلسات.',
     'Added a session as a feature'  => 'أضاف جلسة كميزة',
     'Removed a session as a feature'  => 'إزالة جلسة كميزة',
+    'Vendor terms and conditions' => 'شروط وأحكام البائع',
+    'User terms and conditions' => 'شروط وأحكام المستخدم',
 ];

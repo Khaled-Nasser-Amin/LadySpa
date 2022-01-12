@@ -702,4 +702,7 @@ return [
     'Added a session as a feature'  => 'Added a session as a feature',
     'Removed a session as a feature'  => 'Removed a session as a feature',
 
+    'Vendor terms and conditions' => 'Vendor terms and conditions',
+    'User terms and conditions' => 'User terms and conditions',
+
 ];

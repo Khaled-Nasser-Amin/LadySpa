@@ -25,7 +25,14 @@
             </a>
 
         </div>
-
+        <div class="flex-1 pt-4">
+            <a href="{{route('front.terms')}}" class="text-black" style="display: block">
+               @lang('text.Vendor terms and conditions')
+            </a>
+            <a href="{{route('front.user_terms')}}" class="text-black" style="display: block">
+               @lang('text.User terms and conditions')
+            </a>
+        </div>
 
       </div>
     </div>

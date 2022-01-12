@@ -50,6 +50,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
 
     Route::get('/',[LandingPage::class,'index'])->name('front.index');
     Route::get('/register',Register::class)->name('front.register')->middleware('guest');
+    Route::get('/terms',[LandingPage::class,'terms'])->name('front.terms');
+    Route::get('/user/terms',[LandingPage::class,'user_terms'])->name('front.user_terms');
 
 
     //login
