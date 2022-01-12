@@ -3,14 +3,13 @@
 
 <head>
     <meta charset="utf-8" />
-    <title class="mdi mdi-car-hatchback">@lang('text.Terms and conditions') | Lady Store</title>
+    <title class="mdi mdi-car-hatchback">@lang('text.Vendor terms and conditions') | @lang('text.Lady Spa')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="KBauZ7bhjdOSLNLyElIRtGUIEgqHLqA36YOCWeRp">
     <meta content="Women's clothing online stores" name="description" />
     <meta name="author" content="tawaklsa tech | Eng.Khaled Amin">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <link rel="icon" href="https://ladystore-ksa.com/images/icons/dress_icon.jpg" type="image/icon type">
+    <link rel="icon" href="{{asset('images/icons/spa.png')}}" type="image/icon type">
 
     <style>
 
@@ -41,9 +40,8 @@
         <div class="container">
             <a class="toggleColour text-white" style="font-size: 25px;font-weight:bold"
                 href="https://ladystore-ksa.com/en">
-                <img src="https://ladystore-ksa.com/images/lady_logo.webp"
-                    style="width:60px;height:77px;display:inline;" alt="">
-                Lady Store </a>
+                <img src="{{ asset('images/logo.png') }}" style="width:60px;height:77px;display:inline;" alt="">
+                @lang('text.Lady Spa') </a>
         </div>
     </nav>
 
