@@ -700,4 +700,8 @@ return [
     'Removed a session as a feature'  => 'إزالة جلسة كميزة',
     'Vendor terms and conditions' => 'شروط وأحكام البائع',
     'User terms and conditions' => 'شروط وأحكام المستخدم',
+    'Support' => 'الدعم',
+    'Message' => 'رسالة',
+    'Message created successfully' => 'تم انشاء الرسالة بنجاح',
+
 ];

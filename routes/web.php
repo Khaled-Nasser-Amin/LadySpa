@@ -52,6 +52,8 @@ Route::group(['prefix' => LaravelLocalization::setLocale(), 'middleware' => [ 'l
     Route::get('/register',Register::class)->name('front.register')->middleware('guest');
     Route::get('/terms',[LandingPage::class,'terms'])->name('front.terms');
     Route::get('/user/terms',[LandingPage::class,'user_terms'])->name('front.user_terms');
+    Route::get('/support',[LandingPage::class,'support'])->name('front.support');
+    Route::post('/support',[LandingPage::class,'support_post'])->name('front.support_post');
 
 
     //login

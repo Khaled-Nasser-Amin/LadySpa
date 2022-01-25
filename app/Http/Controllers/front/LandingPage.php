@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\front;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Support;
 use App\Models\Setting;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class LandingPage extends Controller
 {
@@ -20,5 +23,19 @@ class LandingPage extends Controller
     {
         return view('front.user_terms');
     }
+    public function support()
+    {
+        return view('front.support');
+    }
+
+    public function support_post(Request $request)
+    {
+        $to=env('MAIL_USERNAME');
+        Mail::to($to)->send(new Support($request->email,$request->message));
+        session()->flash('status',__('text.Message created successfully'));
+        return view('front.support');
+
+    }
+
 
 }

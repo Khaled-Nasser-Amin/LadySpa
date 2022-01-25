@@ -32,6 +32,9 @@
             <a href="{{route('front.user_terms')}}" class="text-black" style="display: block">
                @lang('text.User terms and conditions')
             </a>
+            <a href="{{route('front.support')}}" class="text-black" style="display: block">
+                @lang('text.Support')
+             </a>
         </div>
 
       </div>

@@ -704,5 +704,7 @@ return [
 
     'Vendor terms and conditions' => 'Vendor terms and conditions',
     'User terms and conditions' => 'User terms and conditions',
-
+    'Support' => 'Support',
+    'Message' => 'Message',
+    'Message created successfully' => 'Message created successfully',
 ];
