@@ -6,7 +6,7 @@
     <nav class="row navbar">
         <div class="container">
             <a class="toggleColour text-white" style="font-size: 25px;font-weight:bold" href="{{ route('front.index') }}">
-                <img src="{{ asset('images/lady_logo.webp') }}" style="width:60px;height:77px;display:inline;" alt="">
+                <img src="{{ asset('images/logo.png') }}" style="width:60px;height:77px;display:inline;" alt="">
               @lang('text.Lady Spa')
             </a>
         </div>
