@@ -22,6 +22,13 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(UserSeeder::class);
-        Setting::create();
+        Setting::create(
+            [
+                "contact_land_line" => '0236760108',
+                "contact_whatsapp" => '01025070424',
+                "contact_phone" => '01025070424',
+                "contact_email" => 'khalednasser546@gmail.com',
+            ]
+        );
     }
 }

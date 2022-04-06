@@ -1,28 +1,27 @@
-<section class="bg-white border-b py-8" id="download">
-    <div class="container max-w-5xl mx-auto m-8" style="margin-top:50px">
-      <h1 class="w-full my-2 text-5xl font-bold leading-tight text-center text-gray-800">
-        @lang('text.Download')
-      </h1>
-      <div class="w-full mb-4">
-        <div class="h-1 mx-auto gradient w-64 opacity-25 my-0 py-0 rounded-t"></div>
-      </div>
-      <div class="flex flex-wrap">
-        <div class="flex w-full w-5/6 sm:w-1/2 p-6 justify-center">
-            @php
-                $urls=App\Models\Setting::find(1);
+ <!-- Download Section -->
 
-            @endphp
-            <a href="{{ $urls->ios_app_url == '' ? '#': $urls->ios_app_url}}">
-                <img src="{{ asset('images/app_store.png') }}" alt="apple store" style="height: 100px;width:270px">
-            </a>
+ <section id="download" style="margin: 50px 0;">
+    <div class="container">
+        <div class="row">
+
+            <h1 class="wow fadeInUp text-center" data-wow-delay="0.4s">@lang('text.Download')</h1>
+            <div class="" style="display: flex;justify-content:space-around;margin-top:50px;margin-bottom:50px">
+                <div class="flex w-full w-5/6 sm:w-1/2 p-6 justify-center">
+                    <a href="{{ $setting->ios_app_url == '' ? '#' : $setting->ios_app_url }}">
+                        <img src="{{ asset('images/app_store.png') }}" alt="apple store"
+                            style="height: 100px;width:270px">
+                    </a>
+                </div>
+                <div class="flex w-full sm:w-1/2 p-6 justify-center	">
+                    <a href="{{ $setting->android_app_url == '' ? '#' : $setting->android_app_url }}">
+                        <img src="{{ asset('images/google_play.png') }}" alt="google play"
+                            style="height: 100px;width:270px">
+                    </a>
+
+                </div>
+            </div>
+
+
         </div>
-        <div class="flex w-full sm:w-1/2 p-6 justify-center	">
-            <a href="{{ $urls->android_app_url == '' ? '#': $urls->android_app_url}}">
-                <img src="{{ asset('images/google_play.png') }}" alt="google play" style="height: 100px;width:270px">
-            </a>
-
-        </div>
-      </div>
-
     </div>
-  </section>
+</section>

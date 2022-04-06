@@ -706,5 +706,10 @@ return [
     'User terms and conditions' => 'User terms and conditions',
     'Support' => 'Support',
     'Message' => 'Message',
+    'Offering a wide range of services able to satisfy every need and support each client during the exciting journey that will lead to the creation of a unique and perfect Spa.' => 'Offering a wide range of services able to satisfy every need and support each client during the exciting journey that will lead to the creation of a unique and perfect Spa.',
     'Message created successfully' => 'Message created successfully',
+    'About us' => 'About us',
+
+    'Phone' => 'Phone',
+
 ];

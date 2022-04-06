@@ -704,4 +704,9 @@ return [
     'Message' => 'رسالة',
     'Message created successfully' => 'تم انشاء الرسالة بنجاح',
 
+    'Offering a wide range of services able to satisfy every need and support each client during the exciting journey that will lead to the creation of a unique and perfect Spa.' => 'تقديم مجموعة واسعة من الخدمات القادرة على تلبية جميع الاحتياجات ودعم كل عميل خلال الرحلة المثيرة التي ستؤدي إلى إنشاء منتجع صحي فريد ومثالي.',
+
+    'About us' => 'معلومات عنا',
+    'Phone' => 'هاتف',
+
 ];

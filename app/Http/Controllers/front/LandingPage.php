@@ -15,6 +15,7 @@ class LandingPage extends Controller
         $setting=Setting::find(1);
         return view('front.welcome',compact('setting'));
     }
+
     public function terms()
     {
         return view('front.terms');

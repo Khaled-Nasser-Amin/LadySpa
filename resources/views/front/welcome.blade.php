@@ -1,134 +1,90 @@
 <!DOCTYPE html>
-<html lang="{{ LaravelLocalization::getCurrentLocale() }}" dir="{{ LaravelLocalization::getCurrentLocaleDirection() }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="author" content="tawaklsa tech | Eng.Khaled Amin">
+<html lang="{{ LaravelLocalization::getCurrentLocale() }}"
+    dir="{{ LaravelLocalization::getCurrentLocaleDirection() }}">
 
-        <meta content="@lang('text.Women\'s clothing online stores')" name="description" />
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="icon" href="{{ asset('images/icons/spa.png') }}" type="image/icon type">
 
-        <title>@lang('text.Lady Spa') | @lang('text.Home')</title>
-        <!-- tailwindcss -->
-        <link rel="stylesheet" href="{{ asset('css/tailwind.min.css') }}" />
+    <title>@lang('text.Lady Spa') | @lang('text.Home')</title>
 
-        <!--Replace with your tailwind.css once created-->
-        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('css/landing_page/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/landing_page/animate.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/landing_page/font-awesome.min.css') }}">
 
-        <link rel="icon" href="{{asset('images/icons/spa.png')}}" type="image/icon type">
+    <link rel="stylesheet" href="{{ asset('css/landing_page/magnific-popup.css') }}">
 
+    <link href='https://fonts.googleapis.com/css?family=Unica+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,700' rel='stylesheet' type='text/css'>
 
-        <style>
-            .gradient {
-                background: linear-gradient(90deg, #f782a9 0%, #cecccd 100%);
-            }
-        </style>
-    </head>
+    <!-- Main css -->
+    <link rel="stylesheet" href="{{ asset('css/landing_page/style.css') }}">
 
-    {{-- body --}}
-    <body class="leading-normal tracking-normal text-white gradient" style="font-family: 'Source Sans Pro', sans-serif;">
+</head>
 
-        {{-- nav_bar --}}
-        <x-front.nav_bar />
-
-
-        <!--join_us-->
-        <x-front.join_us />
+<body data-spy="scroll" data-target=".navbar-collapse" data-offset="50">
 
 
-        {{-- download --}}
-        <x-front.download />
+
+    {{-- nav_bar --}}
+    <x-front.nav_bar />
 
 
-        <!--contact us-->
-        <x-front.contact_us :setting="$setting" />
-
-        <!--Footer-->
-        <x-front.footer />
+    <!--join_us-->
+    <x-front.join_us />
 
 
 
 
-        {{-- scripts --}}
-        <script>
-            var scrollpos = window.scrollY;
-            var header = document.getElementById("header");
-            var navcontent = document.getElementById("nav-content");
-            var navaction = document.getElementById("navAction");
-            var brandname = document.getElementById("brandname");
-            var toToggle = document.querySelectorAll(".toggleColour");
 
-            document.addEventListener("scroll", function () {
-              /*Apply classes for slide in bar*/
-              scrollpos = window.scrollY;
 
-              if (scrollpos > 10) {
-                header.classList.add("bg-white");
-                navaction.classList.remove("bg-white");
-                navaction.classList.add("gradient");
-                navaction.classList.remove("text-gray-800");
-                navaction.classList.add("text-white");
-                //Use to switch toggleColour colours
-                for (var i = 0; i < toToggle.length; i++) {
-                  toToggle[i].classList.add("text-gray-800");
-                  toToggle[i].classList.remove("text-white");
-                }
-                header.classList.add("shadow");
-                navcontent.classList.remove("bg-gray-100");
-                navcontent.classList.add("bg-white");
-              } else {
-                header.classList.remove("bg-white");
-                navaction.classList.remove("gradient");
-                navaction.classList.add("bg-white");
-                navaction.classList.remove("text-white");
-                navaction.classList.add("text-gray-800");
-                //Use to switch toggleColour colours
-                for (var i = 0; i < toToggle.length; i++) {
-                  toToggle[i].classList.add("text-white");
-                  toToggle[i].classList.remove("text-gray-800");
-                }
+    {{-- download --}}
+    <x-front.download :setting="$setting" />
 
-                header.classList.remove("shadow");
-                navcontent.classList.remove("bg-white");
-                navcontent.classList.add("bg-gray-100");
-              }
-            });
-          </script>
-          <script>
-            /*Toggle dropdown list*/
-            /*https://gist.github.com/slavapas/593e8e50cf4cc16ac972afcbad4f70c8*/
 
-            var navMenuDiv = document.getElementById("nav-content");
-            var navMenu = document.getElementById("nav-toggle");
 
-            document.onclick = check;
-            function check(e) {
-              var target = (e && e.target) || (event && event.srcElement);
 
-              //Nav Menu
-              if (!checkParent(target, navMenuDiv)) {
-                // click NOT on the menu
-                if (checkParent(target, navMenu)) {
-                  // click on the link
-                  if (navMenuDiv.classList.contains("hidden")) {
-                    navMenuDiv.classList.remove("hidden");
-                  } else {
-                    navMenuDiv.classList.add("hidden");
-                  }
-                } else {
-                  // click both outside link and outside menu, hide menu
-                  navMenuDiv.classList.add("hidden");
-                }
-              }
-            }
-            function checkParent(t, elm) {
-              while (t.parentNode) {
-                if (t == elm) {
-                  return true;
-                }
-                t = t.parentNode;
-              }
-              return false;
-            }
-          </script>
-    </body>
+    <!--support-->
+    <x-front.contact_us :setting="$setting" />
+
+
+
+
+
+
+    <!--Footer-->
+    <x-front.footer />
+
+
+
+
+
+    <!--Modal contace-->
+    <x-front.modal_contact />
+
+
+
+
+
+
+
+
+    <!-- SCRIPTS -->
+
+    <script src="{{ asset('js/landing_page/jquery.js') }}"></script>
+    <script src="{{ asset('js/landing_page/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/landing_page/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset('js/landing_page/magnific-popup-options.js') }}"></script>
+    <script src="{{ asset('js/landing_page/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/landing_page/smoothscroll.js') }}"></script>
+    <script src="{{ asset('js/landing_page/wow.min.js') }}"></script>
+    <script src="{{ asset('js/landing_page/custom.js') }}"></script>
+
+</body>
+
 </html>
